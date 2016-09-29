@@ -14,36 +14,36 @@ import java.util.Map;
 public class PlayerList {
 
     /**
-     * An array of sample (dummy) items.
+     * An array of players.
      */
-    public static final List<DummyItem> ITEMS = new ArrayList<DummyItem>();
+    public static final List<Player> PLAYERS = new ArrayList<Player>();
 
     /**
-     * A map of sample (dummy) items, by ID.
+     * A map of players, by ID.
      */
-    public static final Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
+    public static final Map<String, Player> PLAYER_MAP = new HashMap<String, Player>();
 
     private static final int COUNT = 25;
 
     static {
-        // Add some sample items.
+        // Add some players.
         for (int i = 1; i <= COUNT; i++) {
-            addItem(createDummyItem(i));
+            addPlayer(createPlayer(i));
         }
     }
 
-    private static void addItem(DummyItem item) {
-        ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
+    private static void addPlayer(Player player) {
+        PLAYERS.add(player);
+        PLAYER_MAP.put(player.id, player);
     }
 
-    private static DummyItem createDummyItem(int position) {
-        return new DummyItem(String.valueOf(position), "Item " + position, makeDetails(position));
+    private static Player createPlayer(int position) {
+        return new Player(String.valueOf(position), "Ivan Ivanov " + position, makeDetails(position));
     }
 
     private static String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
-        builder.append("Details about Item: ").append(position);
+        builder.append("Details about player: ").append(position);
         for (int i = 0; i < position; i++) {
             builder.append("\nMore details information here.");
         }
@@ -51,14 +51,14 @@ public class PlayerList {
     }
 
     /**
-     * A dummy item representing a piece of content.
+     * A player representing a piece of content.
      */
-    public static class DummyItem {
+    public static class Player {
         public final String id;
         public final String content;
         public final String details;
 
-        public DummyItem(String id, String content, String details) {
+        public Player(String id, String content, String details) {
             this.id = id;
             this.content = content;
             this.details = details;

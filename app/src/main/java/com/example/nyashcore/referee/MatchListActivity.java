@@ -22,10 +22,10 @@ import java.util.List;
 /**
  * An activity representing a list of Matches. This activity
  * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
+ * handsets, the activity presents a list of matches, which when touched,
  * lead to a {@link MatchDetailActivity} representing
- * item details. On tablets, the activity presents the list of items and
- * item details side-by-side using two vertical panes.
+ * match details. On tablets, the activity presents the list of matches and
+ * match details side-by-side using two vertical panes.
  */
 public class MatchListActivity extends AppCompatActivity {
 
@@ -67,7 +67,7 @@ public class MatchListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(MatchList.ITEMS));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(MatchList.MATCHES));
     }
 
     public class SimpleItemRecyclerViewAdapter
@@ -88,7 +88,7 @@ public class MatchListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mItem = mValues.get(position);
+            holder.mMatch = mValues.get(position);
             holder.mIdView.setText(mValues.get(position).id);
             holder.mContentView.setText(mValues.get(position).content);
 
@@ -97,7 +97,7 @@ public class MatchListActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
-                        arguments.putString(MatchDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                        arguments.putString(MatchDetailFragment.ARG_MATCH_ID, holder.mMatch.id);
                         MatchDetailFragment fragment = new MatchDetailFragment();
                         fragment.setArguments(arguments);
                         getSupportFragmentManager().beginTransaction()
@@ -106,7 +106,7 @@ public class MatchListActivity extends AppCompatActivity {
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, MatchDetailActivity.class);
-                        intent.putExtra(MatchDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                        intent.putExtra(MatchDetailFragment.ARG_MATCH_ID, holder.mMatch.id);
 
                         context.startActivity(intent);
                     }
@@ -123,7 +123,7 @@ public class MatchListActivity extends AppCompatActivity {
             public final View mView;
             public final TextView mIdView;
             public final TextView mContentView;
-            public MatchList.Match mItem;
+            public MatchList.Match mMatch;
 
             public ViewHolder(View view) {
                 super(view);

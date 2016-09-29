@@ -16,34 +16,34 @@ public class MatchList {
     /**
      * An array of matches.
      */
-    public static final List<Match> ITEMS = new ArrayList<Match>();
+    public static final List<Match> MATCHES = new ArrayList<Match>();
 
     /**
      * A map of sample matches, by ID.
      */
-    public static final Map<String, Match> ITEM_MAP = new HashMap<String, Match>();
+    public static final Map<String, Match> MATCH_MAP = new HashMap<String, Match>();
 
     private static final int COUNT = 25;
 
     static {
-        // Add some sample items.
+        // Add some matches.
         for (int i = 1; i <= COUNT; i++) {
             addMatch(createMatch(i));
         }
     }
 
-    private static void addMatch(Match item) {
-        ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
+    private static void addMatch(Match match) {
+        MATCHES.add(match);
+        MATCH_MAP.put(match.id, match);
     }
 
     private static Match createMatch(int position) {
-        return new Match(String.valueOf(position), "Item " + position, makeDetails(position));
+        return new Match(String.valueOf(position), "Spartak Moscow - Manchester United " + position, makeDetails(position));
     }
 
     private static String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
-        builder.append("Details about Item: ").append(position);
+        builder.append("Details about Match: ").append(position);
         for (int i = 0; i < position; i++) {
             builder.append("\nMore details information here.");
         }

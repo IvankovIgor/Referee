@@ -13,7 +13,7 @@ import android.view.MenuItem;
 /**
  * An activity representing a single Match detail screen. This
  * activity is only used narrow width devices. On tablet-size devices,
- * item details are presented side-by-side with a list of items
+ * match details are presented side-by-side with a list of matches
  * in a {@link MatchListActivity}.
  */
 public class MatchDetailActivity extends AppCompatActivity {
@@ -53,8 +53,8 @@ public class MatchDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(MatchDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(MatchDetailFragment.ARG_ITEM_ID));
+            arguments.putString(MatchDetailFragment.ARG_MATCH_ID,
+                    getIntent().getStringExtra(MatchDetailFragment.ARG_MATCH_ID));
             MatchDetailFragment fragment = new MatchDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

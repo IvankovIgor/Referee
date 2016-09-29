@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.nyashcore.referee.content.MatchList;
+import com.example.nyashcore.referee.content.PlayerList;
 
 /**
  * A fragment representing a single Player detail screen.
@@ -19,15 +19,15 @@ import com.example.nyashcore.referee.content.MatchList;
  */
 public class PlayerDetailFragment extends Fragment {
     /**
-     * The fragment argument representing the item ID that this fragment
+     * The fragment argument representing the player ID that this fragment
      * represents.
      */
-    public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_PLAYER_ID = "player_id";
 
     /**
-     * The dummy content this fragment is presenting.
+     * The player content this fragment is presenting.
      */
-    private MatchList.DummyItem mItem;
+    private PlayerList.Player mPlayer;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -40,16 +40,16 @@ public class PlayerDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
+        if (getArguments().containsKey(ARG_PLAYER_ID)) {
+            // Load the player content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = MatchList.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            mPlayer = PlayerList.PLAYER_MAP.get(getArguments().getString(ARG_PLAYER_ID));
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
+                appBarLayout.setTitle(mPlayer.content);
             }
         }
     }
@@ -59,9 +59,9 @@ public class PlayerDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.player_detail, container, false);
 
-        // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.player_detail)).setText(mItem.details);
+        // Show the player content as text in a TextView.
+        if (mPlayer != null) {
+            ((TextView) rootView.findViewById(R.id.player_detail)).setText(mPlayer.details);
         }
 
         return rootView;

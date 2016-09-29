@@ -14,7 +14,7 @@ import android.view.MenuItem;
 /**
  * An activity representing a single Player detail screen. This
  * activity is only used narrow width devices. On tablet-size devices,
- * item details are presented side-by-side with a list of items
+ * player details are presented side-by-side with a list of players
  * in a {@link PlayerListActivity}.
  */
 public class PlayerDetailActivity extends AppCompatActivity {
@@ -54,8 +54,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(PlayerDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(PlayerDetailFragment.ARG_ITEM_ID));
+            arguments.putString(PlayerDetailFragment.ARG_PLAYER_ID,
+                    getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID));
             PlayerDetailFragment fragment = new PlayerDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()

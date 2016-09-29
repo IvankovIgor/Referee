@@ -15,17 +15,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
-import com.example.nyashcore.referee.content.MatchList;
+import com.example.nyashcore.referee.content.PlayerList;
 
 import java.util.List;
 
 /**
  * An activity representing a list of Players. This activity
  * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
+ * handsets, the activity presents a list of players, which when touched,
  * lead to a {@link PlayerDetailActivity} representing
- * item details. On tablets, the activity presents the list of items and
- * item details side-by-side using two vertical panes.
+ * player details. On tablets, the activity presents the list of players and
+ * player details side-by-side using two vertical panes.
  */
 public class PlayerListActivity extends AppCompatActivity {
 
@@ -67,16 +67,16 @@ public class PlayerListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(MatchList.ITEMS));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(PlayerList.PLAYERS));
     }
 
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<MatchList.DummyItem> mValues;
+        private final List<PlayerList.Player> mValues;
 
-        public SimpleItemRecyclerViewAdapter(List<MatchList.DummyItem> items) {
-            mValues = items;
+        public SimpleItemRecyclerViewAdapter(List<PlayerList.Player> players) {
+            mValues = players;
         }
 
         @Override
@@ -88,7 +88,7 @@ public class PlayerListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mItem = mValues.get(position);
+            holder.mPlayer = mValues.get(position);
             holder.mIdView.setText(mValues.get(position).id);
             holder.mContentView.setText(mValues.get(position).content);
 
@@ -97,7 +97,7 @@ public class PlayerListActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
-                        arguments.putString(PlayerDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                        arguments.putString(PlayerDetailFragment.ARG_PLAYER_ID, holder.mPlayer.id);
                         PlayerDetailFragment fragment = new PlayerDetailFragment();
                         fragment.setArguments(arguments);
                         getSupportFragmentManager().beginTransaction()
@@ -106,7 +106,7 @@ public class PlayerListActivity extends AppCompatActivity {
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, PlayerDetailActivity.class);
-                        intent.putExtra(PlayerDetailFragment.ARG_ITEM_ID, holder.mItem.id);
+                        intent.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, holder.mPlayer.id);
 
                         context.startActivity(intent);
                     }
@@ -123,7 +123,7 @@ public class PlayerListActivity extends AppCompatActivity {
             public final View mView;
             public final TextView mIdView;
             public final TextView mContentView;
-            public MatchList.DummyItem mItem;
+            public PlayerList.Player mPlayer;
 
             public ViewHolder(View view) {
                 super(view);
