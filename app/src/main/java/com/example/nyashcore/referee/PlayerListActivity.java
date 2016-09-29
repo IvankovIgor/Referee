@@ -8,11 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+//import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Chronometer;
 
 
 import com.example.nyashcore.referee.content.PlayerList;
@@ -34,6 +35,7 @@ public class PlayerListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
+    private Chronometer mChronometer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,18 +46,31 @@ public class PlayerListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
+        mChronometer = (Chronometer) findViewById(R.id.chronometer);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                mChronometer.start();
+            }
+        });
+
+        FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mChronometer.stop();
             }
         });
 
         View recyclerView = findViewById(R.id.player_list);
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        setupRecyclerView((RecyclerView) recyclerView, 1);
+
+        View recyclerView2 = findViewById(R.id.player_list2);
+        assert recyclerView2 != null;
+        setupRecyclerView((RecyclerView) recyclerView2, 2);
 
         if (findViewById(R.id.player_detail_container) != null) {
             // The detail container view will be present only in the
@@ -66,8 +81,12 @@ public class PlayerListActivity extends AppCompatActivity {
         }
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(PlayerList.PLAYERS));
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView, int team) {
+        if(team == 1) {
+            recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(PlayerList.PLAYERS));
+        } else {
+            recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(PlayerList.PLAYERS2));
+        }
     }
 
     public class SimpleItemRecyclerViewAdapter

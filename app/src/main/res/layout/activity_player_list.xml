@@ -7,6 +7,16 @@
     android:fitsSystemWindows="true"
     tools:context="com.example.nyashcore.referee.PlayerListActivity">
 
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="196dp"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <include layout="@layout/player_list" />
+
+    </FrameLayout>
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
@@ -21,22 +31,47 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <include layout="@layout/player_list" />
-    </FrameLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        android:paddingLeft="196dp">
+
+        <include
+            layout="@layout/player_list2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <Chronometer
+        android:layout_width="154dp"
+        android:layout_height="105dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="21dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="132dp"
+        android:id="@+id/chronometer"
+        android:visibility="visible" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:fabSize="mini"
+        app:srcCompat="@android:drawable/ic_media_pause"
+        android:id="@+id/fab2" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="234dp"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:fabSize="mini"
+        app:srcCompat="@android:drawable/ic_media_play"
+        android:id="@+id/fab"
+        android:layout_gravity="top|right"
+        app:layout_anchorGravity="top|right" />
 
 
 </android.support.design.widget.CoordinatorLayout>

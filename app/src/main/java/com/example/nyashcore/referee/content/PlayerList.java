@@ -17,28 +17,37 @@ public class PlayerList {
      * An array of players.
      */
     public static final List<Player> PLAYERS = new ArrayList<Player>();
+    public static final List<Player> PLAYERS2 = new ArrayList<Player>();
 
     /**
      * A map of players, by ID.
      */
     public static final Map<String, Player> PLAYER_MAP = new HashMap<String, Player>();
 
-    private static final int COUNT = 25;
+    private static final int COUNT = 50;
 
     static {
         // Add some players.
         for (int i = 1; i <= COUNT; i++) {
-            addPlayer(createPlayer(i));
+            addPlayer(createPlayer(i), i/25);
         }
     }
 
-    private static void addPlayer(Player player) {
-        PLAYERS.add(player);
+    private static void addPlayer(Player player, int i) {
+        if(i == 0) {
+            PLAYERS.add(player);
+        } else {
+            PLAYERS2.add(player);
+        }
         PLAYER_MAP.put(player.id, player);
     }
 
     private static Player createPlayer(int position) {
-        return new Player(String.valueOf(position), "Ivan Ivanov " + position, makeDetails(position));
+        if(position/25 == 0) {
+            return new Player(String.valueOf(position), "Ivan Ivanov " + position, makeDetails(position));
+        } else {
+            return new Player(String.valueOf(position), "John Johnson " + position, makeDetails(position));
+        }
     }
 
     private static String makeDetails(int position) {
