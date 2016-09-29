@@ -41,13 +41,33 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|start"
+        android:clickable="true"
+        app:srcCompat="@android:drawable/star_big_on"
+        android:id="@+id/fab_goal"
+        app:layout_anchor="@+id/player_detail_container"
+        app:layout_anchorGravity="top|left"
+        android:layout_gravity="bottom|right" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_yellow_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
         android:layout_margin="@dimen/fab_margin"
         app:layout_anchor="@+id/player_detail_container"
-        app:layout_anchorGravity="top|end"
-        app:srcCompat="@android:drawable/stat_notify_chat" />
+        app:layout_anchorGravity="top|center_horizontal"
+        app:srcCompat="@android:color/holo_orange_light" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:srcCompat="@android:color/holo_red_dark"
+        android:id="@+id/fab_red_card"
+        app:layout_anchor="@+id/player_detail_container"
+        app:layout_anchorGravity="top|right"
+        android:layout_gravity="bottom|left" />
 
 </android.support.design.widget.CoordinatorLayout>
