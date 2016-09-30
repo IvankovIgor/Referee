@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Chronometer;
+import android.os.SystemClock;
 
 
 import com.example.nyashcore.referee.content.PlayerList;
@@ -36,22 +37,26 @@ public class PlayerListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     private Chronometer mChronometer;
+    long timeWhenStopped = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_list);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setTitle(getTitle());
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        toolbar.setTitle(getTitle());
 
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
+//        mChronometer.setTextSize(120);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped);
                 mChronometer.start();
             }
         });
@@ -60,7 +65,17 @@ public class PlayerListActivity extends AppCompatActivity {
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                timeWhenStopped = mChronometer.getBase() - SystemClock.elapsedRealtime();
                 mChronometer.stop();
+            }
+        });
+
+        FloatingActionButton fab3 = (FloatingActionButton) findViewById(R.id.fab3);
+        fab3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mChronometer.setBase(SystemClock.elapsedRealtime());
+                timeWhenStopped = 0;
             }
         });
 

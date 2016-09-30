@@ -8,6 +8,21 @@
     tools:context="com.example.nyashcore.referee.PlayerListActivity">
 
     <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="55dp"
+        android:layout_marginLeft="196dp">
+
+        <include
+            layout="@layout/player_list2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+
+    <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="196dp"
         android:layout_height="match_parent"
@@ -23,37 +38,16 @@
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+        <Chronometer
+            android:layout_width="51dp"
+            android:layout_height="49dp"
+            android:id="@+id/chronometer"
+            android:visibility="visible"
+            android:layout_alignParentBottom="true"
+            android:layout_weight="1"
+            android:layout_marginLeft="180dp" />
 
     </android.support.design.widget.AppBarLayout>
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="196dp">
-
-        <include
-            layout="@layout/player_list2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </RelativeLayout>
-
-    <Chronometer
-        android:layout_width="154dp"
-        android:layout_height="105dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="21dp"
-        android:layout_marginStart="21dp"
-        android:layout_marginTop="132dp"
-        android:id="@+id/chronometer"
-        android:visibility="visible" />
 
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
@@ -72,6 +66,15 @@
         android:id="@+id/fab"
         android:layout_gravity="top|right"
         app:layout_anchorGravity="top|right" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:fabSize="mini"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
+        android:id="@+id/fab3"
+        android:layout_gravity="bottom|right" />
 
 
 </android.support.design.widget.CoordinatorLayout>
