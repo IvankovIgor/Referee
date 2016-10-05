@@ -7,74 +7,153 @@
     android:fitsSystemWindows="true"
     tools:context="com.example.nyashcore.referee.PlayerListActivity">
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="55dp"
-        android:layout_marginLeft="196dp">
-
-        <include
-            layout="@layout/player_list2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="196dp"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <include layout="@layout/player_list" />
-
-    </FrameLayout>
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
-        <Chronometer
-            android:layout_width="51dp"
-            android:layout_height="49dp"
-            android:id="@+id/chronometer"
-            android:visibility="visible"
-            android:layout_alignParentBottom="true"
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/app_bar"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                android:theme="?attr/actionBarTheme"
+                android:minHeight="?attr/actionBarSize"
+                android:id="@+id/toolbar"
+                android:layout_weight="1"
+                app:title="Match" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/chronom"
+            android:layout_below="@+id/app_bar"
+            android:layout_centerInParent="true"
+            android:textAlignment="center">
+
+            <Chronometer
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/chronometer"
+                android:visibility="visible"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:textColor="#f00"
+                android:textSize="25sp"
+                android:textStyle="bold|italic" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/chronom"
+            android:layout_width="match_parent"
+            android:id="@+id/buttons">
+
+            <!--android:layout_alignParentBottom="true"-->
+
+            <Button
+                android:text="start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_start"
+                android:layout_weight="1" />
+
+            <Button
+                android:text="stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/btn_stop" />
+
+            <Button
+                android:text="reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_reset"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginLeft="180dp" />
+            android:id="@+id/commands"
+            android:layout_below="@+id/buttons">
 
-    </android.support.design.widget.AppBarLayout>
+            <TextView
+                android:text="Spartak Moscow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:id="@+id/team1" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:fabSize="mini"
-        app:srcCompat="@android:drawable/ic_media_pause"
-        android:id="@+id/fab2" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:text="Manchester United"
+                android:id="@+id/team2" />
+        </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="234dp"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:fabSize="mini"
-        app:srcCompat="@android:drawable/ic_media_play"
-        android:id="@+id/fab"
-        android:layout_gravity="top|right"
-        app:layout_anchorGravity="top|right" />
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="false"
+            android:layout_below="@+id/commands"
+            android:id="@+id/list1">
 
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:fabSize="mini"
-        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
-        android:id="@+id/fab3"
-        android:layout_gravity="bottom|right" />
+            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/player_list"
+                android:name="com.example.nyashcore.referee.PlayerListFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="LinearLayoutManager"
+                tools:context="com.example.nyashcore.referee.PlayerListActivity"
+                tools:listitem="@layout/player_list_content"
+                android:textAlignment="center" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_below="@+id/commands"
+            android:id="@+id/list2"
+            android:layout_alignParentRight="true">
+
+            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/player_list2"
+                android:name="com.example.nyashcore.referee.PlayerListFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="LinearLayoutManager"
+                tools:context="com.example.nyashcore.referee.PlayerListActivity"
+                tools:listitem="@layout/player_list_content"
+                android:textAlignment="center" />
+        </FrameLayout>
+    </RelativeLayout>
 
 
 </android.support.design.widget.CoordinatorLayout>

@@ -7,11 +7,10 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
-//import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Chronometer;
 import android.os.SystemClock;
@@ -44,16 +43,17 @@ public class PlayerListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_list);
 
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        toolbar.setTitle(getTitle());
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle(getTitle());
 
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
 //        mChronometer.setTextSize(120);
+//        mChronometer.setFormat("MM:SS");
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        Button btnStart = (Button) findViewById(R.id.btn_start);
+        btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped);
@@ -61,8 +61,8 @@ public class PlayerListActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab2 = (FloatingActionButton) findViewById(R.id.fab2);
-        fab2.setOnClickListener(new View.OnClickListener() {
+        Button btnStop = (Button) findViewById(R.id.btn_stop);
+        btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 timeWhenStopped = mChronometer.getBase() - SystemClock.elapsedRealtime();
@@ -70,8 +70,8 @@ public class PlayerListActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab3 = (FloatingActionButton) findViewById(R.id.fab3);
-        fab3.setOnClickListener(new View.OnClickListener() {
+        Button btnReset = (Button) findViewById(R.id.btn_reset);
+        btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mChronometer.setBase(SystemClock.elapsedRealtime());

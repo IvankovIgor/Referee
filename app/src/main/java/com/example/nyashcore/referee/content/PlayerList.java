@@ -44,9 +44,9 @@ public class PlayerList {
 
     private static Player createPlayer(int position) {
         if(position/25 == 0) {
-            return new Player(String.valueOf(position), "Ivan Ivanov " + position, makeDetails(position));
+            return new Player(String.valueOf(position), "Ivan Ivanov", makeDetails(position));
         } else {
-            return new Player(String.valueOf(position), "John Johnson " + position, makeDetails(position));
+            return new Player(String.valueOf(position), "John Johnson", makeDetails(position));
         }
     }
 
