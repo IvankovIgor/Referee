@@ -38,15 +38,14 @@ public class MatchList {
     }
 
     private static Match createMatch(int position) {
-        return new Match(String.valueOf(position), "Spartak Moscow - Manchester United " + position, makeDetails(position));
+        return new Match(String.valueOf(position), "Spartak Moscow - Manchester United", makeDetails(position));
     }
 
     private static String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
         builder.append("Details about Match: ").append(position);
-        for (int i = 0; i < position; i++) {
-            builder.append("\nMore details information here.");
-        }
+        builder.append("\nDate: 12.10.2016");
+        builder.append("\nJudge: Mark Clattenburg");
         return builder.toString();
     }
 
