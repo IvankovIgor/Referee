@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
+import android.widget.Button;
 
 /**
  * An activity representing a single Player detail screen. This
@@ -26,8 +27,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton goalButton = (FloatingActionButton) findViewById(R.id.fab_goal);
-        goalButton.setOnClickListener(new View.OnClickListener() {
+        Button btnGoal = (Button) findViewById(R.id.btn_goal);
+        btnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Goal", Snackbar.LENGTH_LONG)
@@ -35,8 +36,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton yellowCardButton = (FloatingActionButton) findViewById(R.id.fab_yellow_card);
-        yellowCardButton.setOnClickListener(new View.OnClickListener() {
+        Button btnYellow = (Button) findViewById(R.id.btn_yellow);
+        btnYellow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Yellow card", Snackbar.LENGTH_LONG)
@@ -44,8 +45,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton redCardButton = (FloatingActionButton) findViewById(R.id.fab_red_card);
-        redCardButton.setOnClickListener(new View.OnClickListener() {
+        Button btnRed = (Button) findViewById(R.id.btn_red);
+        btnRed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Red card", Snackbar.LENGTH_LONG)

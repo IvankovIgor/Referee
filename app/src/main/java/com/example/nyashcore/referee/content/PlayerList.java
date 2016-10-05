@@ -52,9 +52,11 @@ public class PlayerList {
 
     private static String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
-        builder.append("Details about player: ").append(position);
-        for (int i = 0; i < position; i++) {
-            builder.append("\nMore details information here.");
+        builder.append("Player number: ").append(position);
+        if (position/25 == 0) {
+            builder.append("\nTeam: Spartak Moscow");
+        } else {
+            builder.append("\nTeam: Manchester United");
         }
         return builder.toString();
     }

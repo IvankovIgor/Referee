@@ -34,40 +34,53 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/player_detail_container"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:srcCompat="@android:drawable/star_big_on"
-        android:id="@+id/fab_goal"
-        app:layout_anchor="@+id/player_detail_container"
-        app:layout_anchorGravity="top|left"
-        android:layout_gravity="bottom|right" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/app_bar">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_yellow_card"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@+id/player_detail_container"
-        app:layout_anchorGravity="top|center_horizontal"
-        app:srcCompat="@android:color/holo_orange_light" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:srcCompat="@android:color/holo_red_dark"
-        android:id="@+id/fab_red_card"
-        app:layout_anchor="@+id/player_detail_container"
-        app:layout_anchorGravity="top|right"
-        android:layout_gravity="bottom|left" />
+                <Button
+                    android:text="goal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/btn_goal" />
+
+                <Button
+                    android:text="yellow card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/btn_yellow" />
+
+                <Button
+                    android:text="red card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/btn_red" />
+
+            </LinearLayout>
+
+            <android.support.v4.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/player_detail_container"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>
