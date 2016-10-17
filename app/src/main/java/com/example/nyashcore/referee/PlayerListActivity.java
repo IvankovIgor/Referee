@@ -36,13 +36,15 @@ public class PlayerListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
+    final private int vibrateTime = 500;
     private Chronometer mChronometer;
     private Chronometer additionalChronometer;
     private Vibrator vibrator;
-    long timeWhenStopped = 0;
-    long timeWhenAdditionalStopped = 0;
+    long timeWhenStopped = 0L;
+    long timeWhenAdditionalStopped = 0L;
     boolean isAdditional = false;
     boolean isStopped = true;
+    long timePeriod = 5000L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,13 +115,16 @@ public class PlayerListActivity extends AppCompatActivity {
             @Override
             public void onChronometerTick(Chronometer chronometer) {
                 long elapsedMillis = SystemClock.elapsedRealtime() - mChronometer.getBase();
-                if(elapsedMillis >= 5000) {
+                if (elapsedMillis > timePeriod) {
                     isAdditional = true;
-//                    timeWhenStopped = 0;
+
                     mChronometer.stop();
-                    vibrator.vibrate(500);
-                    additionalChronometer.setBase(SystemClock.elapsedRealtime());
+
+                    additionalChronometer.setBase(mChronometer.getBase() + timePeriod);
                     additionalChronometer.start();
+
+//                    mChronometer.setBase(SystemClock.elapsedRealtime() - timePeriod);
+                    vibrator.vibrate(vibrateTime);
                 }
             }}
         );
