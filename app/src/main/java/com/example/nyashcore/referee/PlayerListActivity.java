@@ -15,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Chronometer;
 import android.os.SystemClock;
 import android.os.Vibrator;
-
+import android.content.pm.ActivityInfo;
 
 import com.example.nyashcore.referee.content.PlayerList;
 
@@ -44,6 +44,7 @@ public class PlayerListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_list);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
