@@ -37,8 +37,12 @@ public class PlayerListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     private Chronometer mChronometer;
+    private Chronometer additionalChronometer;
     private Vibrator vibrator;
     long timeWhenStopped = 0;
+    long timeWhenAdditionalStopped = 0;
+    boolean isAdditional = false;
+    boolean isStopped = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +55,7 @@ public class PlayerListActivity extends AppCompatActivity {
         toolbar.setTitle(getTitle());
 
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
+        additionalChronometer = (Chronometer) findViewById(R.id.additional_chronometer);
         Context context = getApplicationContext();
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -58,8 +63,16 @@ public class PlayerListActivity extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped);
-                mChronometer.start();
+                if (isStopped) {
+                    isStopped = false;
+                    if (!isAdditional) {
+                        mChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped);
+                        mChronometer.start();
+                    } else {
+                        additionalChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenAdditionalStopped);
+                        additionalChronometer.start();
+                    }
+                }
             }
         });
 
@@ -67,9 +80,14 @@ public class PlayerListActivity extends AppCompatActivity {
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                timeWhenStopped = mChronometer.getBase() - SystemClock.elapsedRealtime();
-                mChronometer.stop();
-                vibrator.vibrate(500);
+                isStopped = true;
+                if (!isAdditional) {
+                    timeWhenStopped = mChronometer.getBase() - SystemClock.elapsedRealtime();
+                    mChronometer.stop();
+                } else {
+                    timeWhenAdditionalStopped = additionalChronometer.getBase() - SystemClock.elapsedRealtime();
+                    additionalChronometer.stop();
+                }
             }
         });
 
@@ -77,10 +95,34 @@ public class PlayerListActivity extends AppCompatActivity {
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mChronometer.setBase(SystemClock.elapsedRealtime());
-                timeWhenStopped = 0;
+                isStopped = true;
+                if (!isAdditional) {
+                    mChronometer.setBase(SystemClock.elapsedRealtime());
+                    timeWhenStopped = 0;
+                    mChronometer.stop();
+                } else {
+                    additionalChronometer.setBase(SystemClock.elapsedRealtime());
+                    timeWhenAdditionalStopped = 0;
+                    additionalChronometer.stop();
+                }
             }
         });
+
+        mChronometer.setOnChronometerTickListener(
+            new Chronometer.OnChronometerTickListener(){
+            @Override
+            public void onChronometerTick(Chronometer chronometer) {
+                long elapsedMillis = SystemClock.elapsedRealtime() - mChronometer.getBase();
+                if(elapsedMillis >= 5000) {
+                    isAdditional = true;
+//                    timeWhenStopped = 0;
+                    mChronometer.stop();
+                    vibrator.vibrate(500);
+                    additionalChronometer.setBase(SystemClock.elapsedRealtime());
+                    additionalChronometer.start();
+                }
+            }}
+        );
 
         View recyclerView = findViewById(R.id.player_list);
         assert recyclerView != null;

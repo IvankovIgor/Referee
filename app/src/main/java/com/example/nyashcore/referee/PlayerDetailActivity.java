@@ -3,7 +3,6 @@ package com.example.nyashcore.referee;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -105,7 +104,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
             //
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
-            NavUtils.navigateUpTo(this, new Intent(this, PlayerListActivity.class));
+//            NavUtils.navigateUpTo(this, new Intent(this, PlayerListActivity.class));
+            this.finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
