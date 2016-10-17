@@ -36,6 +36,15 @@ public class PlayerDetailActivity extends AppCompatActivity {
             }
         });
 
+        Button btnOwnGoal = (Button) findViewById(R.id.btn_own_goal);
+        btnOwnGoal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "OwnGoal", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
         Button btnYellow = (Button) findViewById(R.id.btn_yellow);
         btnYellow.setOnClickListener(new View.OnClickListener() {
             @Override
