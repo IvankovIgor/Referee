@@ -44,7 +44,7 @@ public class PlayerListActivity extends AppCompatActivity {
     long timeWhenAdditionalStopped = 0L;
     boolean isAdditional = false;
     boolean isStopped = true;
-    long timePeriod = 5000L;
+    long timePeriod = 2000L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,7 @@ public class PlayerListActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
-        Button btnStart = (Button) findViewById(R.id.btn_start);
+        final Button btnStart = (Button) findViewById(R.id.btn_start);
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -117,13 +117,13 @@ public class PlayerListActivity extends AppCompatActivity {
                 long elapsedMillis = SystemClock.elapsedRealtime() - mChronometer.getBase();
                 if (elapsedMillis > timePeriod) {
                     isAdditional = true;
-
+                    timeWhenAdditionalStopped = 0;
                     mChronometer.stop();
+                    mChronometer.setBase(SystemClock.elapsedRealtime() - timePeriod);
 
-                    additionalChronometer.setBase(mChronometer.getBase() + timePeriod);
+                    additionalChronometer.setBase(SystemClock.elapsedRealtime() - timeWhenAdditionalStopped);
                     additionalChronometer.start();
 
-//                    mChronometer.setBase(SystemClock.elapsedRealtime() - timePeriod);
                     vibrator.vibrate(vibrateTime);
                 }
             }}
