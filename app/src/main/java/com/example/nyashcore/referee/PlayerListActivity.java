@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Chronometer;
 import android.os.SystemClock;
+import android.os.Vibrator;
 
 
 import com.example.nyashcore.referee.content.PlayerList;
@@ -36,6 +37,7 @@ public class PlayerListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     private Chronometer mChronometer;
+    private Vibrator vibrator;
     long timeWhenStopped = 0;
 
     @Override
@@ -48,9 +50,8 @@ public class PlayerListActivity extends AppCompatActivity {
         toolbar.setTitle(getTitle());
 
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
-//        mChronometer.setTextSize(120);
-//        mChronometer.setFormat("MM:SS");
-
+        Context context = getApplicationContext();
+        vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
         Button btnStart = (Button) findViewById(R.id.btn_start);
         btnStart.setOnClickListener(new View.OnClickListener() {
@@ -67,6 +68,7 @@ public class PlayerListActivity extends AppCompatActivity {
             public void onClick(View view) {
                 timeWhenStopped = mChronometer.getBase() - SystemClock.elapsedRealtime();
                 mChronometer.stop();
+                vibrator.vibrate(500);
             }
         });
 
