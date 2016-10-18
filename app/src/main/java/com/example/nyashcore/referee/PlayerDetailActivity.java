@@ -2,13 +2,14 @@ package com.example.nyashcore.referee;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.widget.Button;
+
+import com.example.nyashcore.referee.content.ActionList;
 
 /**
  * An activity representing a single Player detail screen. This
@@ -31,8 +32,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Goal", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                System.out.println(PlayerListActivity.getTime());
+                ActionList.addAction(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "goal", "details"));
             }
         });
 
@@ -40,8 +41,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnOwnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "OwnGoal", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                ActionList.ACTIONS.add(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "own goal", "30:34"));
             }
         });
 
@@ -49,8 +49,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnYellow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Yellow card", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                ActionList.ACTIONS.add(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "yellow card", "30:34"));
             }
         });
 
@@ -58,8 +57,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnRed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Red card", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                ActionList.ACTIONS.add(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "red card", "30:34"));
             }
         });
         // Show the Up button in the action bar.

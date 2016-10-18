@@ -37,8 +37,8 @@ public class PlayerListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
     final private int vibrateTime = 500;
-    private Chronometer mChronometer;
-    private Chronometer additionalChronometer;
+    private static Chronometer mChronometer;
+    private static Chronometer additionalChronometer;
     private Vibrator vibrator;
     private long timeWhenStopped = 0L;
     private long timeWhenAdditionalStopped = 0L;
@@ -48,6 +48,9 @@ public class PlayerListActivity extends AppCompatActivity {
     private int scoreFirstTeam = 0;
     private int scoreSecondTeam = 0;
     private TextView score;
+    private TextView actions;
+    private TextView firstTeamName;
+    private TextView secondTeamName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +67,26 @@ public class PlayerListActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         score = (TextView) findViewById(R.id.score);
+        firstTeamName = (TextView) findViewById(R.id.team1);
+        secondTeamName = (TextView) findViewById(R.id.team2);
+        actions = (TextView) findViewById(R.id.actions);
+        String team1 = "Real Madrid";
+        String team2 = "Ajax";
+        firstTeamName.setText(team1);
+        secondTeamName.setText(team2);
+
+//        if (savedInstanceState == null) {
+//            // Create the detail fragment and add it to the activity
+//            // using a fragment transaction.
+//        }
+
+        actions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PlayerListActivity.this, ActionListActivity.class);
+                startActivity(intent);
+            }
+        });
 
         final Button btnStart = (Button) findViewById(R.id.btn_start);
         btnStart.setOnClickListener(new View.OnClickListener() {
@@ -149,6 +172,12 @@ public class PlayerListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+    }
+
+    static long getTime() {
+        String chronoText = mChronometer.getText().toString();
+        String array[] = chronoText.split(":");
+        return Integer.parseInt(array[1]);
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, int team) {
