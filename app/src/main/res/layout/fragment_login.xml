@@ -2,14 +2,22 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFCCCCCC">
+    android:layout_height="match_parent">
 
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Login via VK"
         android:id="@+id/vk"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/vk"
+        android:layout_margin="8dp"
+        android:textColor="#ffffffff" />
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:id="@+id/logout"
         android:layout_gravity="center_horizontal"
         android:background="@color/vk"
         android:layout_margin="8dp"

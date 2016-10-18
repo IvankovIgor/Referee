@@ -14,6 +14,7 @@ import com.github.gorbin.asne.core.SocialNetworkManager;
 import com.github.gorbin.asne.core.listener.OnLoginCompleteListener;
 import com.github.gorbin.asne.vk.VkSocialNetwork;
 import com.vk.sdk.VKScope;
+import com.vk.sdk.VKSdk;
 
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
      * 7 - Instagram
      */
     private Button vk;
-    private Button ok;
+    private Button logout;
 
     public LoginFragment() {
     }
@@ -44,6 +45,9 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         // init buttons and set Listener
         vk = (Button) rootView.findViewById(R.id.vk);
         vk.setOnClickListener(loginClick);
+
+        logout = (Button) rootView.findViewById(R.id.logout);
+        logout.setOnClickListener(logoutClick);
 
         //Get Keys for initiate SocialNetworks
         String VK_KEY = getActivity().getString(R.string.vk_app_id);
@@ -119,10 +123,18 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         }
     };
 
+    private View.OnClickListener logoutClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            vk.setText("Login via vk");
+            VKSdk.logout();
+        }
+    };
+
     @Override
     public void onLoginSuccess(int networkId) {
         LoginActivity.hideProgress();
-//        startProfile(networkId);
+        startProfile(networkId);
     }
 
     @Override

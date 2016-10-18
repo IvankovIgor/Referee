@@ -7,10 +7,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
+
+//import com.vk.sdk.util.VKUtil;
 
 
 public class LoginActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
@@ -23,14 +24,10 @@ public class LoginActivity extends AppCompatActivity implements FragmentManager.
         setContentView(R.layout.activity_login);
         context = this;
 
-//        Button btnStartMatch = (Button) findViewById(R.id.start_match);
-//        btnStartMatch.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(LoginActivity.this, PlayerListActivity.class);
-//                startActivity(intent);
-//            }
-//        });
+//        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
+//        for(int i = 0; i<fingerprints.length;i++)
+//            Log.i("myApp", "Fingerprint:"+fingerprints[i]);
+
         getSupportFragmentManager().addOnBackStackChangedListener(this);
         homeAsUpByBackStack();
 
