@@ -44,22 +44,24 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/chronometer"
                 android:visibility="visible"
-                android:layout_weight="3"
+                android:layout_weight="4"
                 android:gravity="center_horizontal"
                 android:textColor="#f00"
                 android:textSize="25sp"
-                android:textStyle="bold|italic" />
+                android:textStyle="bold|italic"
+                android:textAlignment="viewEnd" />
 
             <Chronometer
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/additional_chronometer"
                 android:visibility="visible"
-                android:layout_weight="1"
+                android:layout_weight="3"
                 android:gravity="center_horizontal"
                 android:textColor="#00f"
-                android:textSize="25sp"
-                android:textStyle="bold|italic" />
+                android:textSize="20sp"
+                android:textStyle="bold|italic"
+                android:textAlignment="gravity" />
         </LinearLayout>
 
         <LinearLayout
@@ -109,6 +111,15 @@
                 android:textAlignment="center"
                 android:textSize="18sp"
                 android:id="@+id/team1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/score"
+                android:layout_weight="1"
+                android:elevation="24dp"
+                android:gravity="center_horizontal"
+                android:text="-:-" />
 
             <TextView
                 android:layout_width="wrap_content"

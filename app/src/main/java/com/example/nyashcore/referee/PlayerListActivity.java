@@ -40,11 +40,14 @@ public class PlayerListActivity extends AppCompatActivity {
     private Chronometer mChronometer;
     private Chronometer additionalChronometer;
     private Vibrator vibrator;
-    long timeWhenStopped = 0L;
-    long timeWhenAdditionalStopped = 0L;
-    boolean isAdditional = false;
-    boolean isStopped = true;
-    long timePeriod = 2000L;
+    private long timeWhenStopped = 0L;
+    private long timeWhenAdditionalStopped = 0L;
+    private boolean isAdditional = false;
+    private boolean isStopped = true;
+    private long timePeriod = 2000L;
+    private int scoreFirstTeam = 0;
+    private int scoreSecondTeam = 0;
+    private TextView score;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +63,13 @@ public class PlayerListActivity extends AppCompatActivity {
         additionalChronometer = (Chronometer) findViewById(R.id.additional_chronometer);
         Context context = getApplicationContext();
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        score = (TextView) findViewById(R.id.score);
 
         final Button btnStart = (Button) findViewById(R.id.btn_start);
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                score.setText(scoreFirstTeam + ":" + scoreSecondTeam);
                 if (isStopped) {
                     isStopped = false;
                     if (!isAdditional) {
