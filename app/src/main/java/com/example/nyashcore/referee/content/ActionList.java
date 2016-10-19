@@ -55,11 +55,13 @@ public class ActionList {
         public final String id;
         public final String content;
         public final String details;
+        public String idTeam;
 
-        public Action(String id, String content, String details) {
+        public Action(String id, String content, String details, String idTeam) {
             this.id = id;
             this.content = content;
             this.details = details;
+            this.idTeam = idTeam;
         }
 
         public boolean equals(Action act) {

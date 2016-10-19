@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -45,13 +46,10 @@ public class PlayerListActivity extends AppCompatActivity {
     private long timeWhenAdditionalStopped = 0L;
     private boolean isAdditional = false;
     private boolean isStopped = true;
-    private long timePeriod = 2000L;
-    private int scoreFirstTeam = 0;
-    private int scoreSecondTeam = 0;
-    private TextView score;
-    private TextView actions;
-    private TextView firstTeamName;
-    private TextView secondTeamName;
+    private static TextView score;
+    private long timePeriod;
+    private int countPeriods;
+    private int currentPeriod = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,13 +66,17 @@ public class PlayerListActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         score = (TextView) findViewById(R.id.score);
-        firstTeamName = (TextView) findViewById(R.id.team1);
-        secondTeamName = (TextView) findViewById(R.id.team2);
-        actions = (TextView) findViewById(R.id.actions);
-        String team1 = MatchList.getCurrentMatch().getFirstTeam().getName();
-        String team2 = MatchList.getCurrentMatch().getSecondTeam().getName();
-        firstTeamName.setText(team1);
-        secondTeamName.setText(team2);
+        TextView firstTeamName = (TextView) findViewById(R.id.team1);
+        TextView secondTeamName = (TextView) findViewById(R.id.team2);
+        TextView actions = (TextView) findViewById(R.id.actions);
+        assert firstTeamName != null;
+        firstTeamName.setText(MatchList.getCurrentMatch().getFirstTeam().getName());
+        assert secondTeamName != null;
+        secondTeamName.setText(MatchList.getCurrentMatch().getSecondTeam().getName());
+//        timePeriod = MatchList.getCurrentMatch().getTimePeriod();
+        timePeriod = 2000L;
+        countPeriods = MatchList.getCurrentMatch().getCountPeriods();
+        score.setText(MatchList.getCurrentMatch().getFirstScore() + ":" + MatchList.getCurrentMatch().getSecondScore());
 
         actions.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,16 +90,20 @@ public class PlayerListActivity extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                score.setText(scoreFirstTeam + ":" + scoreSecondTeam);
-                if (isStopped) {
-                    isStopped = false;
-                    if (!isAdditional) {
-                        mChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped);
-                        mChronometer.start();
-                    } else {
-                        additionalChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenAdditionalStopped);
-                        additionalChronometer.start();
+                if (currentPeriod != countPeriods) {
+                    if (isStopped) {
+                        isStopped = false;
+                        if (!isAdditional) {
+                            mChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped);
+                            mChronometer.start();
+                        } else {
+                            additionalChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenAdditionalStopped);
+                            additionalChronometer.start();
+                        }
                     }
+                } else {
+                    Snackbar.make(view, "Full time", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
             }
         });
@@ -121,15 +127,26 @@ public class PlayerListActivity extends AppCompatActivity {
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                isStopped = true;
-                if (!isAdditional) {
-                    mChronometer.setBase(SystemClock.elapsedRealtime());
-                    timeWhenStopped = 0;
-                    mChronometer.stop();
-                } else {
-                    additionalChronometer.setBase(SystemClock.elapsedRealtime());
+                if (currentPeriod != countPeriods) {
+                    isStopped = true;
                     timeWhenAdditionalStopped = 0;
+                    mChronometer.stop();
+                    mChronometer.setBase(SystemClock.elapsedRealtime() - timePeriod * (currentPeriod + 1));
                     additionalChronometer.stop();
+                    additionalChronometer.setBase(SystemClock.elapsedRealtime());
+                    currentPeriod++;
+//                    if (!isAdditional) {
+//                        mChronometer.setBase(SystemClock.elapsedRealtime());
+//                        timeWhenStopped = 0;
+//                        mChronometer.stop();
+//                    } else {
+//                        additionalChronometer.setBase(SystemClock.elapsedRealtime());
+//                        timeWhenAdditionalStopped = 0;
+//                        additionalChronometer.stop();
+//                    }
+                } else {
+                    Snackbar.make(view, "Full time", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
             }
         });
@@ -139,11 +156,11 @@ public class PlayerListActivity extends AppCompatActivity {
             @Override
             public void onChronometerTick(Chronometer chronometer) {
                 long elapsedMillis = SystemClock.elapsedRealtime() - mChronometer.getBase();
-                if (elapsedMillis > timePeriod) {
+                if (elapsedMillis > timePeriod * (countPeriods + 1)) {
                     isAdditional = true;
                     timeWhenAdditionalStopped = 0;
                     mChronometer.stop();
-                    mChronometer.setBase(SystemClock.elapsedRealtime() - timePeriod);
+                    mChronometer.setBase(SystemClock.elapsedRealtime() - timePeriod * (currentPeriod + 1));
 
                     additionalChronometer.setBase(SystemClock.elapsedRealtime() - timeWhenAdditionalStopped);
                     additionalChronometer.start();
@@ -168,6 +185,10 @@ public class PlayerListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+    }
+
+    public static void refresh() {
+        score.setText(MatchList.getCurrentMatch().getFirstScore() + ":" + MatchList.getCurrentMatch().getSecondScore());
     }
 
     static long getTime() {

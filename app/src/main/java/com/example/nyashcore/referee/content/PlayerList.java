@@ -16,7 +16,7 @@ import java.util.Map;
  * TODO: Replace all uses of this class before publishing your app.
  */
 public class PlayerList {
-    
+
     /**
      * A map of players, by ID.
      */

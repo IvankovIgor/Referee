@@ -12,6 +12,8 @@ import android.widget.TextView;
 import android.content.pm.ActivityInfo;
 
 import com.example.nyashcore.referee.content.ActionList;
+import com.example.nyashcore.referee.content.MatchList;
+import com.example.nyashcore.referee.content.PlayerList;
 
 import java.util.List;
 
@@ -81,9 +83,15 @@ public class ActionListActivity extends AppCompatActivity {
         }
 
         public void removeAt(int position) {
+            String idTeam = ActionList.ACTIONS.get(position).idTeam;
+            String details = ActionList.ACTIONS.get(position).details;
+            if (details.equals("goal")) {
+                MatchList.getCurrentMatch().decrementScore(idTeam);
+            } else if (details.equals("own goal")) {
+                MatchList.getCurrentMatch().ownGoalDecrement(idTeam);
+            }
             ActionList.ACTIONS.remove(position);
             notifyItemRemoved(position);
-//            notifyItemRangeChanged(position, ActionList.ACTIONS.size());
         }
 
         @Override

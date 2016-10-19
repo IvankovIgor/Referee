@@ -2,6 +2,7 @@ package com.example.nyashcore.referee;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,8 @@ import android.view.MenuItem;
 import android.widget.Button;
 
 import com.example.nyashcore.referee.content.ActionList;
+import com.example.nyashcore.referee.content.MatchList;
+import com.example.nyashcore.referee.content.PlayerList;
 
 /**
  * An activity representing a single Player detail screen. This
@@ -32,8 +35,12 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println(PlayerListActivity.getTime());
-                ActionList.addAction(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "goal", "details"));
+                String idTeam = PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getIdTeam();
+                MatchList.getCurrentMatch().incrementScore(idTeam);
+                Snackbar.make(view, "Goal", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                ActionList.addAction(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "Goal - " +
+                        PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), "goal", idTeam));
             }
         });
 
@@ -41,7 +48,12 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnOwnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActionList.ACTIONS.add(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "own goal", "30:34"));
+                String idTeam = PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getIdTeam();
+                MatchList.getCurrentMatch().ownGoal(idTeam);
+                Snackbar.make(view, "Own goal", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                ActionList.ACTIONS.add(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "Own goal - " +
+                        PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), "own goal", idTeam));
             }
         });
 
@@ -49,7 +61,11 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnYellow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActionList.ACTIONS.add(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "yellow card", "30:34"));
+                String idTeam = PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getIdTeam();
+                Snackbar.make(view, "Yellow card", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                ActionList.ACTIONS.add(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "Yellow card - " +
+                        PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), "yellow card", idTeam));
             }
         });
 
@@ -57,7 +73,11 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnRed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActionList.ACTIONS.add(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "red card", "30:34"));
+                String idTeam = PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getIdTeam();
+                Snackbar.make(view, "Red card", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                ActionList.ACTIONS.add(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "Red card - " +
+                        PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), "red card", idTeam));
             }
         });
         // Show the Up button in the action bar.

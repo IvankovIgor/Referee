@@ -1,5 +1,7 @@
 package com.example.nyashcore.referee.content;
 
+import com.example.nyashcore.referee.PlayerListActivity;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,9 +51,14 @@ public class MatchList {
         private String stage;
         private PlayerList.Team firstTeam;
         private PlayerList.Team secondTeam;
-        private JSONObject matchConfig;
+        private int timePeriod;
+        private int countPeriods;
+        private int firstScore;
+        private int secondScore;
 
         public Match(JSONObject jsonObject) {
+            firstScore = 0;
+            secondScore = 0;
             try {
                 id = jsonObject.getString("idMatch");
                 JSONObject team1 = jsonObject.getJSONObject("team1");
@@ -59,10 +66,11 @@ public class MatchList {
                 firstTeam = new PlayerList.Team(team1);
                 secondTeam = new PlayerList.Team(team2);
                 content = team1.getString("name") + " - " + team2.getString("name");
-                matchConfig = jsonObject.getJSONObject("matchConfig");
                 tournament = jsonObject.getString("tournament");
                 stage = jsonObject.getString("stage");
                 federation = jsonObject.getString("federation");
+                timePeriod = jsonObject.getJSONObject("matchConfig").getInt("timePeriod");
+                countPeriods = jsonObject.getJSONObject("matchConfig").getInt("countPeriods");
             } catch (JSONException e) {
                 System.out.println(e);
             }
@@ -86,16 +94,64 @@ public class MatchList {
             return tournament;
         }
 
-        public JSONObject getMatchConfig() {
-            return matchConfig;
-        }
-
         public PlayerList.Team getFirstTeam() {
             return firstTeam;
         }
 
         public PlayerList.Team getSecondTeam() {
             return secondTeam;
+        }
+
+        public long getTimePeriod() {
+            return timePeriod * 60 * 1000L;
+        }
+
+        public int getCountPeriods() {
+            return  countPeriods;
+        }
+
+        public int getFirstScore() {
+            return firstScore;
+        }
+
+        public int getSecondScore() {
+            return secondScore;
+        }
+
+        public void incrementScore(String idTeam) {
+            if (firstTeam.getId().equals(idTeam)) {
+                firstScore++;
+            } else {
+                secondScore++;
+            }
+            PlayerListActivity.refresh();
+        }
+
+        public void decrementScore(String idTeam) {
+            if (firstTeam.getId().equals(idTeam)) {
+                firstScore--;
+            } else {
+                secondScore--;
+            }
+            PlayerListActivity.refresh();
+        }
+
+        public void ownGoal(String idTeam) {
+            if (secondTeam.getId().equals(idTeam)) {
+                firstScore++;
+            } else {
+                secondScore++;
+            }
+            PlayerListActivity.refresh();
+        }
+
+        public void ownGoalDecrement(String idTeam) {
+            if (secondTeam.getId().equals(idTeam)) {
+                firstScore--;
+            } else {
+                secondScore--;
+            }
+            PlayerListActivity.refresh();
         }
 
         @Override
