@@ -11,6 +11,8 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import com.example.nyashcore.referee.content.MatchList;
+
 /**
  * An activity representing a single Match detail screen. This
  * activity is only used narrow width devices. On tablet-size devices,
@@ -32,6 +34,8 @@ public class MatchDetailActivity extends AppCompatActivity {
         btnStartMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                System.out.println(getIntent().getStringExtra(MatchDetailFragment.ARG_MATCH_ID));
+                MatchList.currentMatchId = getIntent().getStringExtra(MatchDetailFragment.ARG_MATCH_ID);
                 Intent intent = new Intent(MatchDetailActivity.this, PlayerListActivity.class);
                 startActivity(intent);
             }

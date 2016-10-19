@@ -21,36 +21,20 @@ public class MatchList {
      * An array of matches.
      */
     public static final List<Match> MATCHES = new ArrayList<Match>();
+    public static String currentMatchId;
 
     /**
      * A map of sample matches, by ID.
      */
     public static final Map<String, Match> MATCH_MAP = new HashMap<String, Match>();
 
-    private static final int COUNT = 0;
-
-//    static {
-//        // Add some matches.
-//        for (int i = 1; i <= COUNT; i++) {
-//            addMatch(createMatch(i));
-//        }
-//    }
-
     private static void addMatch(Match match) {
         MATCHES.add(match);
         MATCH_MAP.put(String.valueOf(match.id), match);
     }
 
-//    private static Match createMatch(int position) {
-//        return new Match(String.valueOf(position), "Spartak Moscow - Manchester United", makeDetails(position));
-//    }
-
-    private static String makeDetails(int position) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Details about Match: ").append(position);
-        builder.append("\nDate: 12.10.2016");
-        builder.append("\nJudge: Mark Clattenburg");
-        return builder.toString();
+    public static Match getCurrentMatch() {
+        return MATCH_MAP.get(currentMatchId);
     }
 
     /**
@@ -63,15 +47,17 @@ public class MatchList {
         private String federation;
         private String tournament;
         private String stage;
+        private PlayerList.Team firstTeam;
+        private PlayerList.Team secondTeam;
         private JSONObject matchConfig;
-        private JSONObject team1;
-        private JSONObject team2;
 
         public Match(JSONObject jsonObject) {
             try {
                 id = jsonObject.getString("idMatch");
-                team1 = jsonObject.getJSONObject("team1");
-                team2 = jsonObject.getJSONObject("team2");
+                JSONObject team1 = jsonObject.getJSONObject("team1");
+                JSONObject team2 = jsonObject.getJSONObject("team2");
+                firstTeam = new PlayerList.Team(team1);
+                secondTeam = new PlayerList.Team(team2);
                 content = team1.getString("name") + " - " + team2.getString("name");
                 matchConfig = jsonObject.getJSONObject("matchConfig");
                 tournament = jsonObject.getString("tournament");
@@ -102,6 +88,14 @@ public class MatchList {
 
         public JSONObject getMatchConfig() {
             return matchConfig;
+        }
+
+        public PlayerList.Team getFirstTeam() {
+            return firstTeam;
+        }
+
+        public PlayerList.Team getSecondTeam() {
+            return secondTeam;
         }
 
         @Override

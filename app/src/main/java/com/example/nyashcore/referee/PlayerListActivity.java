@@ -17,6 +17,7 @@ import android.os.SystemClock;
 import android.os.Vibrator;
 import android.content.pm.ActivityInfo;
 
+import com.example.nyashcore.referee.content.MatchList;
 import com.example.nyashcore.referee.content.PlayerList;
 
 import java.util.List;
@@ -70,15 +71,10 @@ public class PlayerListActivity extends AppCompatActivity {
         firstTeamName = (TextView) findViewById(R.id.team1);
         secondTeamName = (TextView) findViewById(R.id.team2);
         actions = (TextView) findViewById(R.id.actions);
-        String team1 = "Real Madrid";
-        String team2 = "Ajax";
+        String team1 = MatchList.getCurrentMatch().getFirstTeam().getName();
+        String team2 = MatchList.getCurrentMatch().getSecondTeam().getName();
         firstTeamName.setText(team1);
         secondTeamName.setText(team2);
-
-//        if (savedInstanceState == null) {
-//            // Create the detail fragment and add it to the activity
-//            // using a fragment transaction.
-//        }
 
         actions.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,11 +155,11 @@ public class PlayerListActivity extends AppCompatActivity {
 
         View recyclerView = findViewById(R.id.player_list);
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView, 1);
+        setupRecyclerView((RecyclerView) recyclerView, MatchList.getCurrentMatch().getFirstTeam());
 
         View recyclerView2 = findViewById(R.id.player_list2);
         assert recyclerView2 != null;
-        setupRecyclerView((RecyclerView) recyclerView2, 2);
+        setupRecyclerView((RecyclerView) recyclerView2, MatchList.getCurrentMatch().getSecondTeam());
 
         if (findViewById(R.id.player_detail_container) != null) {
             // The detail container view will be present only in the
@@ -180,12 +176,8 @@ public class PlayerListActivity extends AppCompatActivity {
         return Integer.parseInt(array[1]);
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView, int team) {
-        if(team == 1) {
-            recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(PlayerList.PLAYERS));
-        } else {
-            recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(PlayerList.PLAYERS2));
-        }
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView, PlayerList.Team team) {
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(team.getPLAYERS()));
     }
 
     public class SimpleItemRecyclerViewAdapter
@@ -207,15 +199,15 @@ public class PlayerListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mPlayer = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
+            holder.mIdView.setText(mValues.get(position).getNumber());
+            holder.mContentView.setText(mValues.get(position).getName());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
-                        arguments.putString(PlayerDetailFragment.ARG_PLAYER_ID, holder.mPlayer.id);
+                        arguments.putString(PlayerDetailFragment.ARG_PLAYER_ID, holder.mPlayer.getId());
                         PlayerDetailFragment fragment = new PlayerDetailFragment();
                         fragment.setArguments(arguments);
                         getSupportFragmentManager().beginTransaction()
@@ -224,7 +216,7 @@ public class PlayerListActivity extends AppCompatActivity {
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, PlayerDetailActivity.class);
-                        intent.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, holder.mPlayer.id);
+                        intent.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, holder.mPlayer.getId());
 
                         context.startActivity(intent);
                     }

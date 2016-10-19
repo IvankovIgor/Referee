@@ -1,5 +1,9 @@
 package com.example.nyashcore.referee.content;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,73 +16,112 @@ import java.util.Map;
  * TODO: Replace all uses of this class before publishing your app.
  */
 public class PlayerList {
-
-    /**
-     * An array of players.
-     */
-    public static final List<Player> PLAYERS = new ArrayList<Player>();
-    public static final List<Player> PLAYERS2 = new ArrayList<Player>();
-
+    
     /**
      * A map of players, by ID.
      */
     public static final Map<String, Player> PLAYER_MAP = new HashMap<String, Player>();
 
-//    private static final int COUNT = 50;
-//
-//    static {
-//        // Add some players.
-//        for (int i = 1; i <= COUNT; i++) {
-//            addPlayer(createPlayer(i), i/25);
-//        }
-//    }
-
-    private static void addPlayer(Player player, int i) {
-        if(i == 0) {
-            PLAYERS.add(player);
-        } else {
-            PLAYERS2.add(player);
-        }
-        PLAYER_MAP.put(player.id, player);
-    }
-
-//    private static Player createPlayer(int position) {
-//        if(position/25 == 0) {
-//            return new Player(String.valueOf(position), "Ivan Ivanov", makeDetails(position));
-//        } else {
-//            return new Player(String.valueOf(position), "John Johnson", makeDetails(position));
-//        }
-//    }
-
-    private static String makeDetails(int position) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Player number: ").append(position);
-        if (position/25 == 0) {
-            builder.append("\nTeam: Spartak Moscow");
-        } else {
-            builder.append("\nTeam: Manchester United");
-        }
-        return builder.toString();
-    }
-
     /**
      * A player representing a piece of content.
      */
     public static class Player {
-        public final String id;
-        public final String content;
-        public final String details;
+        private String id;
+        private String name;
+        private String image;
+        private String number;
+        private String idTeam;
+        private String content;
+        private String details;
 
-        public Player(String id, String content, String details) {
-            this.id = id;
-            this.content = content;
-            this.details = details;
-//            addPlayer();
+        public Player(JSONObject jsonObject, String idTeam) {
+            this.idTeam = idTeam;
+            try {
+                id = jsonObject.getString("idUser");
+                name = jsonObject.getString("name");
+                image = jsonObject.getString("image");
+                number = jsonObject.getString("number");
+            } catch (JSONException e) {
+                System.out.println(e);
+            }
+            this.content = name;
+            this.details = number + " " + name;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getImage() {
+            return image;
+        }
+
+        public String getNumber() {
+            return number;
+        }
+
+        public String getIdTeam() {
+            return idTeam;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public String getDetails() {
+            return details;
         }
 
         @Override
         public String toString() {
-            return content;
+            return name;
+        }
+    }
+
+    public static class Team {
+        private String id;
+        private String name;
+        private String logo;
+        private List<Player> PLAYERS = new ArrayList<Player>();
+
+        public Team(JSONObject jsonObject) {
+            try {
+                id = jsonObject.getString("idTeam");
+                name = jsonObject.getString("name");
+                logo = jsonObject.getString("logo");
+                JSONArray jsonArray = jsonObject.getJSONArray("players");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    addPlayer(jsonArray.getJSONObject(i), id);
+                }
+            } catch (JSONException e) {
+                System.out.println(e);
+            }
+        }
+
+        private void addPlayer(JSONObject jsonObject, String idTeam) {
+            Player player = new Player(jsonObject, idTeam);
+            this.PLAYERS.add(player);
+            PLAYER_MAP.put(player.getId(), player);
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getLogo() {
+            return logo;
+        }
+
+        public List<Player> getPLAYERS() {
+            return PLAYERS;
         }
     }
 }

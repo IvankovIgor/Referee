@@ -49,7 +49,7 @@ public class PlayerDetailFragment extends Fragment {
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(mPlayer.content);
+                appBarLayout.setTitle(mPlayer.getContent());
             }
         }
     }
@@ -61,7 +61,7 @@ public class PlayerDetailFragment extends Fragment {
 
         // Show the player content as text in a TextView.
         if (mPlayer != null) {
-            ((TextView) rootView.findViewById(R.id.player_detail)).setText(mPlayer.details);
+            ((TextView) rootView.findViewById(R.id.player_detail)).setText(mPlayer.getDetails());
         }
 
         return rootView;
