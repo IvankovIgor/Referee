@@ -1,5 +1,9 @@
 package com.example.nyashcore.referee.content;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,23 +27,23 @@ public class MatchList {
      */
     public static final Map<String, Match> MATCH_MAP = new HashMap<String, Match>();
 
-    private static final int COUNT = 25;
+    private static final int COUNT = 0;
 
-    static {
-        // Add some matches.
-        for (int i = 1; i <= COUNT; i++) {
-            addMatch(createMatch(i));
-        }
-    }
+//    static {
+//        // Add some matches.
+//        for (int i = 1; i <= COUNT; i++) {
+//            addMatch(createMatch(i));
+//        }
+//    }
 
     private static void addMatch(Match match) {
         MATCHES.add(match);
-        MATCH_MAP.put(match.id, match);
+        MATCH_MAP.put(String.valueOf(match.id), match);
     }
 
-    private static Match createMatch(int position) {
-        return new Match(String.valueOf(position), "Spartak Moscow - Manchester United", makeDetails(position));
-    }
+//    private static Match createMatch(int position) {
+//        return new Match(String.valueOf(position), "Spartak Moscow - Manchester United", makeDetails(position));
+//    }
 
     private static String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
@@ -53,14 +57,51 @@ public class MatchList {
      * A match representing a piece of content.
      */
     public static class Match {
-        public final String id;
-        public final String content;
-        public final String details;
+        private String id;
+        private String content;
+        private String details;
+        private String federation;
+        private String tournament;
+        private String stage;
+        private JSONObject matchConfig;
+        private JSONObject team1;
+        private JSONObject team2;
 
-        public Match(String id, String content, String details) {
-            this.id = id;
-            this.content = content;
-            this.details = details;
+        public Match(JSONObject jsonObject) {
+            try {
+                id = jsonObject.getString("idMatch");
+                team1 = jsonObject.getJSONObject("team1");
+                team2 = jsonObject.getJSONObject("team2");
+                content = team1.getString("name") + " - " + team2.getString("name");
+                matchConfig = jsonObject.getJSONObject("matchConfig");
+                tournament = jsonObject.getString("tournament");
+                stage = jsonObject.getString("stage");
+                federation = jsonObject.getString("federation");
+            } catch (JSONException e) {
+                System.out.println(e);
+            }
+            details = "Federation: " + federation + "\nTournament: " + tournament + "\nStage: " + stage;
+            MatchList.addMatch(this);
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public String getDetails() {
+            return details;
+        }
+
+        public String getTournament() {
+            return tournament;
+        }
+
+        public JSONObject getMatchConfig() {
+            return matchConfig;
         }
 
         @Override

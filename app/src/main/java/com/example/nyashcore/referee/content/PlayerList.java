@@ -24,14 +24,14 @@ public class PlayerList {
      */
     public static final Map<String, Player> PLAYER_MAP = new HashMap<String, Player>();
 
-    private static final int COUNT = 50;
-
-    static {
-        // Add some players.
-        for (int i = 1; i <= COUNT; i++) {
-            addPlayer(createPlayer(i), i/25);
-        }
-    }
+//    private static final int COUNT = 50;
+//
+//    static {
+//        // Add some players.
+//        for (int i = 1; i <= COUNT; i++) {
+//            addPlayer(createPlayer(i), i/25);
+//        }
+//    }
 
     private static void addPlayer(Player player, int i) {
         if(i == 0) {
@@ -42,13 +42,13 @@ public class PlayerList {
         PLAYER_MAP.put(player.id, player);
     }
 
-    private static Player createPlayer(int position) {
-        if(position/25 == 0) {
-            return new Player(String.valueOf(position), "Ivan Ivanov", makeDetails(position));
-        } else {
-            return new Player(String.valueOf(position), "John Johnson", makeDetails(position));
-        }
-    }
+//    private static Player createPlayer(int position) {
+//        if(position/25 == 0) {
+//            return new Player(String.valueOf(position), "Ivan Ivanov", makeDetails(position));
+//        } else {
+//            return new Player(String.valueOf(position), "John Johnson", makeDetails(position));
+//        }
+//    }
 
     private static String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
@@ -73,6 +73,7 @@ public class PlayerList {
             this.id = id;
             this.content = content;
             this.details = details;
+//            addPlayer();
         }
 
         @Override

@@ -3,6 +3,7 @@ package com.example.nyashcore.referee;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,15 @@ import android.content.pm.ActivityInfo;
 
 import com.example.nyashcore.referee.content.MatchList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -32,12 +42,30 @@ public class MatchListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
+    private String content;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_list);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        if (MatchList.MATCHES.isEmpty()) {
+            try {
+                content = getContent("http://185.143.172.172:8080/api-referee/XXXX/get-my-matches");
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+            try {
+                JSONArray jsonArray = new JSONArray(content);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    new MatchList.Match(jsonObject);
+                }
+            } catch (JSONException e) {
+                System.out.println("JSON ERROR");
+            }
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -53,6 +81,32 @@ public class MatchListActivity extends AppCompatActivity {
             // If this view is present, then the
             // activity should be in two-pane mode.
             mTwoPane = true;
+        }
+    }
+
+    private String getContent(String path) throws IOException {
+        BufferedReader reader = null;
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                .permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        try {
+            URL url=new URL(path);
+            HttpURLConnection c = (HttpURLConnection)url.openConnection();
+            c.setRequestMethod("GET");
+            c.setReadTimeout(10000);
+            c.connect();
+            reader= new BufferedReader(new InputStreamReader(c.getInputStream()));
+            StringBuilder buf = new StringBuilder();
+            String line = null;
+            while ((line=reader.readLine()) != null) {
+                buf.append(line + "\n");
+            }
+            return(buf.toString());
+        }
+        finally {
+            if (reader != null) {
+                reader.close();
+            }
         }
     }
 
@@ -79,15 +133,15 @@ public class MatchListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mMatch = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).id);
-            holder.mContentView.setText(mValues.get(position).content);
+            holder.mIdView.setText(String.valueOf(mValues.get(position).getId()));
+            holder.mContentView.setText(mValues.get(position).getContent());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
-                        arguments.putString(MatchDetailFragment.ARG_MATCH_ID, holder.mMatch.id);
+                        arguments.putString(MatchDetailFragment.ARG_MATCH_ID, String.valueOf(holder.mMatch.getId()));
                         MatchDetailFragment fragment = new MatchDetailFragment();
                         fragment.setArguments(arguments);
                         getSupportFragmentManager().beginTransaction()
@@ -96,7 +150,7 @@ public class MatchListActivity extends AppCompatActivity {
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, MatchDetailActivity.class);
-                        intent.putExtra(MatchDetailFragment.ARG_MATCH_ID, holder.mMatch.id);
+                        intent.putExtra(MatchDetailFragment.ARG_MATCH_ID, holder.mMatch.getId());
 
                         context.startActivity(intent);
                     }

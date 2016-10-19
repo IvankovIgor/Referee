@@ -49,8 +49,8 @@ public class MatchDetailFragment extends Fragment {
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-//                appBarLayout.setTitle(mMatch.content);
-                appBarLayout.setTitle("Champions League");
+                appBarLayout.setTitle(mMatch.getContent());
+//                appBarLayout.setTitle(mMatch.getTournament());
             }
         }
     }
@@ -62,7 +62,7 @@ public class MatchDetailFragment extends Fragment {
 
         // Show the match content as text in a TextView.
         if (mMatch != null) {
-            ((TextView) rootView.findViewById(R.id.match_detail)).setText(mMatch.content + "\n" + mMatch.details);
+            ((TextView) rootView.findViewById(R.id.match_detail)).setText(mMatch.getDetails());
         }
 
         return rootView;
