@@ -46,6 +46,7 @@ public class PlayerListActivity extends AppCompatActivity {
     private long timeWhenAdditionalStopped = 0L;
     private boolean isAdditional = false;
     private boolean isStopped = true;
+    private boolean isReset = false;
     private static TextView score;
     private long timePeriod;
     private int countPeriods;
@@ -74,7 +75,7 @@ public class PlayerListActivity extends AppCompatActivity {
         assert secondTeamName != null;
         secondTeamName.setText(MatchList.getCurrentMatch().getSecondTeam().getName());
 //        timePeriod = MatchList.getCurrentMatch().getTimePeriod();
-        timePeriod = 2000L;
+        timePeriod = 7000L;
         countPeriods = MatchList.getCurrentMatch().getCountPeriods();
         score.setText(MatchList.getCurrentMatch().getFirstScore() + ":" + MatchList.getCurrentMatch().getSecondScore());
 
@@ -90,11 +91,16 @@ public class PlayerListActivity extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (currentPeriod != countPeriods) {
+                if (currentPeriod < countPeriods) {
                     if (isStopped) {
                         isStopped = false;
                         if (!isAdditional) {
-                            mChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped);
+                            if(isReset) {
+                                mChronometer.setBase(SystemClock.elapsedRealtime() - timeWhenStopped);
+                                isReset = false;
+                            } else {
+                                mChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped);
+                            }
                             mChronometer.start();
                         } else {
                             additionalChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenAdditionalStopped);
@@ -127,14 +133,19 @@ public class PlayerListActivity extends AppCompatActivity {
         btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (currentPeriod != countPeriods) {
+                if (currentPeriod <= countPeriods) {
                     isStopped = true;
+                    isAdditional = false;
+                    isReset = true;
+                    timeWhenStopped = timePeriod * (currentPeriod + 1);
                     timeWhenAdditionalStopped = 0;
                     mChronometer.stop();
-                    mChronometer.setBase(SystemClock.elapsedRealtime() - timePeriod * (currentPeriod + 1));
+                    mChronometer.setBase(SystemClock.elapsedRealtime() - timeWhenStopped);
                     additionalChronometer.stop();
-                    additionalChronometer.setBase(SystemClock.elapsedRealtime());
                     currentPeriod++;
+                    if (currentPeriod < countPeriods) {
+                        additionalChronometer.setBase(SystemClock.elapsedRealtime());
+                    }
 //                    if (!isAdditional) {
 //                        mChronometer.setBase(SystemClock.elapsedRealtime());
 //                        timeWhenStopped = 0;
@@ -156,7 +167,7 @@ public class PlayerListActivity extends AppCompatActivity {
             @Override
             public void onChronometerTick(Chronometer chronometer) {
                 long elapsedMillis = SystemClock.elapsedRealtime() - mChronometer.getBase();
-                if (elapsedMillis > timePeriod * (countPeriods + 1)) {
+                if (elapsedMillis > timePeriod * (currentPeriod + 1)) {
                     isAdditional = true;
                     timeWhenAdditionalStopped = 0;
                     mChronometer.stop();

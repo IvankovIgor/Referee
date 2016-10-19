@@ -90,15 +90,15 @@ public class MatchListActivity extends AppCompatActivity {
                 .permitAll().build();
         StrictMode.setThreadPolicy(policy);
         try {
-            URL url=new URL(path);
+            URL url = new URL(path);
             HttpURLConnection c = (HttpURLConnection)url.openConnection();
             c.setRequestMethod("GET");
             c.setReadTimeout(10000);
             c.connect();
-            reader= new BufferedReader(new InputStreamReader(c.getInputStream()));
+            reader = new BufferedReader(new InputStreamReader(c.getInputStream()));
             StringBuilder buf = new StringBuilder();
             String line = null;
-            while ((line=reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 buf.append(line + "\n");
             }
             return(buf.toString());

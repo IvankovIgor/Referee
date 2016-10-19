@@ -14,6 +14,17 @@ import com.example.nyashcore.referee.content.ActionList;
 import com.example.nyashcore.referee.content.MatchList;
 import com.example.nyashcore.referee.content.PlayerList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 /**
  * An activity representing a single Player detail screen. This
  * activity is only used narrow width devices. On tablet-size devices,
@@ -21,6 +32,8 @@ import com.example.nyashcore.referee.content.PlayerList;
  * in a {@link PlayerListActivity}.
  */
 public class PlayerDetailActivity extends AppCompatActivity {
+
+    static int number = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +54,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                 ActionList.addAction(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "Goal - " +
                         PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), "goal", idTeam));
+                sendInfo("Goal");
             }
         });
 
@@ -54,6 +68,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                 ActionList.ACTIONS.add(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "Own goal - " +
                         PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), "own goal", idTeam));
+                sendInfo("Own goal");
             }
         });
 
@@ -66,6 +81,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                 ActionList.ACTIONS.add(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "Yellow card - " +
                         PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), "yellow card", idTeam));
+                sendInfo("Yellow card");
             }
         });
 
@@ -78,6 +94,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                 ActionList.ACTIONS.add(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "Red card - " +
                         PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), "red card", idTeam));
+                sendInfo("Red Card");
             }
         });
         // Show the Up button in the action bar.
@@ -107,6 +124,33 @@ public class PlayerDetailActivity extends AppCompatActivity {
                     .add(R.id.player_detail_container, fragment)
                     .commit();
         }
+    }
+
+    private void sendInfo(String message) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("number", number);
+            jsonObject.put("data", message);
+            try {
+                URL url = new URL("http://185.143.172.172:8080/api-referee/XXXX/set-info");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                OutputStream dStream = new BufferedOutputStream(connection.getOutputStream());
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(dStream, "utf-8"));
+                writer.write(jsonObject.toString());
+                writer.flush();
+                writer.close();
+                int responseCode = connection.getResponseCode();
+//                System.out.println("Sending 'POST' request to URL : " + url);
+//                System.out.println("Post parameters : " + jsonObject);
+//                System.out.println("Response Code : " + responseCode);
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        } catch (JSONException e) {
+            System.out.println(e);
+        }
+        number++;
     }
 
     @Override
