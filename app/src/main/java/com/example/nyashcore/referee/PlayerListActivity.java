@@ -82,6 +82,7 @@ public class PlayerListActivity extends AppCompatActivity {
         countPeriods = MatchList.getCurrentMatch().getCountPeriods();
 //        countPeriods = 3;
         score.setText(MatchList.getCurrentMatch().getFirstScore() + ":" + MatchList.getCurrentMatch().getSecondScore());
+        refresh();
 
         actions.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,20 +120,22 @@ public class PlayerListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (currentPeriod < countPeriods + 1) {
-                    period.setText("Break");
-                    isStopped = true;
-                    isAdditional = false;
-                    timeWhenStopped = timePeriod * (currentPeriod);
-                    timeWhenAdditionalStopped = 0;
-                    mChronometer.stop();
-                    mChronometer.setBase(SystemClock.elapsedRealtime() - timeWhenStopped);
-                    additionalChronometer.stop();
-                    currentPeriod++;
-                    if (currentPeriod > countPeriods) {
-                        period.setText("Full time");
-                        additionalChronometer.setBase(SystemClock.elapsedRealtime());
-                        Snackbar.make(view, "Full time", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
+                    if (!isStopped) {
+                        period.setText("Break");
+                        isStopped = true;
+                        isAdditional = false;
+                        timeWhenStopped = timePeriod * (currentPeriod);
+                        timeWhenAdditionalStopped = 0;
+                        mChronometer.stop();
+                        mChronometer.setBase(SystemClock.elapsedRealtime() - timeWhenStopped);
+                        additionalChronometer.stop();
+                        currentPeriod++;
+                        if (currentPeriod > countPeriods) {
+                            period.setText("Full time");
+                            additionalChronometer.setBase(SystemClock.elapsedRealtime());
+                            Snackbar.make(view, "Full time", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        }
                     }
                 } else {
                     Snackbar.make(view, "Full time", Snackbar.LENGTH_LONG)

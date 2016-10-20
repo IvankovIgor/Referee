@@ -39,6 +39,10 @@ public class MatchList {
         return MATCH_MAP.get(currentMatchId);
     }
 
+    public static void setCurrentMatchId(String currentMatchId) {
+        MatchList.currentMatchId = currentMatchId;
+    }
+
     /**
      * A match representing a piece of content.
      */
