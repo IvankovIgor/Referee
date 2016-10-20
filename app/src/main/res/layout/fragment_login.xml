@@ -20,6 +20,7 @@
         android:id="@+id/logout"
         android:layout_gravity="center_horizontal"
         android:background="@color/vk"
-        android:layout_margin="8dp"
-        android:textColor="#ffffffff" />
+        android:textColor="#ffffffff"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp" />
 </LinearLayout>

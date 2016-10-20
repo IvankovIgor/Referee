@@ -92,6 +92,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
     private void initSocialNetwork(SocialNetwork socialNetwork){
         if(socialNetwork.isConnected()){
             vk.setText("Show match list");
+            logout.setVisibility(View.VISIBLE);
         }
     }
     @Override
@@ -128,6 +129,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         @Override
         public void onClick(View view) {
             vk.setText("Login via vk");
+            logout.setVisibility(View.GONE);
             MatchList.MATCHES.clear();
             VKSdk.logout();
         }
