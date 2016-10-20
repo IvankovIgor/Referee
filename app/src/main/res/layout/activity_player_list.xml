@@ -45,12 +45,14 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-                <Button
-                    android:text="actions"
+                <TextView
+                    android:text="Not started"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/period"
                     android:layout_weight="1"
-                    android:id="@+id/actions" />
+                    android:textAlignment="center"
+                    android:gravity="center_vertical|center_horizontal" />
             </LinearLayout>
 
             <LinearLayout
@@ -103,25 +105,25 @@
             <!--android:layout_alignParentBottom="true"-->
 
             <Button
-                android:text="start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btn_start"
-                android:layout_weight="1" />
-
-            <Button
-                android:text="stop"
+                android:text="actions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:id="@+id/btn_stop" />
+                android:id="@+id/actions" />
+
+            <Button
+                android:text="start match"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_start"
+                android:layout_weight="1"
+                android:layout_width="wrap_content" />
 
             <Button
                 android:text="end time"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/btn_reset"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:layout_width="wrap_content" />
 
         </LinearLayout>
 
