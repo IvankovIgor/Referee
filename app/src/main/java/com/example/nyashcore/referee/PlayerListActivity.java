@@ -18,6 +18,7 @@ import android.os.SystemClock;
 import android.os.Vibrator;
 import android.content.pm.ActivityInfo;
 
+import com.example.nyashcore.referee.content.ActionList;
 import com.example.nyashcore.referee.content.MatchList;
 import com.example.nyashcore.referee.content.PlayerList;
 
@@ -60,6 +61,8 @@ public class PlayerListActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
+
+        ActionList.ACTIONS.clear();
 
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
         additionalChronometer = (Chronometer) findViewById(R.id.additional_chronometer);
