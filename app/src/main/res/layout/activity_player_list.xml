@@ -37,7 +37,8 @@
             android:id="@+id/chronom"
             android:layout_below="@+id/app_bar"
             android:layout_centerInParent="true"
-            android:textAlignment="center">
+            android:textAlignment="center"
+            android:layout_marginTop="5dp">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -52,7 +53,9 @@
                     android:id="@+id/period"
                     android:layout_weight="1"
                     android:textAlignment="center"
-                    android:gravity="center_vertical|center_horizontal" />
+                    android:gravity="center_vertical|center_horizontal"
+                    android:textSize="20sp"
+                    android:textStyle="bold|italic" />
             </LinearLayout>
 
             <LinearLayout
@@ -189,54 +192,66 @@
                     android:text="Manchester United"
                     android:id="@+id/team2"
                     android:gravity="right" />
+
             </LinearLayout>
 
         </LinearLayout>
 
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentTop="false"
-            android:layout_alignParentLeft="false"
-            android:layout_alignParentStart="false"
-            android:layout_below="@+id/commands"
-            android:id="@+id/list1">
-
-            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/player_list"
-                android:name="com.example.nyashcore.referee.PlayerListFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="LinearLayoutManager"
-                tools:context="com.example.nyashcore.referee.PlayerListActivity"
-                tools:listitem="@layout/player_list_content"
-                android:textAlignment="center" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="wrap_content"
             android:layout_weight="1"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:layout_below="@+id/commands"
-            android:id="@+id/list2"
-            android:layout_alignParentRight="true">
+            android:id="@+id/lists_container"
+            android:layout_below="@+id/commands">
 
-            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/player_list2"
-                android:name="com.example.nyashcore.referee.PlayerListFragment"
+            <FrameLayout
                 android:layout_width="match_parent"
+                android:layout_weight="1"
                 android:layout_height="match_parent"
-                app:layoutManager="LinearLayoutManager"
-                tools:context="com.example.nyashcore.referee.PlayerListActivity"
-                tools:listitem="@layout/player_list_content"
-                android:textAlignment="center" />
-        </FrameLayout>
+                android:layout_alignParentTop="false"
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentStart="false"
+                android:layout_below="@+id/commands"
+                android:id="@+id/list1">
+
+                <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/player_list"
+                    android:name="com.example.nyashcore.referee.PlayerListFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutManager="LinearLayoutManager"
+                    tools:context="com.example.nyashcore.referee.PlayerListActivity"
+                    tools:listitem="@layout/player_list_content"
+                    android:textAlignment="center" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:layout_below="@+id/commands"
+                android:id="@+id/list2"
+                android:layout_alignParentRight="true">
+
+                <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/player_list2"
+                    android:name="com.example.nyashcore.referee.PlayerListFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutManager="LinearLayoutManager"
+                    tools:context="com.example.nyashcore.referee.PlayerListActivity"
+                    tools:listitem="@layout/player_list_content"
+                    android:textAlignment="center" />
+            </FrameLayout>
+
+        </LinearLayout>
+
     </RelativeLayout>
 
 

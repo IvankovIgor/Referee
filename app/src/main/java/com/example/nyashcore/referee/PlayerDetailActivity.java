@@ -140,7 +140,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
                 writer.write(jsonObject.toString());
                 writer.flush();
                 writer.close();
-                int responseCode = connection.getResponseCode();
+//                int responseCode = connection.getResponseCode();
 //                System.out.println("Sending 'POST' request to URL : " + url);
 //                System.out.println("Post parameters : " + jsonObject);
 //                System.out.println("Response Code : " + responseCode);
