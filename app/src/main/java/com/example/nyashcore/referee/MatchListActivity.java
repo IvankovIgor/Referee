@@ -133,7 +133,7 @@ public class MatchListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mMatch = mValues.get(position);
-            holder.mIdView.setText(String.valueOf(mValues.get(position).getId()));
+            holder.mIdView.setText(String.valueOf(mValues.get(position).getNumOfMatch()));
             holder.mContentView.setText(mValues.get(position).getContent());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {

@@ -47,6 +47,7 @@ public class MatchList {
      */
     public static class Match {
         private String id;
+        private int numOfMatch;
         private String content;
         private String details;
         private String federation;
@@ -63,6 +64,7 @@ public class MatchList {
         ActionList actionList;
 
         public Match(JSONObject jsonObject) {
+            numOfMatch = MATCHES.size() + 1;
             firstScore = 0;
             secondScore = 0;
             started = false;
@@ -90,6 +92,8 @@ public class MatchList {
         public String getId() {
             return id;
         }
+
+        public String getNumOfMatch() { return String.valueOf(numOfMatch); }
 
         public String getContent() {
             return content;
