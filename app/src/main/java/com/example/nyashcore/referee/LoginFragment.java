@@ -13,6 +13,8 @@ import com.example.nyashcore.referee.content.MatchList;
 import com.github.gorbin.asne.core.SocialNetwork;
 import com.github.gorbin.asne.core.SocialNetworkManager;
 import com.github.gorbin.asne.core.listener.OnLoginCompleteListener;
+import com.github.gorbin.asne.core.listener.OnRequestSocialPersonCompleteListener;
+import com.github.gorbin.asne.core.persons.SocialPerson;
 import com.github.gorbin.asne.vk.VkSocialNetwork;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
@@ -20,7 +22,7 @@ import com.vk.sdk.VKSdk;
 
 import java.util.List;
 
-public class LoginFragment extends Fragment implements SocialNetworkManager.OnInitializationCompleteListener, OnLoginCompleteListener {
+public class LoginFragment extends Fragment implements SocialNetworkManager.OnInitializationCompleteListener, OnLoginCompleteListener, OnRequestSocialPersonCompleteListener {
     public static SocialNetworkManager mSocialNetworkManager;
     /**
      * SocialNetwork Ids in ASNE:
@@ -42,7 +44,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
-        ((LoginActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
+//        ((LoginActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
         // init buttons and set Listener
         vk = (Button) rootView.findViewById(R.id.vk);
         vk.setOnClickListener(loginClick);
@@ -89,10 +91,18 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         return rootView;
     }
 
+    @Override
+    public void onRequestSocialPersonSuccess(int i, SocialPerson socialPerson) {
+        LoginActivity.userId = socialPerson.id;
+        LoginActivity.userName = socialPerson.name;
+        ((LoginActivity)getActivity()).getSupportActionBar().setTitle(LoginActivity.userName);
+    }
+
     private void initSocialNetwork(SocialNetwork socialNetwork){
         if(socialNetwork.isConnected()){
             vk.setText("Show match list");
             logout.setVisibility(View.VISIBLE);
+            socialNetwork.requestCurrentPerson();
         }
     }
     @Override
@@ -100,6 +110,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         //when init SocialNetworks - get and setup login only for initialized SocialNetworks
         for (SocialNetwork socialNetwork : mSocialNetworkManager.getInitializedSocialNetworks()) {
             socialNetwork.setOnLoginCompleteListener(this);
+            socialNetwork.setOnRequestCurrentPersonCompleteListener(this);
             initSocialNetwork(socialNetwork);
         }
     }
@@ -129,7 +140,10 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         @Override
         public void onClick(View view) {
             vk.setText("Login via vk");
+            ((LoginActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
             logout.setVisibility(View.GONE);
+            LoginActivity.userId = null;
+            LoginActivity.userName = null;
             MatchList.MATCHES.clear();
             VKSdk.logout();
         }
@@ -137,8 +151,10 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
 
     @Override
     public void onLoginSuccess(int networkId) {
+        SocialNetwork socialNetwork = mSocialNetworkManager.getSocialNetwork(networkId);
+        socialNetwork.requestCurrentPerson();
         LoginActivity.hideProgress();
-        startProfile(networkId);
+//        startProfile(networkId);
     }
 
     @Override

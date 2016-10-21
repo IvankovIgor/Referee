@@ -52,7 +52,7 @@ public class MatchListActivity extends AppCompatActivity {
 
         if (MatchList.MATCHES.isEmpty()) {
             try {
-                content = getContent("http://185.143.172.172:8080/api-referee/XXXX/get-my-matches");
+                content = getContent("http://185.143.172.172:8080/api-referee/" + LoginActivity.userId + "/get-my-matches");
             } catch (IOException e) {
                 System.out.println(e);
             }

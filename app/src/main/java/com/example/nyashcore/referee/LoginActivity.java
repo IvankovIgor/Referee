@@ -17,6 +17,9 @@ public class LoginActivity extends AppCompatActivity implements FragmentManager.
     public static final String SOCIAL_NETWORK_TAG = "SocialIntegrationMain.SOCIAL_NETWORK_TAG";
     private static ProgressDialog pd;
     static Context context;
+    public static String userName;
+    public static String userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

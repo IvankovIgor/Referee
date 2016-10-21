@@ -7,7 +7,7 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Login via VK"
+        android:text="Login cherez VK "
         android:id="@+id/vk"
         android:layout_gravity="center_horizontal"
         android:background="@color/vk"
