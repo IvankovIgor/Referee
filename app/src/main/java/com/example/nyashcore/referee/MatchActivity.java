@@ -104,6 +104,7 @@ public class MatchActivity extends AppCompatActivity {
                 if (currentPeriod < countPeriods + 1) {
                     if (!MatchList.getCurrentMatch().isStarted()) {
                         MatchList.getCurrentMatch().setStarted();
+                        PlayerDetailActivity.sendInfo("start");
                     }
                     if (isStopped) {
                         isStopped = false;
@@ -139,7 +140,8 @@ public class MatchActivity extends AppCompatActivity {
                         additionalChronometer.stop();
                         currentPeriod++;
                         if (currentPeriod > countPeriods) {
-                             MatchList.getCurrentMatch().setFinished();
+                            PlayerDetailActivity.sendInfo("finish");
+                            MatchList.getCurrentMatch().setFinished();
                             period.setText("Full time");
                             additionalChronometer.setBase(SystemClock.elapsedRealtime());
                             Snackbar.make(view, "Full time", Snackbar.LENGTH_LONG)

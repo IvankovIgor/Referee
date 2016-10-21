@@ -125,7 +125,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         return idTeam;
     }
 
-    private void sendInfo(String message) {
+    protected static void sendInfo(String message) {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("number", number);
