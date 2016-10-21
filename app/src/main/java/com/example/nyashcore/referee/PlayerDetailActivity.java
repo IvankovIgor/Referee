@@ -18,8 +18,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -59,7 +61,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnOwnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String idTeam = addAction(view, "Own Goal");
+                String idTeam = addAction(view, "OwnGoal");
                 if (!idTeam.equals("false")) {
                     MatchList.getCurrentMatch().ownGoal(idTeam);
                 }
@@ -70,7 +72,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnYellow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addAction(view, "Yellow Card");
+                addAction(view, "YellowCard");
             }
         });
 
@@ -78,7 +80,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnRed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addAction(view, "Red Card");
+                addAction(view, "RedCard");
             }
         });
         // Show the Up button in the action bar.
@@ -126,32 +128,47 @@ public class PlayerDetailActivity extends AppCompatActivity {
     }
 
     protected static void sendInfo(String message) {
+        String matchId = MatchList.getCurrentMatch().getId();
         try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("number", String.valueOf(number));
-            jsonObject.put("data", message);
-            String matchId = MatchList.getCurrentMatch().getId();
-            try {
-                URL url = new URL("http://185.143.172.172:8080/api-referee/" + matchId + "/set-info");
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("POST");
-                OutputStream dStream = new BufferedOutputStream(connection.getOutputStream());
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(dStream, "utf-8"));
-                writer.write(jsonObject.toString());
-                writer.flush();
-                writer.close();
-                int responseCode = connection.getResponseCode();
-                System.out.println("Sending 'POST' request to URL : " + url);
-                System.out.println("Post parameters : " + jsonObject);
-                System.out.println("Response Code : " + responseCode);
-            } catch (IOException e) {
-                System.out.println(e);
-            }
-        } catch (JSONException e) {
+            URL url = new URL("http://185.143.172.172:8080/api-referee/" + matchId + "/" + number + "/" + message + "/set-info");
+//            URL url = new URL(path);
+            HttpURLConnection c = (HttpURLConnection)url.openConnection();
+            c.setRequestMethod("GET");
+            c.setReadTimeout(10000);
+            c.connect();
+        } catch (IOException e) {
             System.out.println(e);
         }
         number++;
     }
+
+//    protected static void sendInfo(String message) {
+//        try {
+//            JSONObject jsonObject = new JSONObject();
+//            jsonObject.put("number", number);
+//            jsonObject.put("data", message);
+//            String matchId = MatchList.getCurrentMatch().getId();
+//            try {
+//                URL url = new URL("http://185.143.172.172:8080/api-referee/" + matchId + "/set-info");
+//                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//                connection.setRequestMethod("POST");
+//                OutputStream dStream = new BufferedOutputStream(connection.getOutputStream());
+//                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(dStream, "utf-8"));
+//                writer.write(jsonObject.toString());
+//                writer.flush();
+//                writer.close();
+//                int responseCode = connection.getResponseCode();
+//                System.out.println("Sending 'POST' request to URL : " + url);
+//                System.out.println("Post parameters : " + jsonObject);
+//                System.out.println("Response Code : " + responseCode);
+//            } catch (IOException e) {
+//                System.out.println(e);
+//            }
+//        } catch (JSONException e) {
+//            System.out.println(e);
+//        }
+//        number++;
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

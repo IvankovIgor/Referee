@@ -87,7 +87,7 @@ public class ActionListActivity extends AppCompatActivity {
             String details = MatchList.getCurrentMatch().getActionList().getACTIONS().get(position).details;
             if (details.equals("Goal")) {
                 MatchList.getCurrentMatch().decrementScore(idTeam);
-            } else if (details.equals("Own Goal")) {
+            } else if (details.equals("OwnGoal")) {
                 MatchList.getCurrentMatch().ownGoalDecrement(idTeam);
             }
             MatchList.getCurrentMatch().getActionList().getACTIONS().remove(position);

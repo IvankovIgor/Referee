@@ -88,6 +88,7 @@ public class MatchActivity extends AppCompatActivity {
 //        countPeriods = 3;
         score.setText(MatchList.getCurrentMatch().getFirstScore() + ":" + MatchList.getCurrentMatch().getSecondScore());
         refresh();
+        System.out.println(MatchList.getCurrentMatch().getId());
 
         actions.setOnClickListener(new View.OnClickListener() {
             @Override
