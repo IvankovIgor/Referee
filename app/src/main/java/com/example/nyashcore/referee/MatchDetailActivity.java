@@ -36,7 +36,7 @@ public class MatchDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 System.out.println(getIntent().getStringExtra(MatchDetailFragment.ARG_MATCH_ID));
                 MatchList.setCurrentMatchId(getIntent().getStringExtra(MatchDetailFragment.ARG_MATCH_ID));
-                Intent intent = new Intent(MatchDetailActivity.this, PlayerListActivity.class);
+                Intent intent = new Intent(MatchDetailActivity.this, MatchActivity.class);
                 startActivity(intent);
             }
         });

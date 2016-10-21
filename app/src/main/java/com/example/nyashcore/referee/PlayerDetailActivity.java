@@ -29,7 +29,7 @@ import java.net.URL;
  * An activity representing a single Player detail screen. This
  * activity is only used narrow width devices. On tablet-size devices,
  * player details are presented side-by-side with a list of players
- * in a {@link PlayerListActivity}.
+ * in a {@link MatchActivity}.
  */
 public class PlayerDetailActivity extends AppCompatActivity {
 
@@ -48,13 +48,10 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String idTeam = PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getIdTeam();
-                MatchList.getCurrentMatch().incrementScore(idTeam);
-                Snackbar.make(view, "Goal", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                ActionList.addAction(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "Goal - " +
-                        PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), "goal", idTeam));
-                sendInfo("Goal");
+                String idTeam = addAction(view, "Goal");
+                if (!idTeam.equals("false")) {
+                    MatchList.getCurrentMatch().incrementScore(idTeam);
+                }
             }
         });
 
@@ -62,13 +59,10 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnOwnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String idTeam = PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getIdTeam();
-                MatchList.getCurrentMatch().ownGoal(idTeam);
-                Snackbar.make(view, "Own goal", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                ActionList.ACTIONS.add(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "Own goal - " +
-                        PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), "own goal", idTeam));
-                sendInfo("Own goal");
+                String idTeam = addAction(view, "Own Goal");
+                if (!idTeam.equals("false")) {
+                    MatchList.getCurrentMatch().ownGoal(idTeam);
+                }
             }
         });
 
@@ -76,12 +70,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnYellow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String idTeam = PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getIdTeam();
-                Snackbar.make(view, "Yellow card", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                ActionList.ACTIONS.add(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "Yellow card - " +
-                        PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), "yellow card", idTeam));
-                sendInfo("Yellow card");
+                addAction(view, "Yellow Card");
             }
         });
 
@@ -89,12 +78,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnRed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String idTeam = PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getIdTeam();
-                Snackbar.make(view, "Red card", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                ActionList.ACTIONS.add(new ActionList.Action(String.valueOf(PlayerListActivity.getTime())+"'", "Red card - " +
-                        PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), "red card", idTeam));
-                sendInfo("Red Card");
+                addAction(view, "Red Card");
             }
         });
         // Show the Up button in the action bar.
@@ -126,13 +110,29 @@ public class PlayerDetailActivity extends AppCompatActivity {
         }
     }
 
+    private String addAction(View view, String action) {
+        if (!MatchList.getCurrentMatch().isStarted() || MatchList.getCurrentMatch().isFinished()) {
+            Snackbar.make(view, "Not allowed", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+            return "false";
+        }
+        String idTeam = PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getIdTeam();
+        Snackbar.make(view, action, Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+        MatchList.getCurrentMatch().getActionList().getACTIONS().add(new ActionList.Action(String.valueOf(MatchActivity.getTime())+"'", action + " - " +
+                PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), action, idTeam));
+        sendInfo(action);
+        return idTeam;
+    }
+
     private void sendInfo(String message) {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("number", number);
             jsonObject.put("data", message);
+            String matchId = MatchList.getCurrentMatch().getId();
             try {
-                URL url = new URL("http://185.143.172.172:8080/api-referee/XXXX/set-info");
+                URL url = new URL("http://185.143.172.172:8080/api-referee/" + matchId + "/set-info");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 OutputStream dStream = new BufferedOutputStream(connection.getOutputStream());
@@ -164,7 +164,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
             //
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
-//            NavUtils.navigateUpTo(this, new Intent(this, PlayerListActivity.class));
+//            NavUtils.navigateUpTo(this, new Intent(this, MatchActivity.class));
             this.finish();
             return true;
         }

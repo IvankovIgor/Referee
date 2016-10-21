@@ -41,7 +41,7 @@ public class ActionListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(ActionList.ACTIONS));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(MatchList.getCurrentMatch().getActionList().getACTIONS()));
     }
 
     public class SimpleItemRecyclerViewAdapter
@@ -70,7 +70,7 @@ public class ActionListActivity extends AppCompatActivity {
                 @Override
                 public boolean onLongClick(View v) {
                     int i = 0;
-                    for(ActionList.Action act : ActionList.ACTIONS) {
+                    for(ActionList.Action act : MatchList.getCurrentMatch().getActionList().getACTIONS()) {
                         if (act.equals(holder.aAction)) {
                             break;
                         }
@@ -83,14 +83,14 @@ public class ActionListActivity extends AppCompatActivity {
         }
 
         public void removeAt(int position) {
-            String idTeam = ActionList.ACTIONS.get(position).idTeam;
-            String details = ActionList.ACTIONS.get(position).details;
-            if (details.equals("goal")) {
+            String idTeam = MatchList.getCurrentMatch().getActionList().getACTIONS().get(position).idTeam;
+            String details = MatchList.getCurrentMatch().getActionList().getACTIONS().get(position).details;
+            if (details.equals("Goal")) {
                 MatchList.getCurrentMatch().decrementScore(idTeam);
-            } else if (details.equals("own goal")) {
+            } else if (details.equals("Own Goal")) {
                 MatchList.getCurrentMatch().ownGoalDecrement(idTeam);
             }
-            ActionList.ACTIONS.remove(position);
+            MatchList.getCurrentMatch().getActionList().getACTIONS().remove(position);
             notifyItemRemoved(position);
         }
 

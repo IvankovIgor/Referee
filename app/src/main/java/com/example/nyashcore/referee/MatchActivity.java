@@ -32,7 +32,7 @@ import java.util.List;
  * player details. On tablets, the activity presents the list of players and
  * player details side-by-side using two vertical panes.
  */
-public class PlayerListActivity extends AppCompatActivity {
+public class MatchActivity extends AppCompatActivity {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -51,18 +51,23 @@ public class PlayerListActivity extends AppCompatActivity {
     private long timePeriod;
     private int countPeriods;
     private int currentPeriod = 1;
+    public static ActionList actionList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player_list);
+        setContentView(R.layout.activity_match);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
-        ActionList.ACTIONS.clear();
+        if (!MatchList.getCurrentMatch().isStarted()) {
+            actionList = new ActionList();
+        } else {
+            actionList = MatchList.getCurrentMatch().getActionList();
+        }
 
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
         additionalChronometer = (Chronometer) findViewById(R.id.additional_chronometer);
@@ -87,7 +92,7 @@ public class PlayerListActivity extends AppCompatActivity {
         actions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(PlayerListActivity.this, ActionListActivity.class);
+                Intent intent = new Intent(MatchActivity.this, ActionListActivity.class);
                 startActivity(intent);
             }
         });
@@ -97,6 +102,9 @@ public class PlayerListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (currentPeriod < countPeriods + 1) {
+                    if (!MatchList.getCurrentMatch().isStarted()) {
+                        MatchList.getCurrentMatch().setStarted();
+                    }
                     if (isStopped) {
                         isStopped = false;
                         if (!isAdditional) {
@@ -131,6 +139,7 @@ public class PlayerListActivity extends AppCompatActivity {
                         additionalChronometer.stop();
                         currentPeriod++;
                         if (currentPeriod > countPeriods) {
+                             MatchList.getCurrentMatch().setFinished();
                             period.setText("Full time");
                             additionalChronometer.setBase(SystemClock.elapsedRealtime());
                             Snackbar.make(view, "Full time", Snackbar.LENGTH_LONG)
@@ -207,7 +216,7 @@ public class PlayerListActivity extends AppCompatActivity {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.player_list_content, parent, false);
+                    .inflate(R.layout.match_content, parent, false);
             return new ViewHolder(view);
         }
 

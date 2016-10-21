@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.example.nyashcore.referee.PlayerListActivity">
+    tools:context="com.example.nyashcore.referee.MatchActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -223,8 +223,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:layoutManager="LinearLayoutManager"
-                    tools:context="com.example.nyashcore.referee.PlayerListActivity"
-                    tools:listitem="@layout/player_list_content"
+                    tools:context="com.example.nyashcore.referee.MatchActivity"
+                    tools:listitem="@layout/match_content"
                     android:textAlignment="center" />
             </FrameLayout>
 
@@ -245,8 +245,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:layoutManager="LinearLayoutManager"
-                    tools:context="com.example.nyashcore.referee.PlayerListActivity"
-                    tools:listitem="@layout/player_list_content"
+                    tools:context="com.example.nyashcore.referee.MatchActivity"
+                    tools:listitem="@layout/match_content"
                     android:textAlignment="center" />
             </FrameLayout>
 

@@ -1,8 +1,7 @@
 package com.example.nyashcore.referee.content;
 
-import com.example.nyashcore.referee.PlayerListActivity;
+import com.example.nyashcore.referee.MatchActivity;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,10 +58,16 @@ public class MatchList {
         private int countPeriods;
         private int firstScore;
         private int secondScore;
+        private boolean started;
+        private boolean finished;
+        ActionList actionList;
 
         public Match(JSONObject jsonObject) {
             firstScore = 0;
             secondScore = 0;
+            started = false;
+            finished = false;
+            actionList = new ActionList();
             try {
                 id = jsonObject.getString("idMatch");
                 JSONObject team1 = jsonObject.getJSONObject("team1");
@@ -128,7 +133,7 @@ public class MatchList {
             } else {
                 secondScore++;
             }
-            PlayerListActivity.refresh();
+            MatchActivity.refresh();
         }
 
         public void decrementScore(String idTeam) {
@@ -137,7 +142,7 @@ public class MatchList {
             } else {
                 secondScore--;
             }
-            PlayerListActivity.refresh();
+            MatchActivity.refresh();
         }
 
         public void ownGoal(String idTeam) {
@@ -146,7 +151,7 @@ public class MatchList {
             } else {
                 secondScore++;
             }
-            PlayerListActivity.refresh();
+            MatchActivity.refresh();
         }
 
         public void ownGoalDecrement(String idTeam) {
@@ -155,8 +160,26 @@ public class MatchList {
             } else {
                 secondScore--;
             }
-            PlayerListActivity.refresh();
+            MatchActivity.refresh();
         }
+
+        public boolean isStarted() {
+            return started;
+        }
+
+        public void setStarted() {
+            this.started = true;
+        }
+
+        public boolean isFinished() {
+            return finished;
+        }
+
+        public void setFinished() {
+            this.finished = true;
+        }
+
+        public ActionList getActionList() { return actionList; }
 
         @Override
         public String toString() {

@@ -13,7 +13,7 @@ import com.example.nyashcore.referee.content.PlayerList;
 
 /**
  * A fragment representing a single Player detail screen.
- * This fragment is either contained in a {@link PlayerListActivity}
+ * This fragment is either contained in a {@link MatchActivity}
  * in two-pane mode (on tablets) or a {@link PlayerDetailActivity}
  * on handsets.
  */
