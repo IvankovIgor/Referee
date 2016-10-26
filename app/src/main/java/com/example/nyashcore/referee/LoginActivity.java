@@ -19,6 +19,9 @@ public class LoginActivity extends AppCompatActivity implements FragmentManager.
     static Context context;
     public static String userName;
     public static String userId;
+    public static String serverIP = "ifootball.ml";
+    public static String serverPort = "8080";
+    public static String myId = "4189816";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

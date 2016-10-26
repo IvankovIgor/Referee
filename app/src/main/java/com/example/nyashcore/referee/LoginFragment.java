@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.nyashcore.referee.content.MatchList;
@@ -51,6 +53,20 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
 
         logout = (Button) rootView.findViewById(R.id.logout);
         logout.setOnClickListener(logoutClick);
+
+        Switch switchIP = (Switch) rootView.findViewById(R.id.switchIP);
+        switchIP.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    LoginActivity.serverPort = "8080";
+                    LoginActivity.serverIP = "localhost";
+                } else {
+                    LoginActivity.serverPort = "8080";
+                    LoginActivity.serverIP = "ifootball.ml";
+//                    LoginActivity.serverIP = "185.143.172.172";
+                }
+            }
+        });
 
         //Get Keys for initiate SocialNetworks
         String VK_KEY = getActivity().getString(R.string.vk_app_id);
@@ -101,6 +117,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
     private void initSocialNetwork(SocialNetwork socialNetwork){
         if(socialNetwork.isConnected()){
             vk.setText("Show match list");
+            MatchList.MATCHES.clear();
             logout.setVisibility(View.VISIBLE);
             socialNetwork.requestCurrentPerson();
         }

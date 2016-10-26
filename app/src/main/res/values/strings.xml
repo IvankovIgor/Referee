@@ -13,6 +13,8 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="server_address">185.143.172.172:8080</string>
+    <string name="local_address">localhost:8080</string>
 
     <string name="title_activity_list_of_matches">ListOfMatchesActivity</string>
     <string name="dummy_button">Dummy Button</string>

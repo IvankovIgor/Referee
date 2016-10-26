@@ -130,12 +130,15 @@ public class PlayerDetailActivity extends AppCompatActivity {
     protected static void sendInfo(String message) {
         String matchId = MatchList.getCurrentMatch().getId();
         try {
-            URL url = new URL("http://185.143.172.172:8080/api-referee/" + matchId + "/" + number + "/" + message + "/set-info");
+            URL url = new URL("https://" + LoginActivity.serverIP + "/api-referee/" + matchId + "/" + number + "/" + message + "/set-info");
 //            URL url = new URL(path);
             HttpURLConnection c = (HttpURLConnection)url.openConnection();
             c.setRequestMethod("GET");
             c.setReadTimeout(10000);
             c.connect();
+            int responseCode = c.getResponseCode();
+            System.out.println("Sending 'POST' request to URL : " + url);
+            System.out.println("Response Code : " + responseCode);
         } catch (IOException e) {
             System.out.println(e);
         }

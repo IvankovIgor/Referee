@@ -20,12 +20,31 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+
+import static com.example.nyashcore.referee.LoginActivity.context;
 
 /**
  * An activity representing a list of Matches. This activity
@@ -52,9 +71,17 @@ public class MatchListActivity extends AppCompatActivity {
 
         if (MatchList.MATCHES.isEmpty()) {
             try {
-                content = getContent("http://185.143.172.172:8080/api-referee/" + LoginActivity.userId + "/get-my-matches");
+                content = getContent("https://" + LoginActivity.serverIP + "/api-referee/" + LoginActivity.userId + "/get-my-matches");
             } catch (IOException e) {
-                System.out.println(e);
+                e.printStackTrace();
+            } catch (CertificateException e) {
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            } catch (KeyManagementException e) {
+                e.printStackTrace();
             }
             try {
                 JSONArray jsonArray = new JSONArray(content);
@@ -84,30 +111,75 @@ public class MatchListActivity extends AppCompatActivity {
         }
     }
 
-    private String getContent(String path) throws IOException {
+    private String getContent(String path) throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         BufferedReader reader = null;
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                 .permitAll().build();
         StrictMode.setThreadPolicy(policy);
+// Load CAs from an InputStream
+// (could be from a resource or ByteArrayInputStream or ...)
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+// From https://www.washington.edu/itconnect/security/ca/load-der.crt
+        InputStream caInput = context.getResources().openRawResource(R.raw.intermediate);
+        Certificate ca;
         try {
-            URL url = new URL(path);
-            HttpURLConnection c = (HttpURLConnection)url.openConnection();
-            c.setRequestMethod("GET");
-            c.setReadTimeout(10000);
-            c.connect();
-            reader = new BufferedReader(new InputStreamReader(c.getInputStream()));
+            ca = cf.generateCertificate(caInput);
+            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+        } finally {
+            caInput.close();
+        }
+
+// Create a KeyStore containing our trusted CAs
+        String keyStoreType = KeyStore.getDefaultType();
+        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+        keyStore.load(null, null);
+        keyStore.setCertificateEntry("ca", ca);
+
+// Create a TrustManager that trusts the CAs in our KeyStore
+        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+        tmf.init(keyStore);
+
+// Create an SSLContext that uses our TrustManager
+        SSLContext context = SSLContext.getInstance("TLS");
+        context.init(null, tmf.getTrustManagers(), null);
+
+// Tell the URLConnection to use a SocketFactory from our SSLContext
+//        URL url = new URL("https://ifootball.ml/api-referee/4189816/get-my-matches");
+//        HttpsURLConnection urlConnection =
+//                (HttpsURLConnection)url.openConnection();
+//        urlConnection.setSSLSocketFactory(context.getSocketFactory());
+//        InputStream in = urlConnection.getInputStream();
+//        copyInputStreamToOutputStream(in, System.out);
+        try {
+            URL url = new URL("https://ifootball.ml/api-referee/4189816/get-my-matches");
+            HttpsURLConnection urlConnection =
+                    (HttpsURLConnection)url.openConnection();
+            urlConnection.setSSLSocketFactory(context.getSocketFactory());
+//            URL myurl = new URL(path);
+//            HttpsURLConnection c = (HttpsURLConnection)myurl.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setReadTimeout(10000);
+            urlConnection.connect();
+            reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             StringBuilder buf = new StringBuilder();
             String line = null;
             while ((line = reader.readLine()) != null) {
                 buf.append(line + "\n");
             }
             return(buf.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "sadf";
         }
         finally {
             if (reader != null) {
                 reader.close();
             }
         }
+    }
+
+    private void copyInputStreamToOutputStream(InputStream in, PrintStream out) {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
