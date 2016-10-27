@@ -31,7 +31,7 @@ public class MatchList {
 
     private static void addMatch(Match match) {
         MATCHES.add(match);
-        MATCH_MAP.put(String.valueOf(match.id), match);
+        MATCH_MAP.put(String.valueOf(match.idMatch), match);
     }
 
     public static Match getCurrentMatch() {
@@ -46,7 +46,7 @@ public class MatchList {
      * A match representing a piece of content.
      */
     public static class Match {
-        private String id;
+        private String idMatch;
         private int numOfMatch;
         private String content;
         private String details;
@@ -71,7 +71,7 @@ public class MatchList {
             finished = false;
             actionList = new ActionList();
             try {
-                id = jsonObject.getString("idMatch");
+                idMatch = jsonObject.getString("idMatch");
                 JSONObject team1 = jsonObject.getJSONObject("team1");
                 JSONObject team2 = jsonObject.getJSONObject("team2");
                 firstTeam = new PlayerList.Team(team1);
@@ -89,8 +89,8 @@ public class MatchList {
             MatchList.addMatch(this);
         }
 
-        public String getId() {
-            return id;
+        public String getIdMatch() {
+            return idMatch;
         }
 
         public String getNumOfMatch() { return String.valueOf(numOfMatch); }

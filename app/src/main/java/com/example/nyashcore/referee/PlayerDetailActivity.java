@@ -21,11 +21,26 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+
+import static com.example.nyashcore.referee.LoginActivity.context;
 
 /**
  * An activity representing a single Player detail screen. This
@@ -123,16 +138,54 @@ public class PlayerDetailActivity extends AppCompatActivity {
                 .setAction("Action", null).show();
         MatchList.getCurrentMatch().getActionList().getACTIONS().add(new ActionList.Action(String.valueOf(MatchActivity.getTime())+"'", action + " - " +
                 PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), action, idTeam));
-        sendInfo(action);
+        try {
+            sendInfo(action);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
         return idTeam;
     }
 
-    protected static void sendInfo(String message) {
-        String matchId = MatchList.getCurrentMatch().getId();
+    protected static void sendInfo(String message) throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, KeyManagementException {
+        String matchId = MatchList.getCurrentMatch().getIdMatch();
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+// From https://www.washington.edu/itconnect/security/ca/load-der.crt
+        InputStream caInput = context.getResources().openRawResource(R.raw.intermediate);
+        Certificate ca;
+        ca = cf.generateCertificate(caInput);
         try {
-            URL url = new URL("https://" + LoginActivity.serverIP + "/api-referee/" + matchId + "/" + number + "/" + message + "/set-info");
+            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+        } finally {
+            caInput.close();
+        }
+
+// Create a KeyStore containing our trusted CAs
+        String keyStoreType = KeyStore.getDefaultType();
+        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+        keyStore.load(null, null);
+        keyStore.setCertificateEntry("ca", ca);
+
+// Create a TrustManager that trusts the CAs in our KeyStore
+        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+        tmf.init(keyStore);
+
+// Create an SSLContext that uses our TrustManager
+        SSLContext context = SSLContext.getInstance("TLS");
+        context.init(null, tmf.getTrustManagers(), null);
+        try {
+            URL url = new URL("https://" + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/api-referee/" + matchId + "/" + number + "/" + message + "/set-info");
 //            URL url = new URL(path);
-            HttpURLConnection c = (HttpURLConnection)url.openConnection();
+            HttpsURLConnection c = (HttpsURLConnection)url.openConnection();
+            c.setSSLSocketFactory(context.getSocketFactory());
             c.setRequestMethod("GET");
             c.setReadTimeout(10000);
             c.connect();
@@ -150,7 +203,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
 //            JSONObject jsonObject = new JSONObject();
 //            jsonObject.put("number", number);
 //            jsonObject.put("data", message);
-//            String matchId = MatchList.getCurrentMatch().getId();
+//            String matchId = MatchList.getCurrentMatch().getIdMatch();
 //            try {
 //                URL url = new URL("http://185.143.172.172:8080/api-referee/" + matchId + "/set-info");
 //                HttpURLConnection connection = (HttpURLConnection) url.openConnection();

@@ -22,6 +22,11 @@ import com.example.nyashcore.referee.content.ActionList;
 import com.example.nyashcore.referee.content.MatchList;
 import com.example.nyashcore.referee.content.PlayerList;
 
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.List;
 
 /**
@@ -88,7 +93,7 @@ public class MatchActivity extends AppCompatActivity {
 //        countPeriods = 3;
         score.setText(MatchList.getCurrentMatch().getFirstScore() + ":" + MatchList.getCurrentMatch().getSecondScore());
         refresh();
-        System.out.println(MatchList.getCurrentMatch().getId());
+        System.out.println(MatchList.getCurrentMatch().getIdMatch());
 
         actions.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,7 +110,19 @@ public class MatchActivity extends AppCompatActivity {
                 if (currentPeriod < countPeriods + 1) {
                     if (!MatchList.getCurrentMatch().isStarted()) {
                         MatchList.getCurrentMatch().setStarted();
-                        PlayerDetailActivity.sendInfo("start");
+                        try {
+                            PlayerDetailActivity.sendInfo("start");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (KeyStoreException e) {
+                            e.printStackTrace();
+                        } catch (CertificateException e) {
+                            e.printStackTrace();
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
+                        } catch (KeyManagementException e) {
+                            e.printStackTrace();
+                        }
                     }
                     if (isStopped) {
                         isStopped = false;
@@ -141,7 +158,19 @@ public class MatchActivity extends AppCompatActivity {
                         additionalChronometer.stop();
                         currentPeriod++;
                         if (currentPeriod > countPeriods) {
-                            PlayerDetailActivity.sendInfo("finish");
+                            try {
+                                PlayerDetailActivity.sendInfo("finish");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (KeyStoreException e) {
+                                e.printStackTrace();
+                            } catch (CertificateException e) {
+                                e.printStackTrace();
+                            } catch (NoSuchAlgorithmException e) {
+                                e.printStackTrace();
+                            } catch (KeyManagementException e) {
+                                e.printStackTrace();
+                            }
                             MatchList.getCurrentMatch().setFinished();
                             period.setText("Full time");
                             additionalChronometer.setBase(SystemClock.elapsedRealtime());

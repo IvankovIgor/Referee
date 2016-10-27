@@ -15,21 +15,18 @@ import android.widget.TextView;
 import android.content.pm.ActivityInfo;
 
 import com.example.nyashcore.referee.content.MatchList;
+import com.google.gson.JsonParseException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -43,6 +40,12 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.example.nyashcore.referee.LoginActivity.context;
 
@@ -72,6 +75,7 @@ public class MatchListActivity extends AppCompatActivity {
         if (MatchList.MATCHES.isEmpty()) {
             try {
                 content = getContent("https://" + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/api-referee/" + LoginActivity.userId + "/get-my-matches");
+//                getContent2();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (CertificateException e) {
@@ -111,6 +115,30 @@ public class MatchListActivity extends AppCompatActivity {
         }
     }
 
+    private void getContent2() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://" + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        APIService service = retrofit.create(APIService.class);
+        Call<MatchList.Match> call = service.getMatchList();
+        call.enqueue(new Callback<MatchList.Match>() {
+            @Override
+            public void onResponse(Call<MatchList.Match> call, Response<MatchList.Match> response) {
+                try {
+                    String idMatcha = response.body().getIdMatch();
+                    System.out.println(idMatcha + "bbbbbbbbbbBBBBOIUERHFOQIERNFPOWEBRF");
+                } catch (JsonParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MatchList.Match> call, Throwable t) {
+            }
+        });
+
+    }
     private String getContent(String path) throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         BufferedReader reader = null;
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
@@ -204,7 +232,7 @@ public class MatchListActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
-                        arguments.putString(MatchDetailFragment.ARG_MATCH_ID, String.valueOf(holder.mMatch.getId()));
+                        arguments.putString(MatchDetailFragment.ARG_MATCH_ID, String.valueOf(holder.mMatch.getIdMatch()));
                         MatchDetailFragment fragment = new MatchDetailFragment();
                         fragment.setArguments(arguments);
                         getSupportFragmentManager().beginTransaction()
@@ -213,7 +241,7 @@ public class MatchListActivity extends AppCompatActivity {
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, MatchDetailActivity.class);
-                        intent.putExtra(MatchDetailFragment.ARG_MATCH_ID, holder.mMatch.getId());
+                        intent.putExtra(MatchDetailFragment.ARG_MATCH_ID, holder.mMatch.getIdMatch());
 
                         context.startActivity(intent);
                     }
