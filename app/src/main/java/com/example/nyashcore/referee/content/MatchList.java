@@ -2,9 +2,6 @@ package com.example.nyashcore.referee.content;
 
 import com.example.nyashcore.referee.MatchActivity;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,80 +45,86 @@ public class MatchList {
     public static class Match {
         private String idMatch;
         private int numOfMatch;
-        private String content;
-        private String details;
         private String federation;
         private String tournament;
         private String stage;
-        private PlayerList.Team firstTeam;
-        private PlayerList.Team secondTeam;
-        private int timePeriod;
-        private int countPeriods;
+        private MatchConfig matchConfig;
+        private PlayerTeamList.Team team1;
+        private PlayerTeamList.Team team2;
         private int firstScore;
         private int secondScore;
         private boolean started;
         private boolean finished;
         ActionList actionList;
 
-        public Match(JSONObject jsonObject) {
+        public Match(Match match) {
             numOfMatch = MATCHES.size() + 1;
             firstScore = 0;
             secondScore = 0;
             started = false;
             finished = false;
             actionList = new ActionList();
-            try {
-                idMatch = jsonObject.getString("idMatch");
-                JSONObject team1 = jsonObject.getJSONObject("team1");
-                JSONObject team2 = jsonObject.getJSONObject("team2");
-                firstTeam = new PlayerList.Team(team1);
-                secondTeam = new PlayerList.Team(team2);
-                content = team1.getString("name") + " - " + team2.getString("name");
-                tournament = jsonObject.getString("tournament");
-                stage = jsonObject.getString("stage");
-                federation = jsonObject.getString("federation");
-                timePeriod = jsonObject.getJSONObject("matchConfig").getInt("timePeriod");
-                countPeriods = jsonObject.getJSONObject("matchConfig").getInt("countPeriods");
-            } catch (JSONException e) {
-                System.out.println(e);
-            }
-            details = "Federation: " + federation + "\nTournament: " + tournament + "\nStage: " + stage;
+            idMatch = match.getIdMatch();
+            federation = match.getFederation();
+            tournament = match.getTournament();
+            stage = match.getStage();
+            matchConfig = new MatchConfig(match.getMatchConfig());
+            team1 = new PlayerTeamList.Team(match.getTeam1());
+            team2 = new PlayerTeamList.Team(match.getTeam2());
             MatchList.addMatch(this);
         }
 
         public String getIdMatch() {
-            return idMatch;
+            return this.idMatch;
         }
 
-        public String getNumOfMatch() { return String.valueOf(numOfMatch); }
-
-        public String getContent() {
-            return content;
+        public void setIdMatch(String idMatch) {
+            this.idMatch = idMatch;
         }
 
-        public String getDetails() {
-            return details;
+        public String getFederation() {
+            return this.federation;
+        }
+
+        public void setFederation(String federation) {
+            this.federation = federation;
         }
 
         public String getTournament() {
-            return tournament;
+            return this.tournament;
         }
 
-        public PlayerList.Team getFirstTeam() {
-            return firstTeam;
+        public void setTournament(String tournament) { this.tournament = tournament; }
+
+        public String getStage() { return this.stage; }
+
+        public void setStage(String stage) { this.stage = stage; }
+
+        public MatchConfig getMatchConfig() {
+            return this.matchConfig;
         }
 
-        public PlayerList.Team getSecondTeam() {
-            return secondTeam;
+        public void setMatchConfig(MatchConfig matchConfig) {
+            this.matchConfig = matchConfig;
         }
 
-        public long getTimePeriod() {
-            return timePeriod * 60 * 1000L;
+        public PlayerTeamList.Team getTeam1() {
+            return this.team1;
         }
 
-        public int getCountPeriods() {
-            return  countPeriods;
+        public void setTeam(PlayerTeamList.Team team1) {
+            this.team1 = team1;
         }
+
+        public PlayerTeamList.Team getTeam2() {
+            return this.team2;
+        }
+
+        public void setTeam2(PlayerTeamList.Team team2) {
+            this.team2 = team2;
+        }
+
+        public String getNumOfMatch() { return String.valueOf(numOfMatch); }
 
         public int getFirstScore() {
             return firstScore;
@@ -132,7 +135,7 @@ public class MatchList {
         }
 
         public void incrementScore(String idTeam) {
-            if (firstTeam.getId().equals(idTeam)) {
+            if (team1.getIdTeam().equals(idTeam)) {
                 firstScore++;
             } else {
                 secondScore++;
@@ -141,7 +144,7 @@ public class MatchList {
         }
 
         public void decrementScore(String idTeam) {
-            if (firstTeam.getId().equals(idTeam)) {
+            if (team1.getIdTeam().equals(idTeam)) {
                 firstScore--;
             } else {
                 secondScore--;
@@ -150,7 +153,7 @@ public class MatchList {
         }
 
         public void ownGoal(String idTeam) {
-            if (secondTeam.getId().equals(idTeam)) {
+            if (team2.getIdTeam().equals(idTeam)) {
                 firstScore++;
             } else {
                 secondScore++;
@@ -159,7 +162,7 @@ public class MatchList {
         }
 
         public void ownGoalDecrement(String idTeam) {
-            if (secondTeam.getId().equals(idTeam)) {
+            if (team2.getIdTeam().equals(idTeam)) {
                 firstScore--;
             } else {
                 secondScore--;
@@ -184,10 +187,33 @@ public class MatchList {
         }
 
         public ActionList getActionList() { return actionList; }
-
-        @Override
-        public String toString() {
-            return content;
-        }
     }
+
+    public static class MatchConfig {
+        int timePeriod;
+        int countPeriods;
+
+        MatchConfig(MatchConfig matchConfig) {
+            this.timePeriod = matchConfig.getTimePeriod();
+            this.countPeriods = matchConfig.getCountPeriods();
+        }
+
+        public int getTimePeriod() {
+            return this.timePeriod;
+        }
+
+        public void setTimePeriod(int timePeriod) {
+            this.timePeriod = timePeriod;
+        }
+
+        public int getCountPeriods() {
+            return this.countPeriods;
+        }
+
+        public void setCountPeriods(int countPeriods) {
+            this.countPeriods = countPeriods;
+        }
+
+    }
+
 }

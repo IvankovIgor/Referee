@@ -20,7 +20,7 @@ import android.content.pm.ActivityInfo;
 
 import com.example.nyashcore.referee.content.ActionList;
 import com.example.nyashcore.referee.content.MatchList;
-import com.example.nyashcore.referee.content.PlayerList;
+import com.example.nyashcore.referee.content.PlayerTeamList;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -84,12 +84,12 @@ public class MatchActivity extends AppCompatActivity {
         TextView actions = (TextView) findViewById(R.id.actions);
         final TextView period = (TextView) findViewById(R.id.period);
         assert firstTeamName != null;
-        firstTeamName.setText(MatchList.getCurrentMatch().getFirstTeam().getName());
+        firstTeamName.setText(MatchList.getCurrentMatch().getTeam1().getName());
         assert secondTeamName != null;
-        secondTeamName.setText(MatchList.getCurrentMatch().getSecondTeam().getName());
-//        timePeriod = MatchList.getCurrentMatch().getTimePeriod();
+        secondTeamName.setText(MatchList.getCurrentMatch().getTeam2().getName());
+//        timePeriod = MatchList.getCurrentMatch().getMatchConfig().getTimePeriod() * 60 * 1000;
         timePeriod = 3000L;
-        countPeriods = MatchList.getCurrentMatch().getCountPeriods();
+        countPeriods = MatchList.getCurrentMatch().getMatchConfig().getCountPeriods();
 //        countPeriods = 3;
         score.setText(MatchList.getCurrentMatch().getFirstScore() + ":" + MatchList.getCurrentMatch().getSecondScore());
         refresh();
@@ -207,11 +207,11 @@ public class MatchActivity extends AppCompatActivity {
 
         View recyclerView = findViewById(R.id.player_list);
         assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView, MatchList.getCurrentMatch().getFirstTeam());
+        setupRecyclerView((RecyclerView) recyclerView, MatchList.getCurrentMatch().getTeam1());
 
         View recyclerView2 = findViewById(R.id.player_list2);
         assert recyclerView2 != null;
-        setupRecyclerView((RecyclerView) recyclerView2, MatchList.getCurrentMatch().getSecondTeam());
+        setupRecyclerView((RecyclerView) recyclerView2, MatchList.getCurrentMatch().getTeam2());
 
         if (findViewById(R.id.player_detail_container) != null) {
             // The detail container view will be present only in the
@@ -232,16 +232,16 @@ public class MatchActivity extends AppCompatActivity {
         return Integer.parseInt(array[1]);
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView, PlayerList.Team team) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(team.getPLAYERS()));
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView, PlayerTeamList.Team team) {
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(team.getPlayers()));
     }
 
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<PlayerList.Player> mValues;
+        private final List<PlayerTeamList.Player> mValues;
 
-        public SimpleItemRecyclerViewAdapter(List<PlayerList.Player> players) {
+        public SimpleItemRecyclerViewAdapter(List<PlayerTeamList.Player> players) {
             mValues = players;
         }
 
@@ -263,7 +263,7 @@ public class MatchActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
-                        arguments.putString(PlayerDetailFragment.ARG_PLAYER_ID, holder.mPlayer.getId());
+                        arguments.putString(PlayerDetailFragment.ARG_PLAYER_ID, holder.mPlayer.getIdUser());
                         PlayerDetailFragment fragment = new PlayerDetailFragment();
                         fragment.setArguments(arguments);
                         getSupportFragmentManager().beginTransaction()
@@ -272,7 +272,7 @@ public class MatchActivity extends AppCompatActivity {
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, PlayerDetailActivity.class);
-                        intent.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, holder.mPlayer.getId());
+                        intent.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, holder.mPlayer.getIdUser());
 
                         context.startActivity(intent);
                     }
@@ -289,7 +289,7 @@ public class MatchActivity extends AppCompatActivity {
             public final View mView;
             public final TextView mIdView;
             public final TextView mContentView;
-            public PlayerList.Player mPlayer;
+            public PlayerTeamList.Player mPlayer;
 
             public ViewHolder(View view) {
                 super(view);

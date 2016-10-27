@@ -13,7 +13,6 @@ import android.content.pm.ActivityInfo;
 
 import com.example.nyashcore.referee.content.ActionList;
 import com.example.nyashcore.referee.content.MatchList;
-import com.example.nyashcore.referee.content.PlayerList;
 
 import java.util.List;
 

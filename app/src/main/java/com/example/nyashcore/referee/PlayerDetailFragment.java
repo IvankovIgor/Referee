@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.nyashcore.referee.content.PlayerList;
+import com.example.nyashcore.referee.content.PlayerTeamList;
 
 /**
  * A fragment representing a single Player detail screen.
@@ -27,7 +27,7 @@ public class PlayerDetailFragment extends Fragment {
     /**
      * The player content this fragment is presenting.
      */
-    private PlayerList.Player mPlayer;
+    private PlayerTeamList.Player mPlayer;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -44,12 +44,12 @@ public class PlayerDetailFragment extends Fragment {
             // Load the player content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mPlayer = PlayerList.PLAYER_MAP.get(getArguments().getString(ARG_PLAYER_ID));
+            mPlayer = PlayerTeamList.PLAYER_MAP.get(getArguments().getString(ARG_PLAYER_ID));
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(mPlayer.getContent());
+                appBarLayout.setTitle(mPlayer.getName());
             }
         }
     }
@@ -61,7 +61,7 @@ public class PlayerDetailFragment extends Fragment {
 
         // Show the player content as text in a TextView.
         if (mPlayer != null) {
-            ((TextView) rootView.findViewById(R.id.player_detail)).setText(mPlayer.getDetails());
+            ((TextView) rootView.findViewById(R.id.player_detail)).setText(mPlayer.getNumber() + " " + mPlayer.getName());
         }
 
         return rootView;

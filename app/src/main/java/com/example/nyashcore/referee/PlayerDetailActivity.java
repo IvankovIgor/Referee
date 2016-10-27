@@ -12,20 +12,10 @@ import android.widget.Button;
 
 import com.example.nyashcore.referee.content.ActionList;
 import com.example.nyashcore.referee.content.MatchList;
-import com.example.nyashcore.referee.content.PlayerList;
+import com.example.nyashcore.referee.content.PlayerTeamList;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -133,11 +123,13 @@ public class PlayerDetailActivity extends AppCompatActivity {
                 .setAction("Action", null).show();
             return "false";
         }
-        String idTeam = PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getIdTeam();
+//        PlayerTeamList.Team team = PlayerTeamList.getTeamByPlayerId(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID));
+//        String idUser = PlayerTeamList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID));
+        String idTeam = PlayerTeamList.PLAYER_TEAM_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID));
         Snackbar.make(view, action, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
         MatchList.getCurrentMatch().getActionList().getACTIONS().add(new ActionList.Action(String.valueOf(MatchActivity.getTime())+"'", action + " - " +
-                PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), action, idTeam));
+                PlayerTeamList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), action, idTeam));
         try {
             sendInfo(action);
         } catch (IOException e) {

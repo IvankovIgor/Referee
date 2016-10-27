@@ -3,12 +3,10 @@ package com.example.nyashcore.referee;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,44 +14,7 @@ import android.widget.TextView;
 import android.content.pm.ActivityInfo;
 
 import com.example.nyashcore.referee.content.MatchList;
-import com.google.gson.JsonParseException;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.Collections;
 import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
-
-import okhttp3.ConnectionSpec;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.TlsVersion;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-import static com.example.nyashcore.referee.LoginActivity.context;
 
 /**
  * An activity representing a list of Matches. This activity
@@ -79,29 +40,29 @@ public class MatchListActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         if (MatchList.MATCHES.isEmpty()) {
-            try {
-                content = getContent("https://" + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/api-referee/" + LoginActivity.userId + "/get-my-matches");
-                getContent2();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (CertificateException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            } catch (KeyManagementException e) {
-                e.printStackTrace();
-            }
-            try {
-                JSONArray jsonArray = new JSONArray(content);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    new MatchList.Match(jsonObject);
-                }
-            } catch (JSONException e) {
-                System.out.println("JSON ERROR");
-            }
+            HttpsClient.getMatches();
+//            try {
+//                content = getContent("https://" + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/api-referee/" + LoginActivity.userId + "/get-my-matches");
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } catch (CertificateException e) {
+//                e.printStackTrace();
+//            } catch (NoSuchAlgorithmException e) {
+//                e.printStackTrace();
+//            } catch (KeyStoreException e) {
+//                e.printStackTrace();
+//            } catch (KeyManagementException e) {
+//                e.printStackTrace();
+//            }
+//            try {
+//                JSONArray jsonArray = new JSONArray(content);
+//                for (int i = 0; i < jsonArray.length(); i++) {
+//                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+//                    new MatchList.Match(jsonObject);
+//                }
+//            } catch (JSONException e) {
+//                System.out.println("JSON ERROR");
+//            }
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -121,140 +82,64 @@ public class MatchListActivity extends AppCompatActivity {
         }
     }
 
-    private void getContent2() throws CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-        // Load CAs from an InputStream
-// (could be from a resource or ByteArrayInputStream or ...)
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-// From https://www.washington.edu/itconnect/security/ca/load-der.crt
-        InputStream caInput = context.getResources().openRawResource(R.raw.intermediate);
-        Certificate ca;
-        try {
-            ca = cf.generateCertificate(caInput);
-            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
-        } finally {
-            caInput.close();
-        }
-
-// Create a KeyStore containing our trusted CAs
-        String keyStoreType = KeyStore.getDefaultType();
-        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-        keyStore.load(null, null);
-        keyStore.setCertificateEntry("ca", ca);
-
-// Create a TrustManager that trusts the CAs in our KeyStore
-        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-        tmf.init(keyStore);
-
-// Create an SSLContext that uses our TrustManager
-        SSLContext context = SSLContext.getInstance("TLS");
-        context.init(null, tmf.getTrustManagers(), null);
-
-//        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-//                .tlsVersions(TlsVersion.TLS_1_0)
-//                .allEnabledCipherSuites()
-//                .build();
-
-        Retrofit.Builder builder = new Retrofit.Builder().baseUrl("https://" + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/");
-
-        OkHttpClient client = new OkHttpClient.Builder().sslSocketFactory(context.getSocketFactory())
-//                .connectionSpecs(Collections.singletonList(spec))
-                .build();
-//        OkHttpClient okHttp = new OkHttpClient().Builder().build();
-//        okHttp.sslSocketFactory(context.getSocketFactory());
-        Retrofit retrofit = builder.client(client)
-//                .baseUrl("https://" + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        APIService service = retrofit.create(APIService.class);
-        Call<List<MatchList.Match>> call = service.getMatchList(LoginActivity.userId);
-
-
+//    private String getContent(String path) throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+//        BufferedReader reader = null;
+//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+//                .permitAll().build();
+//        StrictMode.setThreadPolicy(policy);
+//// Load CAs from an InputStream
+//// (could be from a resource or ByteArrayInputStream or ...)
+//        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+//// From https://www.washington.edu/itconnect/security/ca/load-der.crt
+//        InputStream caInput = context.getResources().openRawResource(R.raw.intermediate);
+//        Certificate ca;
 //        try {
-//            client.newCall(call).execute();
+//            ca = cf.generateCertificate(caInput);
+//            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+//        } finally {
+//            caInput.close();
+//        }
+//
+//// Create a KeyStore containing our trusted CAs
+//        String keyStoreType = KeyStore.getDefaultType();
+//        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+//        keyStore.load(null, null);
+//        keyStore.setCertificateEntry("ca", ca);
+//
+//// Create a TrustManager that trusts the CAs in our KeyStore
+//        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+//        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+//        tmf.init(keyStore);
+//
+//// Create an SSLContext that uses our TrustManager
+//        SSLContext context = SSLContext.getInstance("TLS");
+//        context.init(null, tmf.getTrustManagers(), null);
+//
+//        try {
+//            URL url = new URL(path);
+//            HttpsURLConnection urlConnection =
+//                    (HttpsURLConnection)url.openConnection();
+//            urlConnection.setSSLSocketFactory(context.getSocketFactory());
+//            urlConnection.setRequestMethod("GET");
+//            urlConnection.setReadTimeout(10000);
+//            urlConnection.connect();
+//            reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+//            StringBuilder buf = new StringBuilder();
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                buf.append(line + "\n");
+//            }
+//            return(buf.toString());
 //        } catch (IOException e) {
 //            e.printStackTrace();
+//            return "sadf";
 //        }
-
-        call.enqueue(new Callback<List<MatchList.Match>>() {
-            @Override
-            public void onResponse(Call<List<MatchList.Match>> call, Response<List<MatchList.Match>> response) {
-                try {
-                    String idMatcha = response.body().get(0).getIdMatch();
-                    System.out.println("bbbbbbbbbbBBBBOIUERHFOQIERNFPOWEBRF" + idMatcha);
-                } catch (JsonParseException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<MatchList.Match>> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
-
-    }
-    private String getContent(String path) throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-        BufferedReader reader = null;
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-                .permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-// Load CAs from an InputStream
-// (could be from a resource or ByteArrayInputStream or ...)
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-// From https://www.washington.edu/itconnect/security/ca/load-der.crt
-        InputStream caInput = context.getResources().openRawResource(R.raw.intermediate);
-        Certificate ca;
-        try {
-            ca = cf.generateCertificate(caInput);
-            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
-        } finally {
-            caInput.close();
-        }
-
-// Create a KeyStore containing our trusted CAs
-        String keyStoreType = KeyStore.getDefaultType();
-        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-        keyStore.load(null, null);
-        keyStore.setCertificateEntry("ca", ca);
-
-// Create a TrustManager that trusts the CAs in our KeyStore
-        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-        tmf.init(keyStore);
-
-// Create an SSLContext that uses our TrustManager
-        SSLContext context = SSLContext.getInstance("TLS");
-        context.init(null, tmf.getTrustManagers(), null);
-
-        try {
-            URL url = new URL(path);
-            HttpsURLConnection urlConnection =
-                    (HttpsURLConnection)url.openConnection();
-            urlConnection.setSSLSocketFactory(context.getSocketFactory());
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setReadTimeout(10000);
-            urlConnection.connect();
-            reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            StringBuilder buf = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                buf.append(line + "\n");
-            }
-            return(buf.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "sadf";
-        }
-        finally {
-            if (reader != null) {
-                reader.close();
-            }
-        }
-    }
-
-    private void copyInputStreamToOutputStream(InputStream in, PrintStream out) {
-    }
+//        finally {
+//            if (reader != null) {
+//                reader.close();
+//            }
+//        }
+//    }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(MatchList.MATCHES));
@@ -280,7 +165,7 @@ public class MatchListActivity extends AppCompatActivity {
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mMatch = mValues.get(position);
             holder.mIdView.setText(String.valueOf(mValues.get(position).getNumOfMatch()));
-            holder.mContentView.setText(mValues.get(position).getContent());
+            holder.mContentView.setText(mValues.get(position).getTeam1().getName() + " - " + mValues.get(position).getTeam2().getName());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
