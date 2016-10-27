@@ -71,7 +71,7 @@ public class MatchListActivity extends AppCompatActivity {
 
         if (MatchList.MATCHES.isEmpty()) {
             try {
-                content = getContent("https://" + LoginActivity.serverIP + "/api-referee/" + LoginActivity.userId + "/get-my-matches");
+                content = getContent("https://" + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/api-referee/" + LoginActivity.userId + "/get-my-matches");
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (CertificateException e) {
@@ -144,26 +144,17 @@ public class MatchListActivity extends AppCompatActivity {
         SSLContext context = SSLContext.getInstance("TLS");
         context.init(null, tmf.getTrustManagers(), null);
 
-// Tell the URLConnection to use a SocketFactory from our SSLContext
-//        URL url = new URL("https://ifootball.ml/api-referee/4189816/get-my-matches");
-//        HttpsURLConnection urlConnection =
-//                (HttpsURLConnection)url.openConnection();
-//        urlConnection.setSSLSocketFactory(context.getSocketFactory());
-//        InputStream in = urlConnection.getInputStream();
-//        copyInputStreamToOutputStream(in, System.out);
         try {
-            URL url = new URL("https://ifootball.ml/api-referee/4189816/get-my-matches");
+            URL url = new URL(path);
             HttpsURLConnection urlConnection =
                     (HttpsURLConnection)url.openConnection();
             urlConnection.setSSLSocketFactory(context.getSocketFactory());
-//            URL myurl = new URL(path);
-//            HttpsURLConnection c = (HttpsURLConnection)myurl.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setReadTimeout(10000);
             urlConnection.connect();
             reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             StringBuilder buf = new StringBuilder();
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
                 buf.append(line + "\n");
             }

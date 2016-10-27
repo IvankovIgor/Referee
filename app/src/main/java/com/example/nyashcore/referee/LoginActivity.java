@@ -3,6 +3,7 @@ package com.example.nyashcore.referee;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
@@ -15,12 +16,15 @@ import android.view.MenuItem;
 
 public class LoginActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
     public static final String SOCIAL_NETWORK_TAG = "SocialIntegrationMain.SOCIAL_NETWORK_TAG";
-    private static ProgressDialog pd;
+    public static final String APP_PREFERENCES = "server_settings";
+    public static final String APP_PREFERENCES_IP = "IP";
+    public static final String APP_PREFERENCES_PORT = "Port";
+    public static SharedPreferences sSettings;
     static Context context;
     public static String userName;
     public static String userId;
-    public static String serverIP = "ifootball.ml";
-    public static String serverPort = "8080";
+    public static String serverIP;
+    public static String serverPort;
     public static String myId = "4189816";
 
     @Override
@@ -28,7 +32,13 @@ public class LoginActivity extends AppCompatActivity implements FragmentManager.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         context = this;
-
+        sSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        if(sSettings.contains(APP_PREFERENCES_IP)) {
+            serverIP = sSettings.getString(APP_PREFERENCES_IP, "ifootball.ml");
+        }
+        if(sSettings.contains(APP_PREFERENCES_PORT)) {
+            serverPort = sSettings.getString(APP_PREFERENCES_PORT, "443");
+        }
 //        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
 //        for(int i = 0; i<fingerprints.length;i++)
 //            Log.i("myApp", "Fingerprint:"+fingerprints[i]);
@@ -70,19 +80,6 @@ public class LoginActivity extends AppCompatActivity implements FragmentManager.
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    protected static void showProgress(String message) {
-        pd = new ProgressDialog(context);
-        pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pd.setMessage(message);
-        pd.setCancelable(false);
-        pd.setCanceledOnTouchOutside(false);
-        pd.show();
-    }
-
-    protected static void hideProgress() {
-        pd.dismiss();
     }
 
     @Override

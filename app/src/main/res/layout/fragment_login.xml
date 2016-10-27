@@ -21,17 +21,64 @@
         android:background="@color/vk"
         android:textColor="#ffffffff"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginRight="8dp" />
 
-    <Switch
-        android:text="Switch IP and port"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textOn="@string/local_address"
-        android:textOff="@string/server_address"
-        android:textAlignment="center"
-        android:gravity="center_vertical|center_horizontal"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:id="@+id/switchIP" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/curIP"
+            android:layout_weight="1"
+            android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/curPort"
+            android:layout_weight="2"
+            android:textAlignment="center" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/editIP"
+            android:layout_weight="1"
+            android:hint="IP-address"
+            android:textAlignment="center" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/editPort"
+            android:layout_weight="2"
+            android:textAlignment="center"
+            android:hint="port" />
+    </LinearLayout>
+
+    <Button
+        android:text="reset ip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/resetIP"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp" />
+
 </LinearLayout>

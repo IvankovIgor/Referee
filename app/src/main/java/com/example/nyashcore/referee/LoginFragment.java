@@ -1,14 +1,16 @@
 package com.example.nyashcore.referee;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.Switch;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nyashcore.referee.content.MatchList;
@@ -21,6 +23,8 @@ import com.github.gorbin.asne.vk.VkSocialNetwork;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -38,6 +42,11 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
      */
     private Button vk;
     private Button logout;
+    private Button resetIP;
+    private EditText editIP;
+    private EditText editPort;
+    private TextView curIP;
+    private TextView curPort;
 
     public LoginFragment() {
     }
@@ -47,26 +56,76 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
 //        ((LoginActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
-        // init buttons and set Listener
         vk = (Button) rootView.findViewById(R.id.vk);
+        vk.setText("Login via vk");
         vk.setOnClickListener(loginClick);
 
         logout = (Button) rootView.findViewById(R.id.logout);
         logout.setOnClickListener(logoutClick);
 
-        Switch switchIP = (Switch) rootView.findViewById(R.id.switchIP);
-        switchIP.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    LoginActivity.serverPort = "8080";
-                    LoginActivity.serverIP = "localhost";
-                } else {
-                    LoginActivity.serverPort = "8080";
+        resetIP = (Button) rootView.findViewById(R.id.resetIP);
+        resetIP.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v) {
                     LoginActivity.serverIP = "ifootball.ml";
-//                    LoginActivity.serverIP = "185.143.172.172";
+                    SharedPreferences.Editor editor = LoginActivity.sSettings.edit();
+                    editor.putString(LoginActivity.APP_PREFERENCES_IP, LoginActivity.serverIP);
+                    editor.apply();
+                    curIP.setText(LoginActivity.serverIP);
+                    LoginActivity.serverPort = "443";
+                    editor.putString(LoginActivity.APP_PREFERENCES_PORT, LoginActivity.serverPort);
+                    editor.apply();
+                    curPort.setText(LoginActivity.serverPort);
                 }
             }
-        });
+        );
+
+        curIP = (TextView) rootView.findViewById(R.id.curIP);
+        curIP.setText(LoginActivity.serverIP);
+
+        curPort = (TextView) rootView.findViewById(R.id.curPort);
+        curPort.setText(LoginActivity.serverPort);
+
+        editIP = (EditText) rootView.findViewById(R.id.editIP);
+        editIP.setOnKeyListener(new View.OnKeyListener()
+                {
+                    public boolean onKey(View v, int keyCode, KeyEvent event)
+                    {
+                        if(event.getAction() == KeyEvent.ACTION_DOWN &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER))
+                        {
+                            LoginActivity.serverIP = editIP.getText().toString();
+                            SharedPreferences.Editor editor = LoginActivity.sSettings.edit();
+                            editor.putString(LoginActivity.APP_PREFERENCES_IP, LoginActivity.serverIP);
+                            editor.apply();
+                            curIP.setText(LoginActivity.serverIP);
+                            return true;
+                        }
+                        return false;
+                    }
+                }
+        );
+
+        editPort = (EditText) rootView.findViewById(R.id.editPort);
+        editPort.setOnKeyListener(new View.OnKeyListener()
+                {
+                    public boolean onKey(View v, int keyCode, KeyEvent event)
+                    {
+                        if(event.getAction() == KeyEvent.ACTION_DOWN &&
+                                (keyCode == KeyEvent.KEYCODE_ENTER))
+                        {
+                            LoginActivity.serverPort = editPort.getText().toString();
+                            SharedPreferences.Editor editor = LoginActivity.sSettings.edit();
+                            editor.putString(LoginActivity.APP_PREFERENCES_PORT, LoginActivity.serverPort);
+                            editor.apply();
+                            curPort.setText(LoginActivity.serverPort);
+                            return true;
+                        }
+                        return false;
+                    }
+                }
+        );
 
         //Get Keys for initiate SocialNetworks
         String VK_KEY = getActivity().getString(R.string.vk_app_id);
@@ -143,7 +202,6 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
             if(!socialNetwork.isConnected()) {
                 if(networkId != 0) {
                     socialNetwork.requestLogin();
-                    LoginActivity.showProgress("Loading social person");
                 } else {
                     Toast.makeText(getActivity(), "Wrong networkId", Toast.LENGTH_LONG).show();
                 }
@@ -170,13 +228,11 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
     public void onLoginSuccess(int networkId) {
         SocialNetwork socialNetwork = mSocialNetworkManager.getSocialNetwork(networkId);
         socialNetwork.requestCurrentPerson();
-        LoginActivity.hideProgress();
 //        startProfile(networkId);
     }
 
     @Override
     public void onError(int networkId, String requestID, String errorMessage, Object data) {
-        LoginActivity.hideProgress();
         Toast.makeText(getActivity(), "ERROR: " + errorMessage, Toast.LENGTH_LONG).show();
     }
 
