@@ -91,7 +91,7 @@ public class MatchActivity extends AppCompatActivity {
         timePeriod = 3000L;
         countPeriods = MatchList.getCurrentMatch().getMatchConfig().getCountPeriods();
 //        countPeriods = 3;
-        score.setText(MatchList.getCurrentMatch().getFirstScore() + ":" + MatchList.getCurrentMatch().getSecondScore());
+        score.setText(MatchList.getCurrentMatch().getTeam1Score() + ":" + MatchList.getCurrentMatch().getTeam2Score());
         refresh();
         System.out.println(MatchList.getCurrentMatch().getIdMatch());
 
@@ -223,7 +223,7 @@ public class MatchActivity extends AppCompatActivity {
     }
 
     public static void refresh() {
-        score.setText(MatchList.getCurrentMatch().getFirstScore() + ":" + MatchList.getCurrentMatch().getSecondScore());
+        score.setText(MatchList.getCurrentMatch().getTeam1Score() + ":" + MatchList.getCurrentMatch().getTeam2Score());
     }
 
     static long getTime() {

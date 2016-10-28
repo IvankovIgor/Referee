@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nyashcore.referee.content.MatchList;
+import com.example.nyashcore.referee.content.PlayerTeamList;
 import com.github.gorbin.asne.core.SocialNetwork;
 import com.github.gorbin.asne.core.SocialNetworkManager;
 import com.github.gorbin.asne.core.listener.OnLoginCompleteListener;
@@ -22,9 +23,6 @@ import com.github.gorbin.asne.core.persons.SocialPerson;
 import com.github.gorbin.asne.vk.VkSocialNetwork;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
-
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -177,6 +175,10 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         if(socialNetwork.isConnected()){
             vk.setText("Show match list");
             MatchList.MATCHES.clear();
+            MatchList.MATCH_MAP.clear();
+            PlayerTeamList.PLAYER_TEAM_MAP.clear();
+            PlayerTeamList.PLAYER_MAP.clear();
+            PlayerTeamList.TEAM_MAP.clear();
             logout.setVisibility(View.VISIBLE);
             socialNetwork.requestCurrentPerson();
         }
@@ -206,7 +208,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
                     Toast.makeText(getActivity(), "Wrong networkId", Toast.LENGTH_LONG).show();
                 }
             } else {
-                startProfile(socialNetwork.getID());
+                showMatchList(socialNetwork.getID());
             }
         }
     };
@@ -228,7 +230,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
     public void onLoginSuccess(int networkId) {
         SocialNetwork socialNetwork = mSocialNetworkManager.getSocialNetwork(networkId);
         socialNetwork.requestCurrentPerson();
-//        startProfile(networkId);
+//        showMatchList(networkId);
     }
 
     @Override
@@ -236,10 +238,13 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         Toast.makeText(getActivity(), "ERROR: " + errorMessage, Toast.LENGTH_LONG).show();
     }
 
-    private void startProfile(int networkId){
+    private void showMatchList(int networkId){
+        if (MatchList.MATCHES.isEmpty()) {
+            HttpsClient.getMatches();
+        }
         Intent intent = new Intent(getActivity(), MatchListActivity.class);
         startActivity(intent);
-//        ProfileFragment profile = ProfileFragment.newInstannce(networkId);
+//        ProfileFragment profile = ProfileFragment.newInstance(networkId);
 //        getActivity().getSupportFragmentManager().beginTransaction()
 //                .addToBackStack("profile")
 //                .replace(R.id.container, profile)

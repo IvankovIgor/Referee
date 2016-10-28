@@ -16,7 +16,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.List;
 
 import javax.net.ssl.SSLContext;
@@ -74,6 +73,7 @@ public class HttpsClient {
                 t.printStackTrace();
             }
         });
+
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

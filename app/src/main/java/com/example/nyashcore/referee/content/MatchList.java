@@ -7,29 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Helper class for providing sample content for user interfaces created by
- * Android template wizards.
- * <p>
- * TODO: Replace all uses of this class before publishing your app.
- */
 public class MatchList {
 
-    /**
-     * An array of matches.
-     */
     public static final List<Match> MATCHES = new ArrayList<Match>();
     public static String currentMatchId;
 
-    /**
-     * A map of sample matches, by ID.
-     */
     public static final Map<String, Match> MATCH_MAP = new HashMap<String, Match>();
-
-    private static void addMatch(Match match) {
-        MATCHES.add(match);
-        MATCH_MAP.put(String.valueOf(match.idMatch), match);
-    }
 
     public static Match getCurrentMatch() {
         return MATCH_MAP.get(currentMatchId);
@@ -39,39 +22,39 @@ public class MatchList {
         MatchList.currentMatchId = currentMatchId;
     }
 
-    /**
-     * A match representing a piece of content.
-     */
     public static class Match {
         private String idMatch;
-        private int numOfMatch;
         private String federation;
         private String tournament;
         private String stage;
         private MatchConfig matchConfig;
         private PlayerTeamList.Team team1;
         private PlayerTeamList.Team team2;
-        private int firstScore;
-        private int secondScore;
+        private int team1Score;
+        private int team2Score;
         private boolean started;
         private boolean finished;
         ActionList actionList;
 
         public Match(Match match) {
-            numOfMatch = MATCHES.size() + 1;
-            firstScore = 0;
-            secondScore = 0;
-            started = false;
-            finished = false;
             actionList = new ActionList();
             idMatch = match.getIdMatch();
             federation = match.getFederation();
             tournament = match.getTournament();
             stage = match.getStage();
             matchConfig = new MatchConfig(match.getMatchConfig());
-            team1 = new PlayerTeamList.Team(match.getTeam1());
-            team2 = new PlayerTeamList.Team(match.getTeam2());
-            MatchList.addMatch(this);
+            if (PlayerTeamList.TEAM_MAP.containsKey(match.getTeam1().getIdTeam())) {
+                team1 = PlayerTeamList.TEAM_MAP.get(match.getTeam1().getIdTeam());
+            } else {
+                team1 = new PlayerTeamList.Team(match.getTeam1());
+            }
+            if (PlayerTeamList.TEAM_MAP.containsKey(match.getTeam2().getIdTeam())) {
+                team2 = PlayerTeamList.TEAM_MAP.get(match.getTeam2().getIdTeam());
+            } else {
+                team2 = new PlayerTeamList.Team(match.getTeam2());
+            }
+            MATCHES.add(this);
+            MATCH_MAP.put(idMatch, this);
         }
 
         public String getIdMatch() {
@@ -124,48 +107,46 @@ public class MatchList {
             this.team2 = team2;
         }
 
-        public String getNumOfMatch() { return String.valueOf(numOfMatch); }
-
-        public int getFirstScore() {
-            return firstScore;
+        public int getTeam1Score() {
+            return team1Score;
         }
 
-        public int getSecondScore() {
-            return secondScore;
+        public int getTeam2Score() {
+            return team2Score;
         }
 
         public void incrementScore(String idTeam) {
             if (team1.getIdTeam().equals(idTeam)) {
-                firstScore++;
+                team1Score++;
             } else {
-                secondScore++;
+                team2Score++;
             }
             MatchActivity.refresh();
         }
 
         public void decrementScore(String idTeam) {
             if (team1.getIdTeam().equals(idTeam)) {
-                firstScore--;
+                team1Score--;
             } else {
-                secondScore--;
+                team2Score--;
             }
             MatchActivity.refresh();
         }
 
         public void ownGoal(String idTeam) {
             if (team2.getIdTeam().equals(idTeam)) {
-                firstScore++;
+                team1Score++;
             } else {
-                secondScore++;
+                team2Score++;
             }
             MatchActivity.refresh();
         }
 
         public void ownGoalDecrement(String idTeam) {
             if (team2.getIdTeam().equals(idTeam)) {
-                firstScore--;
+                team1Score--;
             } else {
-                secondScore--;
+                team2Score--;
             }
             MatchActivity.refresh();
         }

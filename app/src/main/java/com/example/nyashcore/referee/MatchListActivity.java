@@ -31,7 +31,6 @@ public class MatchListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
-    private String content;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,36 +38,16 @@ public class MatchListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_match_list);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        if (MatchList.MATCHES.isEmpty()) {
-            HttpsClient.getMatches();
-//            try {
-//                content = getContent("https://" + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/api-referee/" + LoginActivity.userId + "/get-my-matches");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } catch (CertificateException e) {
-//                e.printStackTrace();
-//            } catch (NoSuchAlgorithmException e) {
-//                e.printStackTrace();
-//            } catch (KeyStoreException e) {
-//                e.printStackTrace();
-//            } catch (KeyManagementException e) {
-//                e.printStackTrace();
-//            }
-//            try {
-//                JSONArray jsonArray = new JSONArray(content);
-//                for (int i = 0; i < jsonArray.length(); i++) {
-//                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-//                    new MatchList.Match(jsonObject);
-//                }
-//            } catch (JSONException e) {
-//                System.out.println("JSON ERROR");
-//            }
-        }
+//        if (MatchList.MATCHES.isEmpty()) {
+//            HttpsClient.getMatches();
+//        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        assert toolbar != null;
         toolbar.setTitle(getTitle());
 
+//        while (MatchList.MATCHES.size() < 4);
         View recyclerView = findViewById(R.id.match_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
@@ -81,65 +60,6 @@ public class MatchListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
     }
-
-//    private String getContent(String path) throws IOException, CertificateException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-//        BufferedReader reader = null;
-//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-//                .permitAll().build();
-//        StrictMode.setThreadPolicy(policy);
-//// Load CAs from an InputStream
-//// (could be from a resource or ByteArrayInputStream or ...)
-//        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-//// From https://www.washington.edu/itconnect/security/ca/load-der.crt
-//        InputStream caInput = context.getResources().openRawResource(R.raw.intermediate);
-//        Certificate ca;
-//        try {
-//            ca = cf.generateCertificate(caInput);
-//            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
-//        } finally {
-//            caInput.close();
-//        }
-//
-//// Create a KeyStore containing our trusted CAs
-//        String keyStoreType = KeyStore.getDefaultType();
-//        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-//        keyStore.load(null, null);
-//        keyStore.setCertificateEntry("ca", ca);
-//
-//// Create a TrustManager that trusts the CAs in our KeyStore
-//        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-//        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-//        tmf.init(keyStore);
-//
-//// Create an SSLContext that uses our TrustManager
-//        SSLContext context = SSLContext.getInstance("TLS");
-//        context.init(null, tmf.getTrustManagers(), null);
-//
-//        try {
-//            URL url = new URL(path);
-//            HttpsURLConnection urlConnection =
-//                    (HttpsURLConnection)url.openConnection();
-//            urlConnection.setSSLSocketFactory(context.getSocketFactory());
-//            urlConnection.setRequestMethod("GET");
-//            urlConnection.setReadTimeout(10000);
-//            urlConnection.connect();
-//            reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-//            StringBuilder buf = new StringBuilder();
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                buf.append(line + "\n");
-//            }
-//            return(buf.toString());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return "sadf";
-//        }
-//        finally {
-//            if (reader != null) {
-//                reader.close();
-//            }
-//        }
-//    }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(MatchList.MATCHES));
@@ -164,7 +84,7 @@ public class MatchListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mMatch = mValues.get(position);
-            holder.mIdView.setText(String.valueOf(mValues.get(position).getNumOfMatch()));
+            holder.mIdView.setText(String.valueOf(mValues.get(position).getIdMatch().substring(1, 3)));
             holder.mContentView.setText(mValues.get(position).getTeam1().getName() + " - " + mValues.get(position).getTeam2().getName());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {

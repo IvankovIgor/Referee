@@ -14,5 +14,5 @@ public interface APIService {
     @GET("api-referee/{userId}/get-my-matches")
     Call<List<MatchList.Match>> getMatchList(@Path("userId") String userId);
     @POST("api-referee/{userId}/set-info")
-    Response sendAction(@Path("userID") String userId);
+    Response postAction(@Path("userID") String userId);
 }

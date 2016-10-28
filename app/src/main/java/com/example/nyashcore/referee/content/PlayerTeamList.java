@@ -1,5 +1,6 @@
 package com.example.nyashcore.referee.content;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,12 +57,18 @@ public class PlayerTeamList {
             name = team.getName();
             logo = team.getLogo();
             idTeam = team.getIdTeam();
-            players = team.getPlayers();
-            for (Player player : players) {
-//                PLAYER_MAP.put(player.getIdUser(), player);
-                PLAYER_TEAM_MAP.put(player.getIdUser(), idTeam);
+            players = new ArrayList<>();
+            for (Player player : team.getPlayers()) {
+                if (PLAYER_MAP.containsKey(player.getIdUser())) {
+                    players.add(PLAYER_MAP.get(player.getIdUser()));
+                } else {
+                    Player newPlayer = new Player(player);
+                    players.add(newPlayer);
+                    PLAYER_MAP.put(player.getIdUser(), newPlayer);
+                    PLAYER_TEAM_MAP.put(player.getIdUser(), idTeam);
+                }
             }
-            TEAM_MAP.put(idTeam, this);
+            PlayerTeamList.TEAM_MAP.put(idTeam, this);
         }
 
         public String getIdTeam() {
