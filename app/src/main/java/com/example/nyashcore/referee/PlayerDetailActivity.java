@@ -12,7 +12,6 @@ import android.widget.Button;
 
 import com.example.nyashcore.referee.content.ActionList;
 import com.example.nyashcore.referee.content.MatchList;
-import com.example.nyashcore.referee.content.PlayerTeamList;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,8 +54,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String idTeam = addAction(view, "Goal");
-                if (!idTeam.equals("false")) {
+                String idTeam = addAction(view, ActionList.EventType.GOAL);
+                if (idTeam != null) {
                     MatchList.getCurrentMatch().incrementScore(idTeam);
                 }
             }
@@ -66,8 +65,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnOwnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String idTeam = addAction(view, "OwnGoal");
-                if (!idTeam.equals("false")) {
+                String idTeam = addAction(view, ActionList.EventType.OWN_GOAL);
+                if (idTeam != null) {
                     MatchList.getCurrentMatch().ownGoal(idTeam);
                 }
             }
@@ -77,7 +76,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnYellow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addAction(view, "YellowCard");
+                addAction(view, ActionList.EventType.YELLOW_CARD);
             }
         });
 
@@ -85,7 +84,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnRed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addAction(view, "RedCard");
+                addAction(view, ActionList.EventType.RED_CARD);
             }
         });
         // Show the Up button in the action bar.
@@ -117,21 +116,23 @@ public class PlayerDetailActivity extends AppCompatActivity {
         }
     }
 
-    private String addAction(View view, String action) {
+    private String addAction(View view, ActionList.EventType event) {
         if (!MatchList.getCurrentMatch().isStarted() || MatchList.getCurrentMatch().isFinished()) {
             Snackbar.make(view, "Not allowed", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
-            return "false";
+            return null;
         }
-//        PlayerTeamList.Team team = PlayerTeamList.getTeamByPlayerId(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID));
-//        String idUser = PlayerTeamList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID));
-        String idTeam = PlayerTeamList.PLAYER_TEAM_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID));
-        Snackbar.make(view, action, Snackbar.LENGTH_LONG)
+//        TeamList.Team team = TeamList.getTeamByPlayerId(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID));
+//        String idUser = TeamList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID));
+        String idPlayer = getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID);
+        String idTeam = MatchListActivity.PLAYER_TEAM_MAP.get(idPlayer);
+        Snackbar.make(view, String.valueOf(event), Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
-        MatchList.getCurrentMatch().getActionList().getACTIONS().add(new ActionList.Action(String.valueOf(MatchActivity.getTime())+"'", action + " - " +
-                PlayerTeamList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), action, idTeam));
+        MatchList.getCurrentMatch().getActions().add(new ActionList.Action(MatchList.getCurrentMatch().getIdMatch(), idTeam, idPlayer, MatchActivity.getTime(), event));
+//                String.valueOf(MatchActivity.getTime())+"'", action + " - " +
+//                PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), action, idTeam));
         try {
-            sendInfo(action);
+            sendInfo(event);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (KeyStoreException e) {
@@ -146,7 +147,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         return idTeam;
     }
 
-    protected static void sendInfo(String message) throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, KeyManagementException {
+    protected static void sendInfo(ActionList.EventType event) throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, KeyManagementException {
         String matchId = MatchList.getCurrentMatch().getIdMatch();
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
 // From https://www.washington.edu/itconnect/security/ca/load-der.crt
@@ -174,7 +175,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         SSLContext context = SSLContext.getInstance("TLS");
         context.init(null, tmf.getTrustManagers(), null);
         try {
-            URL url = new URL("https://" + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/api-referee/" + matchId + "/" + number + "/" + message + "/set-info");
+            URL url = new URL("https://" + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/api-referee/" + matchId + "/" + number + "/" + event + "/set-info");
 //            URL url = new URL(path);
             HttpsURLConnection c = (HttpsURLConnection)url.openConnection();
             c.setSSLSocketFactory(context.getSocketFactory());

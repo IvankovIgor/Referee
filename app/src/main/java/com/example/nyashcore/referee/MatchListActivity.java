@@ -14,7 +14,10 @@ import android.widget.TextView;
 import android.content.pm.ActivityInfo;
 
 import com.example.nyashcore.referee.content.MatchList;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An activity representing a list of Matches. This activity
@@ -31,6 +34,7 @@ public class MatchListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
+    public static final Map<String, String> PLAYER_TEAM_MAP = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +88,7 @@ public class MatchListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mMatch = mValues.get(position);
-            holder.mIdView.setText(String.valueOf(mValues.get(position).getIdMatch().substring(1, 3)));
+//            holder.mIdView.setText(String.valueOf(mValues.get(position).getIdMatch()).substring(0, 3));
             holder.mContentView.setText(mValues.get(position).getTeam1().getName() + " - " + mValues.get(position).getTeam2().getName());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -116,14 +120,14 @@ public class MatchListActivity extends AppCompatActivity {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
-            public final TextView mIdView;
+//            public final TextView mIdView;
             public final TextView mContentView;
             public MatchList.Match mMatch;
 
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
-                mIdView = (TextView) view.findViewById(R.id.id);
+//                mIdView = (TextView) view.findViewById(R.id.id);
                 mContentView = (TextView) view.findViewById(R.id.content);
             }
 

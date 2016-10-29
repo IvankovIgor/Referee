@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 
+import com.example.nyashcore.referee.content.ActionList;
 import com.example.nyashcore.referee.content.MatchList;
 import com.google.gson.JsonParseException;
 
@@ -22,87 +23,151 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.example.nyashcore.referee.LoginActivity.context;
+class HttpsClient {
 
-public class HttpsClient {
+    static void getMatches(String idUser) {
 
-    public static void getMatches() {
+        Call<List<MatchList.Match>> call = createAPIService().getMatches(idUser);
 
-        Retrofit.Builder builder = new Retrofit.Builder().baseUrl("https://" + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/");
-        OkHttpClient client = null;
-
+        Response<List<MatchList.Match>> response;
         try {
-            client = new OkHttpClient.Builder().sslSocketFactory(getSSLConfig(context).getSocketFactory())
-                    .build();
-        } catch (CertificateException
-                | KeyStoreException
-                | NoSuchAlgorithmException
-                | IOException
-                | KeyManagementException e) {
-                    e.printStackTrace();
+            response = call.execute();
+            try {
+                List<MatchList.Match> list = response.body();
+                for (int i = 0; i < list.size(); i++) {
+                    new MatchList.Match(list.get(i));
+                }
+            } catch (JsonParseException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        assert client != null;
+//        call.enqueue(new Callback<List<MatchList.Match>>() {
+//            @Override
+//            public void onResponse(Call<List<MatchList.Match>> call, Response<List<MatchList.Match>> response) {
+//                try {
+//                    List<MatchList.Match> list = response.body();
+//                    for (int i = 0; i < list.size(); i++) {
+//                        new MatchList.Match(list.get(i));
+//                    }
+//                } catch (JsonParseException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<MatchList.Match>> call, Throwable t) {
+//                t.printStackTrace();
+//            }
+//        });
+    }
+
+    static boolean postAction(ActionList.Action action) {
+
+        Call<ResponseBody> call = createAPIService().postAction(action.getIdMatch(), action.getIdAction(), action.getEvent());
+
+        try {
+            Response<ResponseBody> responseBody = call.execute();
+            System.out.println(responseBody);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
+    private static APIService createAPIService() {
+
+        Retrofit.Builder builder = new Retrofit.Builder().baseUrl("https://" + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/");
+        OkHttpClient client;
+
+        client = new OkHttpClient.Builder().sslSocketFactory(getSSLConfig(LoginActivity.context).getSocketFactory())
+                .build();
+
         Retrofit retrofit = builder.client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        APIService service = retrofit.create(APIService.class);
-        Call<List<MatchList.Match>> call = service.getMatchList(LoginActivity.userId);
 
-        call.enqueue(new Callback<List<MatchList.Match>>() {
-            @Override
-            public void onResponse(Call<List<MatchList.Match>> call, Response<List<MatchList.Match>> response) {
-                try {
-                    List<MatchList.Match> list = response.body();
-                    for (int i = 0; i < list.size(); i++) {
-                        new MatchList.Match(list.get(i));
-                    }
-                } catch (JsonParseException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<MatchList.Match>> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
-
+        return retrofit.create(APIService.class);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    private static SSLContext getSSLConfig(Context context) throws CertificateException, IOException,
-            KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+    private static SSLContext getSSLConfig(Context context) {
 
         // Loading CAs from an InputStream
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        CertificateFactory cf = null;
+        try {
+            cf = CertificateFactory.getInstance("X.509");
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        }
 
-        Certificate ca;
-        // I'm using Java7. If you used Java6 close it manually with finally.
-        try (InputStream cert = context.getResources().openRawResource(R.raw.intermediate)) {
-            ca = cf.generateCertificate(cert);
+        Certificate ca = null;
+        try {
+            try (InputStream cert = context.getResources().openRawResource(R.raw.intermediate)) {
+                assert cf != null;
+                ca = cf.generateCertificate(cert);
+            }
+        } catch (IOException | CertificateException e) {
+            e.printStackTrace();
         }
 
         // Creating a KeyStore containing our trusted CAs
         String keyStoreType = KeyStore.getDefaultType();
-        KeyStore keyStore   = KeyStore.getInstance(keyStoreType);
-        keyStore.load(null, null);
-        keyStore.setCertificateEntry("ca", ca);
+        KeyStore keyStore   = null;
+        try {
+            keyStore = KeyStore.getInstance(keyStoreType);
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+        try {
+            assert keyStore != null;
+            keyStore.load(null, null);
+        } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
+            e.printStackTrace();
+        }
+        try {
+            keyStore.setCertificateEntry("ca", ca);
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
 
         // Creating a TrustManager that trusts the CAs in our KeyStore.
         String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-        tmf.init(keyStore);
+        TrustManagerFactory tmf = null;
+        try {
+            tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        try {
+            assert tmf != null;
+            tmf.init(keyStore);
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
 
         // Creating an SSLSocketFactory that uses our TrustManager
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, tmf.getTrustManagers(), null);
+        SSLContext sslContext = null;
+        try {
+            sslContext = SSLContext.getInstance("TLS");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        try {
+            assert sslContext != null;
+            sslContext.init(null, tmf.getTrustManagers(), null);
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
 
         return sslContext;
     }

@@ -20,13 +20,15 @@ import android.content.pm.ActivityInfo;
 
 import com.example.nyashcore.referee.content.ActionList;
 import com.example.nyashcore.referee.content.MatchList;
-import com.example.nyashcore.referee.content.PlayerTeamList;
+import com.example.nyashcore.referee.content.TeamList;
+import com.example.nyashcore.referee.content.PlayerList;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,7 +58,7 @@ public class MatchActivity extends AppCompatActivity {
     private long timePeriod;
     private int countPeriods;
     private int currentPeriod = 1;
-    public static ActionList actionList;
+    public static List<ActionList.Action> actionList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +71,9 @@ public class MatchActivity extends AppCompatActivity {
         toolbar.setTitle(getTitle());
 
         if (!MatchList.getCurrentMatch().isStarted()) {
-            actionList = new ActionList();
+            actionList = new ArrayList<>();
         } else {
-            actionList = MatchList.getCurrentMatch().getActionList();
+            actionList = MatchList.getCurrentMatch().getActions();
         }
 
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
@@ -93,7 +95,7 @@ public class MatchActivity extends AppCompatActivity {
 //        countPeriods = 3;
         score.setText(MatchList.getCurrentMatch().getTeam1Score() + ":" + MatchList.getCurrentMatch().getTeam2Score());
         refresh();
-        System.out.println(MatchList.getCurrentMatch().getIdMatch());
+//        System.out.println(MatchList.getCurrentMatch().getIdMatch());
 
         actions.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,19 +112,7 @@ public class MatchActivity extends AppCompatActivity {
                 if (currentPeriod < countPeriods + 1) {
                     if (!MatchList.getCurrentMatch().isStarted()) {
                         MatchList.getCurrentMatch().setStarted();
-                        try {
-                            PlayerDetailActivity.sendInfo("start");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (KeyStoreException e) {
-                            e.printStackTrace();
-                        } catch (CertificateException e) {
-                            e.printStackTrace();
-                        } catch (NoSuchAlgorithmException e) {
-                            e.printStackTrace();
-                        } catch (KeyManagementException e) {
-                            e.printStackTrace();
-                        }
+                        HttpsClient.postAction(new ActionList.Action(MatchList.getCurrentMatchId(), null, null, getTime(), ActionList.EventType.START));
                     }
                     if (isStopped) {
                         isStopped = false;
@@ -159,7 +149,7 @@ public class MatchActivity extends AppCompatActivity {
                         currentPeriod++;
                         if (currentPeriod > countPeriods) {
                             try {
-                                PlayerDetailActivity.sendInfo("finish");
+                                PlayerDetailActivity.sendInfo(ActionList.EventType.FINISH);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             } catch (KeyStoreException e) {
@@ -226,22 +216,22 @@ public class MatchActivity extends AppCompatActivity {
         score.setText(MatchList.getCurrentMatch().getTeam1Score() + ":" + MatchList.getCurrentMatch().getTeam2Score());
     }
 
-    static long getTime() {
+    static int getTime() {
         String chronoText = mChronometer.getText().toString();
         String array[] = chronoText.split(":");
-        return Integer.parseInt(array[1]);
+        return Integer.parseInt(array[1]) / 1000 / 60;
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView, PlayerTeamList.Team team) {
+    private void setupRecyclerView(@NonNull RecyclerView recyclerView, TeamList.Team team) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(team.getPlayers()));
     }
 
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<PlayerTeamList.Player> mValues;
+        private final List<PlayerList.Player> mValues;
 
-        public SimpleItemRecyclerViewAdapter(List<PlayerTeamList.Player> players) {
+        public SimpleItemRecyclerViewAdapter(List<PlayerList.Player> players) {
             mValues = players;
         }
 
@@ -255,7 +245,7 @@ public class MatchActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mPlayer = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).getNumber());
+            holder.mIdView.setText(Integer.toString(mValues.get(position).getNumber()));
             holder.mContentView.setText(mValues.get(position).getName());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -289,7 +279,7 @@ public class MatchActivity extends AppCompatActivity {
             public final View mView;
             public final TextView mIdView;
             public final TextView mContentView;
-            public PlayerTeamList.Player mPlayer;
+            public PlayerList.Player mPlayer;
 
             public ViewHolder(View view) {
                 super(view);

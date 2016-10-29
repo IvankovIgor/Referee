@@ -40,7 +40,7 @@ public class ActionListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(MatchList.getCurrentMatch().getActionList().getACTIONS()));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(MatchList.getCurrentMatch().getActions()));
     }
 
     public class SimpleItemRecyclerViewAdapter
@@ -60,37 +60,30 @@ public class ActionListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
             holder.aAction = aValues.get(position);
-            holder.aIdView.setText(aValues.get(position).id);
-            holder.aContentView.setText(aValues.get(position).content);
+            holder.aIdView.setText(aValues.get(position).getMinute());
+            holder.aContentView.setText(aValues.get(position).getEvent() + " - " + aValues.get(position).getIdPlayer());
 
             holder.aView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    int i = 0;
-                    for(ActionList.Action act : MatchList.getCurrentMatch().getActionList().getACTIONS()) {
-                        if (act.equals(holder.aAction)) {
-                            break;
-                        }
-                        i++;
-                    }
-                    removeAt(i);
-                    return false;
+                    return removeAction(holder.aAction, position);
                 }
             });
         }
 
-        public void removeAt(int position) {
-            String idTeam = MatchList.getCurrentMatch().getActionList().getACTIONS().get(position).idTeam;
-            String details = MatchList.getCurrentMatch().getActionList().getACTIONS().get(position).details;
-            if (details.equals("Goal")) {
-                MatchList.getCurrentMatch().decrementScore(idTeam);
-            } else if (details.equals("OwnGoal")) {
-                MatchList.getCurrentMatch().ownGoalDecrement(idTeam);
+        public boolean removeAction(ActionList.Action action, int position) {
+//            long idTeam = MatchList.getCurrentMatch().getActions().get(idAction).getIdTeam();
+//            ActionList.Action action = ActionList.ACTION_MAP.get(idAction);
+            if (action.getEvent() == ActionList.EventType.GOAL) {
+                MatchList.MATCH_MAP.get(action.getIdMatch()).decrementScore(action.getIdTeam());
+            } else if (action.getEvent() == ActionList.EventType.OWN_GOAL) {
+                MatchList.MATCH_MAP.get(action.getIdMatch()).ownGoalDecrement(action.getIdTeam());
             }
-            MatchList.getCurrentMatch().getActionList().getACTIONS().remove(position);
+            MatchList.MATCH_MAP.get(action.getIdMatch()).getActions().remove(action);
             notifyItemRemoved(position);
+            return true;
         }
 
         @Override

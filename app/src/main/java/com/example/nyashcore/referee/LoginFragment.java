@@ -14,7 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nyashcore.referee.content.MatchList;
-import com.example.nyashcore.referee.content.PlayerTeamList;
+import com.example.nyashcore.referee.content.PlayerList;
+import com.example.nyashcore.referee.content.TeamList;
 import com.github.gorbin.asne.core.SocialNetwork;
 import com.github.gorbin.asne.core.SocialNetworkManager;
 import com.github.gorbin.asne.core.listener.OnLoginCompleteListener;
@@ -176,9 +177,9 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
             vk.setText("Show match list");
             MatchList.MATCHES.clear();
             MatchList.MATCH_MAP.clear();
-            PlayerTeamList.PLAYER_TEAM_MAP.clear();
-            PlayerTeamList.PLAYER_MAP.clear();
-            PlayerTeamList.TEAM_MAP.clear();
+            MatchListActivity.PLAYER_TEAM_MAP.clear();
+            PlayerList.PLAYER_MAP.clear();
+            TeamList.TEAM_MAP.clear();
             logout.setVisibility(View.VISIBLE);
             socialNetwork.requestCurrentPerson();
         }
@@ -240,7 +241,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
 
     private void showMatchList(int networkId){
         if (MatchList.MATCHES.isEmpty()) {
-            HttpsClient.getMatches();
+            HttpsClient.getMatches(LoginActivity.myId);
         }
         Intent intent = new Intent(getActivity(), MatchListActivity.class);
         startActivity(intent);

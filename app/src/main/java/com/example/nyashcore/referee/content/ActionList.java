@@ -5,57 +5,45 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Helper class for providing sample content for user interfaces created by
- * Android template wizards.
- * <p>
- * TODO: Replace all uses of this class before publishing your app.
- */
 public class ActionList {
 
-    /**
-     * An array of matches.
-     */
-    private final List<Action> ACTIONS = new ArrayList<Action>();
+    public final static List<Action> ACTIONS = new ArrayList<>();
+    public final static Map<Long, Action> ACTION_MAP = new HashMap<>();
+    public enum EventType { START, FINISH, GOAL, OWN_GOAL, YELLOW_CARD, RED_CARD }
 
-    /**
-     * A map of sample matches, by ID.
-     */
-    private final Map<String, Action> ACTION_MAP = new HashMap<String, Action>();
-
-    public void addAction(Action action) {
-        ACTIONS.add(action);
-        ACTION_MAP.put(action.id, action);
-    }
-
-    public List<Action> getACTIONS() { return ACTIONS; }
-
-    /**
-     * A match representing a piece of content.
-     */
     public static class Action {
-        public final String id;
-        public final String content;
-        public final String details;
-        public String idTeam;
+        private final long idAction;
+        private final String idMatch;
+        private final String idTeam;
+        private final String idPlayer;
+        private final int minute;
+        private final EventType event;
 
-        public Action(String id, String content, String details, String idTeam) {
-            this.id = id;
-            this.content = content;
-            this.details = details;
+        public Action(String idMatch, String idTeam, String idPlayer, int minute, EventType event) {
+            this.idAction = ACTIONS.size();
+            this.idMatch = idMatch;
             this.idTeam = idTeam;
+            this.idPlayer = idPlayer;
+            this.minute = minute;
+            this.event = event;
+            ACTIONS.add(this);
+            ACTION_MAP.put(idAction, this);
         }
+
+        public long getIdAction() { return this.idAction; }
+
+        public String getIdMatch() { return this.idMatch; }
+
+        public String getIdTeam() { return this.idTeam; }
+
+        public String getIdPlayer() { return this.idPlayer; }
+
+        public int getMinute() { return this.minute; }
+
+        public EventType getEvent() { return this.event; }
 
         public boolean equals(Action act) {
-            if (this.id == act.id && this.content == act.content) {
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return content;
+            return this.idAction == act.idAction;
         }
     }
 }

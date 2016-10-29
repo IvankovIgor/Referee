@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
@@ -39,6 +40,10 @@ public class LoginActivity extends AppCompatActivity implements FragmentManager.
         if(sSettings.contains(APP_PREFERENCES_PORT)) {
             serverPort = sSettings.getString(APP_PREFERENCES_PORT, "443");
         }
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                .permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 //        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
 //        for(int i = 0; i<fingerprints.length;i++)
 //            Log.i("myApp", "Fingerprint:"+fingerprints[i]);
