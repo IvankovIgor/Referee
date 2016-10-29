@@ -25,6 +25,7 @@ import javax.net.ssl.TrustManagerFactory;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -70,18 +71,36 @@ class HttpsClient {
 //        });
     }
 
-    static boolean postAction(ActionList.Action action) {
+    static void postAction(ActionList.Action action) {
 
-        Call<ResponseBody> call = createAPIService().postAction(action.getIdMatch(), action.getIdAction(), action.getEvent());
+        Call<List<String>> call = createAPIService().postAction(action.getIdMatch(), action.getIdAction(), action.getEvent().getIndex());
 
-        try {
-            Response<ResponseBody> responseBody = call.execute();
-            System.out.println(responseBody);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        call.enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                try {
+                    List<String> list = response.body();
+                    for (String str : list) {
+                        System.out.println(str);
+                    }
+                } catch (JsonParseException e) {
+                    e.printStackTrace();
+                }
+            }
 
-        return true;
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+//        try {
+//            Response<ResponseBody> responseBody = call.execute();
+//            return true;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
     }
 
     private static APIService createAPIService() {

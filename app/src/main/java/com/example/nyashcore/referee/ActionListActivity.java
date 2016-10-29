@@ -13,6 +13,7 @@ import android.content.pm.ActivityInfo;
 
 import com.example.nyashcore.referee.content.ActionList;
 import com.example.nyashcore.referee.content.MatchList;
+import com.example.nyashcore.referee.content.PlayerList;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class ActionListActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        assert toolbar != null;
         toolbar.setTitle(getTitle());
 
         View recyclerView = findViewById(R.id.action_list);
@@ -62,8 +64,8 @@ public class ActionListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
             holder.aAction = aValues.get(position);
-            holder.aIdView.setText(aValues.get(position).getMinute());
-            holder.aContentView.setText(aValues.get(position).getEvent() + " - " + aValues.get(position).getIdPlayer());
+            holder.aIdView.setText(String.valueOf(aValues.get(position).getMinute()));
+            holder.aContentView.setText(aValues.get(position).toString());
 
             holder.aView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override

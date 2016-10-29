@@ -34,7 +34,6 @@ public class MatchDetailActivity extends AppCompatActivity {
         btnStartMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println(getIntent().getStringExtra(MatchDetailFragment.ARG_MATCH_ID));
                 MatchList.setCurrentMatchId(getIntent().getStringExtra(MatchDetailFragment.ARG_MATCH_ID));
                 PlayerDetailActivity.number = 0;
                 Intent intent = new Intent(MatchDetailActivity.this, MatchActivity.class);

@@ -112,9 +112,10 @@ public class MatchActivity extends AppCompatActivity {
                 if (currentPeriod < countPeriods + 1) {
                     if (!MatchList.getCurrentMatch().isStarted()) {
                         MatchList.getCurrentMatch().setStarted();
-                        HttpsClient.postAction(new ActionList.Action(MatchList.getCurrentMatchId(), null, null, getTime(), ActionList.EventType.START));
+                        HttpsClient.postAction(new ActionList.Action(MatchList.getCurrentMatchId(), null, null, MatchActivity.getTime(), ActionList.EventType.MATCH_START));
                     }
                     if (isStopped) {
+                        HttpsClient.postAction(new ActionList.Action(MatchList.getCurrentMatchId(), null, null, MatchActivity.getTime(), ActionList.EventType.TIME_START));
                         isStopped = false;
                         if (!isAdditional) {
                             period.setText("Period " + currentPeriod);
@@ -138,6 +139,7 @@ public class MatchActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (currentPeriod < countPeriods + 1) {
                     if (!isStopped) {
+                        HttpsClient.postAction(new ActionList.Action(MatchList.getCurrentMatchId(), null, null, MatchActivity.getTime(), ActionList.EventType.TIME_END));
                         period.setText("Break");
                         isStopped = true;
                         isAdditional = false;
@@ -148,19 +150,7 @@ public class MatchActivity extends AppCompatActivity {
                         additionalChronometer.stop();
                         currentPeriod++;
                         if (currentPeriod > countPeriods) {
-                            try {
-                                PlayerDetailActivity.sendInfo(ActionList.EventType.FINISH);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } catch (KeyStoreException e) {
-                                e.printStackTrace();
-                            } catch (CertificateException e) {
-                                e.printStackTrace();
-                            } catch (NoSuchAlgorithmException e) {
-                                e.printStackTrace();
-                            } catch (KeyManagementException e) {
-                                e.printStackTrace();
-                            }
+                            HttpsClient.postAction(new ActionList.Action(MatchList.getCurrentMatchId(), null, null, MatchActivity.getTime(), ActionList.EventType.MATCH_END));
                             MatchList.getCurrentMatch().setFinished();
                             period.setText("Full time");
                             additionalChronometer.setBase(SystemClock.elapsedRealtime());
@@ -219,7 +209,7 @@ public class MatchActivity extends AppCompatActivity {
     static int getTime() {
         String chronoText = mChronometer.getText().toString();
         String array[] = chronoText.split(":");
-        return Integer.parseInt(array[1]) / 1000 / 60;
+        return Integer.parseInt(array[1]);
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, TeamList.Team team) {

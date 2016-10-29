@@ -51,6 +51,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Button btnGoal = (Button) findViewById(R.id.btn_goal);
+        assert btnGoal != null;
         btnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,6 +63,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         });
 
         Button btnOwnGoal = (Button) findViewById(R.id.btn_own_goal);
+        assert btnOwnGoal != null;
         btnOwnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,6 +75,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         });
 
         Button btnYellow = (Button) findViewById(R.id.btn_yellow);
+        assert btnYellow != null;
         btnYellow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,6 +84,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         });
 
         Button btnRed = (Button) findViewById(R.id.btn_red);
+        assert btnRed != null;
         btnRed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,102 +126,16 @@ public class PlayerDetailActivity extends AppCompatActivity {
                 .setAction("Action", null).show();
             return null;
         }
-//        TeamList.Team team = TeamList.getTeamByPlayerId(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID));
-//        String idUser = TeamList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID));
         String idPlayer = getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID);
         String idTeam = MatchListActivity.PLAYER_TEAM_MAP.get(idPlayer);
         Snackbar.make(view, String.valueOf(event), Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
-        MatchList.getCurrentMatch().getActions().add(new ActionList.Action(MatchList.getCurrentMatch().getIdMatch(), idTeam, idPlayer, MatchActivity.getTime(), event));
-//                String.valueOf(MatchActivity.getTime())+"'", action + " - " +
-//                PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID)).getName(), action, idTeam));
-        try {
-            sendInfo(event);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        }
+
+        HttpsClient.postAction(new ActionList.Action(MatchList.getCurrentMatchId(), idTeam, idPlayer, MatchActivity.getTime(), event));
+
         return idTeam;
     }
 
-    protected static void sendInfo(ActionList.EventType event) throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException, KeyManagementException {
-        String matchId = MatchList.getCurrentMatch().getIdMatch();
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-// From https://www.washington.edu/itconnect/security/ca/load-der.crt
-        InputStream caInput = context.getResources().openRawResource(R.raw.intermediate);
-        Certificate ca;
-        ca = cf.generateCertificate(caInput);
-        try {
-            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
-        } finally {
-            caInput.close();
-        }
-
-// Create a KeyStore containing our trusted CAs
-        String keyStoreType = KeyStore.getDefaultType();
-        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-        keyStore.load(null, null);
-        keyStore.setCertificateEntry("ca", ca);
-
-// Create a TrustManager that trusts the CAs in our KeyStore
-        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-        tmf.init(keyStore);
-
-// Create an SSLContext that uses our TrustManager
-        SSLContext context = SSLContext.getInstance("TLS");
-        context.init(null, tmf.getTrustManagers(), null);
-        try {
-            URL url = new URL("https://" + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/api-referee/" + matchId + "/" + number + "/" + event + "/set-info");
-//            URL url = new URL(path);
-            HttpsURLConnection c = (HttpsURLConnection)url.openConnection();
-            c.setSSLSocketFactory(context.getSocketFactory());
-            c.setRequestMethod("GET");
-            c.setReadTimeout(10000);
-            c.connect();
-            int responseCode = c.getResponseCode();
-            System.out.println("Sending 'POST' request to URL : " + url);
-            System.out.println("Response Code : " + responseCode);
-        } catch (IOException e) {
-            System.out.println(e);
-        }
-        number++;
-    }
-
-//    protected static void sendInfo(String message) {
-//        try {
-//            JSONObject jsonObject = new JSONObject();
-//            jsonObject.put("number", number);
-//            jsonObject.put("data", message);
-//            String matchId = MatchList.getCurrentMatch().getIdMatch();
-//            try {
-//                URL url = new URL("http://185.143.172.172:8080/api-referee/" + matchId + "/set-info");
-//                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//                connection.setRequestMethod("POST");
-//                OutputStream dStream = new BufferedOutputStream(connection.getOutputStream());
-//                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(dStream, "utf-8"));
-//                writer.write(jsonObject.toString());
-//                writer.flush();
-//                writer.close();
-//                int responseCode = connection.getResponseCode();
-//                System.out.println("Sending 'POST' request to URL : " + url);
-//                System.out.println("Post parameters : " + jsonObject);
-//                System.out.println("Response Code : " + responseCode);
-//            } catch (IOException e) {
-//                System.out.println(e);
-//            }
-//        } catch (JSONException e) {
-//            System.out.println(e);
-//        }
-//        number++;
-//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

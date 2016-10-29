@@ -16,5 +16,5 @@ public interface APIService {
     @GET("api-referee/{idUser}/get-my-matches")
     Call<List<MatchList.Match>> getMatches(@Path("idUser") String idUser);
     @GET("api-referee/{idMatch}/{idAction}/{event}/set-info")
-    Call<ResponseBody> postAction(@Path("idMatch") String idMatch, @Path("idAction") long idAction, @Path("event") ActionList.EventType event);
+    Call<List<String>> postAction(@Path("idMatch") String idMatch, @Path("idAction") long idAction, @Path("event") int event);
 }
