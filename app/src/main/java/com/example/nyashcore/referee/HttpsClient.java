@@ -18,6 +18,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -31,6 +32,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 class HttpsClient {
+
+    private static final Logger LOGGER = Logger.getLogger(HttpsClient.class.getName());
 
     static void getMatches(String idUser) {
 
@@ -71,36 +74,27 @@ class HttpsClient {
 //        });
     }
 
-    static void postAction(ActionList.Action action) {
+    static void postAction(final ActionList.Action action) {
 
-        Call<List<String>> call = createAPIService().postAction(action.getIdMatch(), action.getIdAction(), action.getEvent().getIndex());
+        Call<ResponseBody> call = createAPIService().postAction(action.getIdMatch(), action.getIdAction(), action.getEvent().getIndex());
 
-        call.enqueue(new Callback<List<String>>() {
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+            public void onResponse(Call call, Response response) {
                 try {
-                    List<String> list = response.body();
-                    for (String str : list) {
-                        System.out.println(str);
-                    }
+                    int code = response.code();
+                    LOGGER.info("idAction: " + action.getIdAction());
+                    LOGGER.info("response code: " + code);
                 } catch (JsonParseException e) {
                     e.printStackTrace();
                 }
             }
 
             @Override
-            public void onFailure(Call<List<String>> call, Throwable t) {
+            public void onFailure(Call call, Throwable t) {
                 t.printStackTrace();
             }
         });
-
-//        try {
-//            Response<ResponseBody> responseBody = call.execute();
-//            return true;
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
     }
 
     private static APIService createAPIService() {
