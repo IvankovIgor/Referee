@@ -1,4 +1,4 @@
-package com.example.nyashcore.referee.content;
+package com.technopark.ivankov.referee.content;
 
 import java.util.HashMap;
 import java.util.Map;

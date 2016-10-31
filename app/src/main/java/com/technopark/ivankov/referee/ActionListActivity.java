@@ -1,4 +1,4 @@
-package com.example.nyashcore.referee;
+package com.technopark.ivankov.referee;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.content.pm.ActivityInfo;
 
-import com.example.nyashcore.referee.content.ActionList;
-import com.example.nyashcore.referee.content.MatchList;
+import com.technopark.ivankov.referee.content.ActionList;
+import com.technopark.ivankov.referee.content.MatchList;
 
 import java.util.List;
 

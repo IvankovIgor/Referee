@@ -1,4 +1,4 @@
-package com.example.nyashcore.referee;
+package com.technopark.ivankov.referee;
 
 import android.app.Activity;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.nyashcore.referee.content.PlayerList;
+import com.technopark.ivankov.referee.content.PlayerList;
 
 /**
  * A fragment representing a single Player detail screen.

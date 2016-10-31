@@ -1,4 +1,4 @@
-package com.example.nyashcore.referee;
+package com.technopark.ivankov.referee;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -11,7 +11,7 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.widget.Button;
 
-import com.example.nyashcore.referee.content.MatchList;
+import com.technopark.ivankov.referee.content.MatchList;
 
 /**
  * An activity representing a single Match detail screen. This

@@ -1,13 +1,13 @@
-package com.example.nyashcore.referee.content;
+package com.technopark.ivankov.referee.content;
 
-import com.example.nyashcore.referee.MatchListActivity;
+import com.technopark.ivankov.referee.MatchListActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.nyashcore.referee.content.PlayerList.PLAYER_MAP;
+import static com.technopark.ivankov.referee.content.PlayerList.PLAYER_MAP;
 
 public class TeamList {
 

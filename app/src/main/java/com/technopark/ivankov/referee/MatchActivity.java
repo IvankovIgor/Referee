@@ -1,4 +1,4 @@
-package com.example.nyashcore.referee;
+package com.technopark.ivankov.referee;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,10 +18,10 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 
-import com.example.nyashcore.referee.content.ActionList;
-import com.example.nyashcore.referee.content.MatchList;
-import com.example.nyashcore.referee.content.PlayerList;
-import com.example.nyashcore.referee.content.TeamList;
+import com.technopark.ivankov.referee.content.ActionList;
+import com.technopark.ivankov.referee.content.MatchList;
+import com.technopark.ivankov.referee.content.PlayerList;
+import com.technopark.ivankov.referee.content.TeamList;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.nyashcore.referee;
+package com.technopark.ivankov.referee;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,9 +13,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.nyashcore.referee.content.MatchList;
-import com.example.nyashcore.referee.content.PlayerList;
-import com.example.nyashcore.referee.content.TeamList;
+import com.technopark.ivankov.referee.content.MatchList;
+import com.technopark.ivankov.referee.content.PlayerList;
+import com.technopark.ivankov.referee.content.TeamList;
 import com.github.gorbin.asne.core.SocialNetwork;
 import com.github.gorbin.asne.core.SocialNetworkManager;
 import com.github.gorbin.asne.core.listener.OnLoginCompleteListener;

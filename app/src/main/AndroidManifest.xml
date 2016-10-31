@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.nyashcore.referee">
+    package="com.technopark.ivankov.referee">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".LoginActivity"
+            android:name="com.technopark.ivankov.referee.LoginActivity"
             android:label="@string/title_login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,33 +26,33 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MatchListActivity"
+            android:name="com.technopark.ivankov.referee.MatchListActivity"
             android:label="@string/title_match_list"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MatchDetailActivity"
+            android:name="com.technopark.ivankov.referee.MatchDetailActivity"
             android:label="@string/title_match_detail"
-            android:parentActivityName=".MatchListActivity"
+            android:parentActivityName="com.technopark.ivankov.referee.MatchListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.nyashcore.referee.MatchListActivity" />
+                android:value="com.technopark.ivankov.referee.MatchListActivity" />
         </activity>
         <activity
-            android:name=".MatchActivity"
+            android:name="com.technopark.ivankov.referee.MatchActivity"
             android:label="@string/title_match"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".PlayerDetailActivity"
+            android:name="com.technopark.ivankov.referee.PlayerDetailActivity"
             android:label="@string/title_player_detail"
-            android:parentActivityName=".MatchActivity"
+            android:parentActivityName="com.technopark.ivankov.referee.MatchActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.nyashcore.referee.MatchActivity" />
+                android:value="com.technopark.ivankov.referee.MatchActivity" />
         </activity>
         <activity
-            android:name=".ActionListActivity"
+            android:name="com.technopark.ivankov.referee.ActionListActivity"
             android:label="@string/title_action_list"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

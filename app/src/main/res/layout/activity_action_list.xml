@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.example.nyashcore.referee.ActionListActivity">
+    tools:context="com.technopark.ivankov.referee.ActionListActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -43,7 +43,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 app:layoutManager="LinearLayoutManager"
-                tools:context="com.example.nyashcore.referee.ActionListActivity"
+                tools:context="com.technopark.ivankov.referee.ActionListActivity"
                 tools:listitem="@layout/action_list_content" />
 
         </FrameLayout>

@@ -1,6 +1,6 @@
-package com.example.nyashcore.referee.content;
+package com.technopark.ivankov.referee.content;
 
-import com.example.nyashcore.referee.MatchActivity;
+import com.technopark.ivankov.referee.MatchActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;

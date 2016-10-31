@@ -1,11 +1,11 @@
-package com.example.nyashcore.referee;
+package com.technopark.ivankov.referee;
 
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 
-import com.example.nyashcore.referee.content.ActionList;
-import com.example.nyashcore.referee.content.MatchList;
+import com.technopark.ivankov.referee.content.ActionList;
+import com.technopark.ivankov.referee.content.MatchList;
 import com.google.gson.JsonParseException;
 
 import java.io.IOException;

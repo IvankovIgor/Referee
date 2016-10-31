@@ -1,10 +1,9 @@
-package com.example.nyashcore.referee.content;
+package com.technopark.ivankov.referee.content;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 public class ActionList {
 
