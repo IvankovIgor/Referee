@@ -13,17 +13,10 @@ import android.content.pm.ActivityInfo;
 
 import com.example.nyashcore.referee.content.ActionList;
 import com.example.nyashcore.referee.content.MatchList;
-import com.example.nyashcore.referee.content.PlayerList;
 
 import java.util.List;
 
 public class ActionListActivity extends AppCompatActivity {
-
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
-//    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +69,6 @@ public class ActionListActivity extends AppCompatActivity {
         }
 
         public boolean removeAction(ActionList.Action action, int position) {
-//            long idTeam = MatchList.getCurrentMatch().getActions().get(idAction).getIdTeam();
-//            ActionList.Action action = ActionList.ACTION_MAP.get(idAction);
             if (action.getEvent() == ActionList.EventType.GOAL) {
                 MatchList.MATCH_MAP.get(action.getIdMatch()).decrementScore(action.getIdTeam());
             } else if (action.getEvent() == ActionList.EventType.OWN_GOAL) {

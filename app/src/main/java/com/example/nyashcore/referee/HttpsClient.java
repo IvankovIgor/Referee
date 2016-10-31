@@ -36,7 +36,6 @@ class HttpsClient {
     private static final Logger LOGGER = Logger.getLogger(HttpsClient.class.getName());
 
     static void getMatches(String idUser) {
-
         Call<List<MatchList.Match>> call = createAPIService().getMatches(idUser);
 
         Response<List<MatchList.Match>> response;

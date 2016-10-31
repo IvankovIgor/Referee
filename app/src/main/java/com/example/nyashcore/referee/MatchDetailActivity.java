@@ -30,7 +30,7 @@ public class MatchDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
-        Button btnStartMatch = (Button) findViewById(R.id.start_match);
+        Button btnStartMatch = (Button) findViewById(R.id.to_match);
         btnStartMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

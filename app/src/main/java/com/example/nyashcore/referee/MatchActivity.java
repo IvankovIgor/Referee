@@ -2,7 +2,10 @@ package com.example.nyashcore.referee;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -12,22 +15,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Chronometer;
-import android.os.SystemClock;
-import android.os.Vibrator;
-import android.content.pm.ActivityInfo;
+import android.widget.TextView;
 
 import com.example.nyashcore.referee.content.ActionList;
 import com.example.nyashcore.referee.content.MatchList;
-import com.example.nyashcore.referee.content.TeamList;
 import com.example.nyashcore.referee.content.PlayerList;
+import com.example.nyashcore.referee.content.TeamList;
 
-import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,11 +36,6 @@ import java.util.List;
  */
 public class MatchActivity extends AppCompatActivity {
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
-    private boolean mTwoPane;
     final private int vibrateTime = 500;
     private static Chronometer mChronometer;
     private static Chronometer additionalChronometer;
@@ -68,6 +58,7 @@ public class MatchActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        assert toolbar != null;
         toolbar.setTitle(getTitle());
 
         if (!MatchList.getCurrentMatch().isStarted()) {
@@ -89,13 +80,11 @@ public class MatchActivity extends AppCompatActivity {
         firstTeamName.setText(MatchList.getCurrentMatch().getTeam1().getName());
         assert secondTeamName != null;
         secondTeamName.setText(MatchList.getCurrentMatch().getTeam2().getName());
-//        timePeriod = MatchList.getCurrentMatch().getMatchConfig().getTimePeriod() * 60 * 1000;
+        timePeriod = MatchList.getCurrentMatch().getMatchConfig().getTimePeriod() * 60 * 1000;
         timePeriod = 3000L;
         countPeriods = MatchList.getCurrentMatch().getMatchConfig().getCountPeriods();
-//        countPeriods = 3;
         score.setText(MatchList.getCurrentMatch().getTeam1Score() + ":" + MatchList.getCurrentMatch().getTeam2Score());
         refresh();
-//        System.out.println(MatchList.getCurrentMatch().getIdMatch());
 
         actions.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,6 +107,7 @@ public class MatchActivity extends AppCompatActivity {
                         HttpsClient.postAction(new ActionList.Action(MatchList.getCurrentMatchId(), null, null, MatchActivity.getTime(), ActionList.EventType.TIME_START));
                         isStopped = false;
                         if (!isAdditional) {
+                            assert period != null;
                             period.setText("Period " + currentPeriod);
                             mChronometer.setBase(SystemClock.elapsedRealtime() - timeWhenStopped);
                             mChronometer.start();
@@ -140,6 +130,7 @@ public class MatchActivity extends AppCompatActivity {
                 if (currentPeriod < countPeriods + 1) {
                     if (!isStopped) {
                         HttpsClient.postAction(new ActionList.Action(MatchList.getCurrentMatchId(), null, null, MatchActivity.getTime(), ActionList.EventType.TIME_END));
+                        assert period != null;
                         period.setText("Break");
                         isStopped = true;
                         isAdditional = false;
@@ -192,14 +183,6 @@ public class MatchActivity extends AppCompatActivity {
         View recyclerView2 = findViewById(R.id.player_list2);
         assert recyclerView2 != null;
         setupRecyclerView((RecyclerView) recyclerView2, MatchList.getCurrentMatch().getTeam2());
-
-        if (findViewById(R.id.player_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
-        }
     }
 
     public static void refresh() {
@@ -241,21 +224,11 @@ public class MatchActivity extends AppCompatActivity {
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mTwoPane) {
-                        Bundle arguments = new Bundle();
-                        arguments.putString(PlayerDetailFragment.ARG_PLAYER_ID, holder.mPlayer.getIdUser());
-                        PlayerDetailFragment fragment = new PlayerDetailFragment();
-                        fragment.setArguments(arguments);
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.player_detail_container, fragment)
-                                .commit();
-                    } else {
-                        Context context = v.getContext();
-                        Intent intent = new Intent(context, PlayerDetailActivity.class);
-                        intent.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, holder.mPlayer.getIdUser());
+                Context context = v.getContext();
+                Intent intent = new Intent(context, PlayerDetailActivity.class);
+                intent.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, holder.mPlayer.getIdUser());
 
-                        context.startActivity(intent);
-                    }
+                context.startActivity(intent);
                 }
             });
         }

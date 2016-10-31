@@ -146,6 +146,20 @@ public class MatchList {
             }
             MatchActivity.refresh();
         }
+
+        @Override
+        public String toString() {
+            String result = idMatch + "\n";
+            result += federation + "\n";
+            result += tournament + "\n";
+            result += stage + "\n";
+            result += matchConfig.countPeriods + "\n";
+            result += matchConfig.timePeriod + "\n";
+            result += team1.getName() + "\n";
+            result += team2.getName() + "\n";
+
+            return result;
+        }
     }
 
     public static class MatchConfig {

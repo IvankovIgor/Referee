@@ -40,17 +40,17 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <Button
-            android:text="start match"
+            android:text="@string/button_to_match"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/start_match" />
+            android:id="@+id/to_match" />
 
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/match_detail_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:layout_below="@+id/start_match">
+            android:layout_below="@+id/to_match">
 
         </android.support.v4.widget.NestedScrollView>
 

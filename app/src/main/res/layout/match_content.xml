@@ -9,7 +9,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat"
-        android:text="11"
         android:layout_margin="10dp" />
 
     <TextView
@@ -17,6 +16,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:text="1111"
         android:layout_marginTop="10dp" />
 </LinearLayout>
