@@ -11,8 +11,6 @@ import android.widget.TextView;
 
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.MatchList;
-import com.technopark.ivankov.referee.match_list.MatchDetailActivity;
-import com.technopark.ivankov.referee.match_list.MatchListActivity;
 
 /**
  * A fragment representing a single Match detail screen.
@@ -25,7 +23,7 @@ public class MatchDetailFragment extends Fragment {
      * The fragment argument representing the match ID that this fragment
      * represents.
      */
-    public static final String ARG_MATCH_ID = "match_id";
+    public static final String MATCH_ID = "com.technopark.ivankov.referee.match_list.MATCH_ID";
 
     /**
      * The match content this fragment is presenting.
@@ -43,11 +41,11 @@ public class MatchDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_MATCH_ID)) {
+        if (getArguments().containsKey(MATCH_ID)) {
             // Load the match content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mMatch = MatchList.MATCH_MAP.get(getArguments().getString(ARG_MATCH_ID));
+            mMatch = MatchList.MATCH_MAP.get(getArguments().getString(MATCH_ID));
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);

@@ -229,7 +229,7 @@ public class MatchActivity extends AppCompatActivity {
                 public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, PlayerDetailActivity.class);
-                intent.putExtra(PlayerDetailFragment.ARG_PLAYER_ID, holder.mPlayer.getIdUser());
+                intent.putExtra(PlayerDetailFragment.PLAYER_ID, holder.mPlayer.getIdUser());
 
                 context.startActivity(intent);
                 }

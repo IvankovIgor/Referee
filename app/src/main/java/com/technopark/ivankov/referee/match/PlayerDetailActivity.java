@@ -97,8 +97,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(PlayerDetailFragment.ARG_PLAYER_ID,
-                    getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID));
+            arguments.putString(PlayerDetailFragment.PLAYER_ID,
+                    getIntent().getStringExtra(PlayerDetailFragment.PLAYER_ID));
             PlayerDetailFragment fragment = new PlayerDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -113,7 +113,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
                 .setAction("Action", null).show();
             return null;
         }
-        String idPlayer = getIntent().getStringExtra(PlayerDetailFragment.ARG_PLAYER_ID);
+        String idPlayer = getIntent().getStringExtra(PlayerDetailFragment.PLAYER_ID);
         String idTeam = MatchListActivity.PLAYER_TEAM_MAP.get(idPlayer);
         Snackbar.make(view, String.valueOf(event), Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();

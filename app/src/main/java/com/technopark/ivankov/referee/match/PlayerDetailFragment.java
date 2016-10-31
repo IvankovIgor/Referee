@@ -11,21 +11,17 @@ import android.widget.TextView;
 
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.PlayerList;
-import com.technopark.ivankov.referee.match.MatchActivity;
-import com.technopark.ivankov.referee.match.PlayerDetailActivity;
 
 /**
  * A fragment representing a single Player detail screen.
- * This fragment is either contained in a {@link MatchActivity}
- * in two-pane mode (on tablets) or a {@link PlayerDetailActivity}
- * on handsets.
+ * This fragment is contained in a {@link PlayerDetailActivity}.
  */
 public class PlayerDetailFragment extends Fragment {
     /**
      * The fragment argument representing the player ID that this fragment
      * represents.
      */
-    public static final String ARG_PLAYER_ID = "player_id";
+    public static final String PLAYER_ID = "com.technopark.ivankov.referee.match.PLAYER_ID";
 
     /**
      * The player content this fragment is presenting.
@@ -43,11 +39,11 @@ public class PlayerDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_PLAYER_ID)) {
+        if (getArguments().containsKey(PLAYER_ID)) {
             // Load the player content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mPlayer = PlayerList.PLAYER_MAP.get(getArguments().getString(ARG_PLAYER_ID));
+            mPlayer = PlayerList.PLAYER_MAP.get(getArguments().getString(PLAYER_ID));
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);

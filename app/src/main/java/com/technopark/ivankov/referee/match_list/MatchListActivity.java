@@ -78,7 +78,7 @@ public class MatchListActivity extends AppCompatActivity {
                 public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, MatchDetailActivity.class);
-                intent.putExtra(MatchDetailFragment.ARG_MATCH_ID, holder.mMatch.getIdMatch());
+                intent.putExtra(MatchDetailFragment.MATCH_ID, holder.mMatch.getIdMatch());
 
                 context.startActivity(intent);
                 }

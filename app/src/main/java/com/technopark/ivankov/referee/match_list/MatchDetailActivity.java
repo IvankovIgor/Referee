@@ -37,7 +37,7 @@ public class MatchDetailActivity extends AppCompatActivity {
         btnStartMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MatchList.setCurrentMatchId(getIntent().getStringExtra(MatchDetailFragment.ARG_MATCH_ID));
+                MatchList.setCurrentMatchId(getIntent().getStringExtra(MatchDetailFragment.MATCH_ID));
                 PlayerDetailActivity.number = 0;
                 Intent intent = new Intent(MatchDetailActivity.this, MatchActivity.class);
                 startActivity(intent);
@@ -63,8 +63,8 @@ public class MatchDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(MatchDetailFragment.ARG_MATCH_ID,
-                    getIntent().getStringExtra(MatchDetailFragment.ARG_MATCH_ID));
+            arguments.putString(MatchDetailFragment.MATCH_ID,
+                    getIntent().getStringExtra(MatchDetailFragment.MATCH_ID));
             MatchDetailFragment fragment = new MatchDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
