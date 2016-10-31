@@ -1,4 +1,4 @@
-package com.technopark.ivankov.referee;
+package com.technopark.ivankov.referee.login;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.technopark.ivankov.referee.R;
 
 
 public class LoginActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
@@ -20,7 +21,7 @@ public class LoginActivity extends AppCompatActivity implements FragmentManager.
     public static final String APP_PREFERENCES_IP = "IP";
     public static final String APP_PREFERENCES_PORT = "Port";
     public static SharedPreferences sSettings;
-    static Context context;
+    public static Context context;
     public static String userName;
     public static String userId;
     public static String serverIP;

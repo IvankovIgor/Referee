@@ -103,4 +103,6 @@
     <string name="button_end_time">end time</string>
     <string name="button_actions">actions</string>
     <string name="button_logout">Logout</string>
+    <string name="button_login_false">Login via vk</string>
+    <string name="button_login_true">Show match list</string>
 </resources>

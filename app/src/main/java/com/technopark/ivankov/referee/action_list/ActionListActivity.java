@@ -1,4 +1,4 @@
-package com.technopark.ivankov.referee;
+package com.technopark.ivankov.referee.action_list;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,8 +11,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.content.pm.ActivityInfo;
 
+import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.ActionList;
 import com.technopark.ivankov.referee.content.MatchList;
+import com.technopark.ivankov.referee.match.MatchActivity;
 
 import java.util.List;
 
@@ -76,6 +78,7 @@ public class ActionListActivity extends AppCompatActivity {
             }
             MatchList.MATCH_MAP.get(action.getIdMatch()).getActions().remove(action);
             notifyItemRemoved(position);
+            MatchActivity.refresh();
             return true;
         }
 

@@ -1,7 +1,5 @@
 package com.technopark.ivankov.referee.content;
 
-import com.technopark.ivankov.referee.MatchActivity;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -117,7 +115,6 @@ public class MatchList {
             } else {
                 team2Score++;
             }
-            MatchActivity.refresh();
         }
 
         public void decrementScore(String idTeam) {
@@ -126,7 +123,6 @@ public class MatchList {
             } else {
                 team2Score--;
             }
-            MatchActivity.refresh();
         }
 
         public void ownGoal(String idTeam) {
@@ -135,7 +131,6 @@ public class MatchList {
             } else {
                 team2Score++;
             }
-            MatchActivity.refresh();
         }
 
         public void ownGoalDecrement(String idTeam) {
@@ -144,7 +139,6 @@ public class MatchList {
             } else {
                 team2Score--;
             }
-            MatchActivity.refresh();
         }
 
         @Override

@@ -6,4 +6,4 @@
     android:layout_height="match_parent"
     android:padding="16dp"
     android:textIsSelectable="true"
-    tools:context="com.technopark.ivankov.referee.PlayerDetailFragment" />
+    tools:context="com.technopark.ivankov.referee.match.PlayerDetailFragment" />

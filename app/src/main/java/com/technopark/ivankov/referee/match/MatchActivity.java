@@ -1,4 +1,4 @@
-package com.technopark.ivankov.referee;
+package com.technopark.ivankov.referee.match;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,9 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 
+import com.technopark.ivankov.referee.action_list.ActionListActivity;
+import com.technopark.ivankov.referee.https_client.HttpsClient;
+import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.ActionList;
 import com.technopark.ivankov.referee.content.MatchList;
 import com.technopark.ivankov.referee.content.PlayerList;

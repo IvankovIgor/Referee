@@ -1,4 +1,4 @@
-package com.technopark.ivankov.referee;
+package com.technopark.ivankov.referee.match;
 
 import android.app.Activity;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.PlayerList;
+import com.technopark.ivankov.referee.match.MatchActivity;
+import com.technopark.ivankov.referee.match.PlayerDetailActivity;
 
 /**
  * A fragment representing a single Player detail screen.

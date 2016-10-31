@@ -1,6 +1,6 @@
 package com.technopark.ivankov.referee.content;
 
-import com.technopark.ivankov.referee.MatchListActivity;
+import com.technopark.ivankov.referee.match_list.MatchListActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ public class TeamList {
             TEAM_MAP.put(idTeam, this);
         }
 
-        String getIdTeam() {
+        public String getIdTeam() {
             return idTeam;
         }
 

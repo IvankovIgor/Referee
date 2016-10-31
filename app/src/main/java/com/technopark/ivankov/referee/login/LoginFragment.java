@@ -1,4 +1,4 @@
-package com.technopark.ivankov.referee;
+package com.technopark.ivankov.referee.login;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +13,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.technopark.ivankov.referee.https_client.HttpsClient;
+import com.technopark.ivankov.referee.match_list.MatchListActivity;
+import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.MatchList;
 import com.technopark.ivankov.referee.content.PlayerList;
 import com.technopark.ivankov.referee.content.TeamList;
@@ -41,7 +44,6 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
      */
     private Button vk;
     private Button logout;
-    private Button resetIP;
     private EditText editIP;
     private EditText editPort;
     private TextView curIP;
@@ -56,13 +58,13 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
 //        ((LoginActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
         vk = (Button) rootView.findViewById(R.id.vk);
-        vk.setText("Login via vk");
+        vk.setText(R.string.button_login_true);
         vk.setOnClickListener(loginClick);
 
         logout = (Button) rootView.findViewById(R.id.logout);
         logout.setOnClickListener(logoutClick);
 
-        resetIP = (Button) rootView.findViewById(R.id.resetIP);
+        Button resetIP = (Button) rootView.findViewById(R.id.resetIP);
         resetIP.setOnClickListener(new View.OnClickListener()
             {
                 @Override
@@ -174,7 +176,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
 
     private void initSocialNetwork(SocialNetwork socialNetwork){
         if(socialNetwork.isConnected()){
-            vk.setText("Show match list");
+            vk.setText(R.string.button_login_true);
             MatchList.MATCHES.clear();
             MatchList.MATCH_MAP.clear();
             MatchListActivity.PLAYER_TEAM_MAP.clear();
@@ -199,17 +201,13 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
     private View.OnClickListener loginClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            int networkId = 0;
+            int networkId;
             networkId = VkSocialNetwork.ID;
             SocialNetwork socialNetwork = mSocialNetworkManager.getSocialNetwork(networkId);
             if(!socialNetwork.isConnected()) {
-                if(networkId != 0) {
-                    socialNetwork.requestLogin();
-                } else {
-                    Toast.makeText(getActivity(), "Wrong networkId", Toast.LENGTH_LONG).show();
-                }
+                socialNetwork.requestLogin();
             } else {
-                showMatchList(socialNetwork.getID());
+                showMatchList();
             }
         }
     };
@@ -217,7 +215,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
     private View.OnClickListener logoutClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            vk.setText("Login via vk");
+            vk.setText(R.string.button_login_false);
             ((LoginActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
             logout.setVisibility(View.GONE);
             LoginActivity.userId = null;
@@ -239,7 +237,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         Toast.makeText(getActivity(), "ERROR: " + errorMessage, Toast.LENGTH_LONG).show();
     }
 
-    private void showMatchList(int networkId){
+    private void showMatchList(){
         if (MatchList.MATCHES.isEmpty()) {
             HttpsClient.getMatches(LoginActivity.myId);
         }

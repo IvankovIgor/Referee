@@ -1,12 +1,14 @@
-package com.technopark.ivankov.referee;
+package com.technopark.ivankov.referee.https_client;
 
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 
+import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.ActionList;
 import com.technopark.ivankov.referee.content.MatchList;
 import com.google.gson.JsonParseException;
+import com.technopark.ivankov.referee.login.LoginActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,11 +33,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-class HttpsClient {
+public class HttpsClient {
 
     private static final Logger LOGGER = Logger.getLogger(HttpsClient.class.getName());
 
-    static void getMatches(String idUser) {
+    public static void getMatches(String idUser) {
         Call<List<MatchList.Match>> call = createAPIService().getMatches(idUser);
 
         Response<List<MatchList.Match>> response;
@@ -73,7 +75,7 @@ class HttpsClient {
 //        });
     }
 
-    static void postAction(final ActionList.Action action) {
+    public static void postAction(final ActionList.Action action) {
 
         Call<ResponseBody> call = createAPIService().postAction(action.getIdMatch(), action.getIdAction(), action.getEvent().getIndex());
 

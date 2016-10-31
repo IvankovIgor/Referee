@@ -1,4 +1,4 @@
-package com.technopark.ivankov.referee;
+package com.technopark.ivankov.referee.match_list;
 
 import android.app.Activity;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.MatchList;
+import com.technopark.ivankov.referee.match_list.MatchDetailActivity;
+import com.technopark.ivankov.referee.match_list.MatchListActivity;
 
 /**
  * A fragment representing a single Match detail screen.

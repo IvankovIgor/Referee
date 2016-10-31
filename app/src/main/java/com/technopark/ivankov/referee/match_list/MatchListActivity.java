@@ -1,4 +1,4 @@
-package com.technopark.ivankov.referee;
+package com.technopark.ivankov.referee.match_list;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.content.pm.ActivityInfo;
 
+import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.MatchList;
 
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package com.technopark.ivankov.referee;
+package com.technopark.ivankov.referee.match;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -10,8 +10,11 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import com.technopark.ivankov.referee.https_client.HttpsClient;
+import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.ActionList;
 import com.technopark.ivankov.referee.content.MatchList;
+import com.technopark.ivankov.referee.match_list.MatchListActivity;
 
 /**
  * An activity representing a single Player detail screen. This
@@ -21,7 +24,7 @@ import com.technopark.ivankov.referee.content.MatchList;
  */
 public class PlayerDetailActivity extends AppCompatActivity {
 
-    static int number = 0;
+    public static int number = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
                 String idTeam = addAction(view, ActionList.EventType.GOAL);
                 if (idTeam != null) {
                     MatchList.getCurrentMatch().incrementScore(idTeam);
+                    MatchActivity.refresh();
                 }
             }
         });
@@ -52,6 +56,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
                 String idTeam = addAction(view, ActionList.EventType.OWN_GOAL);
                 if (idTeam != null) {
                     MatchList.getCurrentMatch().ownGoal(idTeam);
+                    MatchActivity.refresh();
                 }
             }
         });
