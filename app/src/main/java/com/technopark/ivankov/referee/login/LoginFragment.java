@@ -25,6 +25,7 @@ import com.github.gorbin.asne.core.listener.OnLoginCompleteListener;
 import com.github.gorbin.asne.core.listener.OnRequestSocialPersonCompleteListener;
 import com.github.gorbin.asne.core.persons.SocialPerson;
 import com.github.gorbin.asne.vk.VkSocialNetwork;
+import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKScope;
 import com.vk.sdk.VKSdk;
 
@@ -58,7 +59,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
 
         vk = (Button) rootView.findViewById(R.id.vk);
-        vk.setText(R.string.button_login_true);
+        vk.setText(R.string.button_login_false);
         vk.setOnClickListener(loginClick);
 
         logout = (Button) rootView.findViewById(R.id.logout);
@@ -115,12 +116,16 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
                 }
             }
         }
+        if (VKAccessToken.currentToken() != null) {
+            LoginActivity.myId = Integer.parseInt(VKAccessToken.currentToken().userId);
+            vk.setText(R.string.button_login_true);
+        }
         return rootView;
     }
 
     @Override
     public void onRequestSocialPersonSuccess(int i, SocialPerson socialPerson) {
-        LoginActivity.userId = socialPerson.id;
+        LoginActivity.myId = Integer.parseInt(socialPerson.id);
         LoginActivity.userName = socialPerson.name;
         ((LoginActivity)getActivity()).getSupportActionBar().setTitle(LoginActivity.userName);
     }
