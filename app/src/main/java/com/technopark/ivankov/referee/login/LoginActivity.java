@@ -25,7 +25,8 @@ public class LoginActivity extends AppCompatActivity implements FragmentManager.
     public static String userId;
     public static String serverIP;
     public static String serverPort;
-    public static int myId = 4189816;
+//    public static int myId = 4189816;
+    public static int myId = 52057885;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,5 +96,15 @@ public class LoginActivity extends AppCompatActivity implements FragmentManager.
         if (fragment != null) {
             fragment.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    public static class User {
+        private int idVk;
+
+        public User(int idVk) { this.idVk = idVk; }
+
+        public int getIdVk() { return idVk; }
+
+        public void setIdVk(int idVk) { this.idVk = idVk; }
     }
 }

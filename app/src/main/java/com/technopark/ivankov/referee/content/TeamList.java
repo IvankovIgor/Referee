@@ -13,14 +13,12 @@ public class TeamList {
 
     public static class Team {
         private final String name;
-        private final String logo;
         private final String idTeam;
         private final List<PlayerList.Player> players;
         private final Map<String, Integer> numberMap;
 
         Team(Team team) {
             name = team.getName();
-            logo = team.getLogo();
             idTeam = team.getIdTeam();
             players = new ArrayList<>();
             numberMap = new HashMap<>();
@@ -30,7 +28,8 @@ public class TeamList {
                 } else {
                     players.add(new PlayerList.Player(player));
                 }
-                numberMap.put(player.getIdUser(), player.getNumber());
+//                numberMap.put(player.getIdUser(), player.getNumber());
+                numberMap.put(player.getIdUser(), 1);
             }
             TEAM_MAP.put(idTeam, this);
         }
@@ -41,10 +40,6 @@ public class TeamList {
 
         public String getName() {
             return name;
-        }
-
-        public String getLogo() {
-            return logo;
         }
 
         public List<PlayerList.Player> getPlayers() { return players; }

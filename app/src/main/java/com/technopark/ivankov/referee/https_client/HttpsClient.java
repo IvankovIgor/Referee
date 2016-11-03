@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.Action;
@@ -27,14 +26,17 @@ import java.util.logging.Logger;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
+import okhttp3.Headers;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class HttpsClient {
 
@@ -42,14 +44,16 @@ public class HttpsClient {
 
     public static void getMatches(int idVk) {
         Call<List<MatchList.Match>> call;
-        JsonObject param = new JsonObject();
-        param.addProperty("idVk", idVk);
-        call = createAPIService().getMatches(param);
+//        JsonObject param = new JsonObject();
+//        param.addProperty("idVk", idVk);
+        call = createAPIService().getMatches(new LoginActivity.User(idVk));
+
         Response<List<MatchList.Match>> response;
         try {
             response = call.execute();
-            LOGGER.info(String.valueOf(call.request().body().contentLength()));
             try {
+//                checkRequestContent(call.request());
+//                checkResponseContent(response);
                 List<MatchList.Match> list = response.body();
                 for (int i = 0; i < list.size(); i++) {
                     new MatchList.Match(list.get(i));
@@ -65,11 +69,13 @@ public class HttpsClient {
 //            @Override
 //            public void onResponse(Call<List<MatchList.Match>> call, Response<List<MatchList.Match>> response) {
 //                try {
+//                    checkRequestContent(call.request());
+//                    checkResponseContent(response);
 //                    List<MatchList.Match> list = response.body();
 //                    for (int i = 0; i < list.size(); i++) {
 //                        new MatchList.Match(list.get(i));
 //                    }
-//                } catch (JsonParseException e) {
+//                } catch (JsonParseException | NullPointerException e) {
 //                    e.printStackTrace();
 //                }
 //            }
@@ -89,8 +95,8 @@ public class HttpsClient {
             @Override
             public void onResponse(Call call, Response response) {
                 try {
-                    LOGGER.info("request body: " + call.request().body());
-                    LOGGER.info("response code: " + response.code());
+//                    checkRequestContent(call.request());
+//                    checkResponseContent(response);
                 } catch (JsonParseException e) {
                     e.printStackTrace();
                 }
@@ -116,6 +122,32 @@ public class HttpsClient {
                 .build();
 
         return retrofit.create(APIService.class);
+    }
+
+    private static void checkRequestContent(Request request) {
+        try {
+            Headers requestHeaders = request.headers();
+            LOGGER.info("Headers: " + requestHeaders.toString());
+            HttpUrl requestUrl = request.url();
+            LOGGER.info("HttpUrl: " + requestUrl.toString());
+            RequestBody requestBody = request.body();
+            LOGGER.info("RequestBody: " + requestBody.toString());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void checkResponseContent(Response response) {
+        try {
+            Headers responseHeaders = response.headers();
+            LOGGER.info("Headers: " + responseHeaders.toString());
+            Integer responseCode = response.code();
+            LOGGER.info("ResponseCode: " + responseCode.toString());
+            Object responseBody = response.body();
+            LOGGER.info("ResponseBody: " + responseBody.toString());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

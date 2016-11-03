@@ -10,14 +10,12 @@ public class PlayerList {
     public static class Player {
         private final String idUser;
         private final String name;
-        private final String image;
-        private final Integer number;
+//        private final Integer number;
 
         Player(Player player) {
             idUser = player.getIdUser();
             name = player.getName();
-            image = player.getImage();
-            number = player.getNumber();
+//            number = player.getNumber();
             PLAYER_MAP.put(idUser, this);
         }
 
@@ -25,8 +23,6 @@ public class PlayerList {
 
         public String getName() { return name; }
 
-        public String getImage() { return image; }
-
-        public Integer getNumber() { return number; }
+//        public Integer getNumber() { return number; }
     }
 }

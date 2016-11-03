@@ -238,6 +238,9 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
     }
 
     private void showMatchList() {
+        if (MatchList.MATCHES.isEmpty()) {
+            HttpsClient.getMatches(LoginActivity.myId);
+        }
         Intent intent = new Intent(getActivity(), MatchListActivity.class);
         startActivity(intent);
 //        ProfileFragment profile = ProfileFragment.newInstance(networkId);

@@ -15,8 +15,6 @@ import android.content.pm.ActivityInfo;
 
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.MatchList;
-import com.technopark.ivankov.referee.https_client.HttpsClient;
-import com.technopark.ivankov.referee.login.LoginActivity;
 
 import java.util.List;
 
@@ -40,10 +38,6 @@ public class MatchListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         assert toolbar != null;
         toolbar.setTitle(getTitle());
-
-        if (MatchList.MATCHES.isEmpty()) {
-            HttpsClient.getMatches(LoginActivity.myId);
-        }
 
         View recyclerView = findViewById(R.id.match_list);
         assert recyclerView != null;
