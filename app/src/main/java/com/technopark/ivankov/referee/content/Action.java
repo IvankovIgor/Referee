@@ -6,15 +6,15 @@ public class Action {
     private final String idTeam;
     private final String idPlayer;
     private final int minute;
-    private final EventType event;
+    private final EventType idEvent;
 
-    public Action(String idMatch, String idTeam, String idPlayer, int minute, EventType event) {
+    public Action(String idMatch, String idTeam, String idPlayer, int minute, EventType idEvent) {
         this.idAction = MatchList.MATCH_MAP.get(idMatch).getActionList().size();
         this.idMatch = idMatch;
         this.idTeam = idTeam;
         this.idPlayer = idPlayer;
         this.minute = minute;
-        this.event = event;
+        this.idEvent = idEvent;
         MatchList.MATCH_MAP.get(idMatch).getActionList().add(this);
     }
 
@@ -59,13 +59,13 @@ public class Action {
         return this.minute;
     }
 
-    public EventType getEvent() {
-        return this.event;
+    public EventType getIdEvent() {
+        return this.idEvent;
     }
 
     @Override
     public String toString() {
-        String result = String.valueOf(event);
+        String result = String.valueOf(idEvent);
         PlayerList.Player player = PlayerList.PLAYER_MAP.get(idPlayer);
         if (player != null) {
             result += " - " + player.getName();

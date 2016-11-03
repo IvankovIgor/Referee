@@ -75,9 +75,9 @@ public class ActionListActivity extends AppCompatActivity {
         }
 
         public boolean removeAction(Action action, int position) {
-            if (action.getEvent() == Action.EventType.GOAL) {
+            if (action.getIdEvent() == Action.EventType.GOAL) {
                 decrementScore(action.getIdTeam());
-            } else if (action.getEvent() == Action.EventType.OWN_GOAL) {
+            } else if (action.getIdEvent() == Action.EventType.OWN_GOAL) {
                 if (mMatch.getTeam1().getIdTeam().equals(action.getIdTeam())) {
                     decrementScore(mMatch.getTeam2().getIdTeam());
                 } else {
