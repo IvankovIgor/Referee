@@ -112,7 +112,6 @@ public class HttpsClient {
                 .build();
 
         Retrofit retrofit = builder.client(client)
-                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
