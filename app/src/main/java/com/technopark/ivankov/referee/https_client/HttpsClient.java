@@ -20,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -44,9 +45,9 @@ public class HttpsClient {
 
     public static void getMatches(int idVk) {
         Call<List<MatchList.Match>> call;
-//        JsonObject param = new JsonObject();
-//        param.addProperty("idVk", idVk);
-        call = createAPIService().getMatches(new LoginActivity.User(idVk));
+        JsonObject param = new JsonObject();
+        param.addProperty("idVk", idVk);
+        call = createAPIService().getMatches(param);
 
         Response<List<MatchList.Match>> response;
         try {
