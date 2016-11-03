@@ -41,9 +41,8 @@ public class MatchListActivity extends AppCompatActivity {
         assert toolbar != null;
         toolbar.setTitle(getTitle());
 
-
         if (MatchList.MATCHES.isEmpty()) {
-            HttpsClient.getMatches(LoginActivity.userId);
+            HttpsClient.getMatches(LoginActivity.myId);
         }
 
         View recyclerView = findViewById(R.id.match_list);

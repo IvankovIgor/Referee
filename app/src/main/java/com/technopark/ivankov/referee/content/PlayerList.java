@@ -11,7 +11,7 @@ public class PlayerList {
         private final String idUser;
         private final String name;
         private final String image;
-        private final int number;
+        private final Integer number;
 
         Player(Player player) {
             idUser = player.getIdUser();
@@ -27,6 +27,6 @@ public class PlayerList {
 
         public String getImage() { return image; }
 
-        public int getNumber() { return number; }
+        public Integer getNumber() { return number; }
     }
 }

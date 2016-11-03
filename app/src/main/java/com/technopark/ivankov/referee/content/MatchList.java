@@ -22,7 +22,7 @@ public class MatchList {
         private int team2Score;
         private boolean started;
         private boolean finished;
-        private final List<ActionList.Action> actions;
+        private final List<Action> actionList;
 
         public Match(Match match) {
             idMatch = match.getIdMatch();
@@ -40,7 +40,7 @@ public class MatchList {
             } else {
                 team2 = new TeamList.Team(match.getTeam2());
             }
-            actions = new ArrayList<>();
+            actionList = new ArrayList<>();
             MATCHES.add(this);
             MATCH_MAP.put(idMatch, this);
         }
@@ -75,13 +75,13 @@ public class MatchList {
             return team1Score;
         }
 
-        public void setTeam1Score(int team1Score) { this.team1Score = team1Score; }
+        public void setTeam1Score(Integer team1Score) { this.team1Score = team1Score; }
 
         public int getTeam2Score() {
             return team2Score;
         }
 
-        public void setTeam2Score(int team2Score) { this.team2Score = team2Score; }
+        public void setTeam2Score(Integer team2Score) { this.team2Score = team2Score; }
 
         public boolean isStarted() {
             return started;
@@ -99,7 +99,7 @@ public class MatchList {
             this.finished = true;
         }
 
-        public List<ActionList.Action> getActions() { return actions; }
+        public List<Action> getActionList() { return actionList; }
 
         @Override
         public String toString() {

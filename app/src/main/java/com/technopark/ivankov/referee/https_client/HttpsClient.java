@@ -5,7 +5,7 @@ import android.content.Context;
 import android.os.Build;
 
 import com.technopark.ivankov.referee.R;
-import com.technopark.ivankov.referee.content.ActionList;
+import com.technopark.ivankov.referee.content.Action;
 import com.technopark.ivankov.referee.content.MatchList;
 import com.google.gson.JsonParseException;
 import com.technopark.ivankov.referee.login.LoginActivity;
@@ -48,7 +48,7 @@ public class HttpsClient {
                 for (int i = 0; i < list.size(); i++) {
                     new MatchList.Match(list.get(i));
                 }
-            } catch (JsonParseException e) {
+            } catch (JsonParseException | NullPointerException e) {
                 e.printStackTrace();
             }
         } catch (IOException e) {
@@ -75,7 +75,7 @@ public class HttpsClient {
 //        });
     }
 
-    public static void postAction(final ActionList.Action action) {
+    public static void postAction(final Action action) {
 
         Call<ResponseBody> call = createAPIService().postAction(action);
 

@@ -12,7 +12,7 @@ import android.widget.TextView;
 import android.content.pm.ActivityInfo;
 
 import com.technopark.ivankov.referee.R;
-import com.technopark.ivankov.referee.content.ActionList;
+import com.technopark.ivankov.referee.content.Action;
 import com.technopark.ivankov.referee.content.MatchList;
 import com.technopark.ivankov.referee.match.MatchActivity;
 
@@ -41,15 +41,15 @@ public class ActionListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(mMatch.getActions()));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(mMatch.getActionList()));
     }
 
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<ActionList.Action> aValues;
+        private final List<Action> aValues;
 
-        public SimpleItemRecyclerViewAdapter(List<ActionList.Action> items) {
+        public SimpleItemRecyclerViewAdapter(List<Action> items) {
             aValues = items;
         }
 
@@ -74,17 +74,17 @@ public class ActionListActivity extends AppCompatActivity {
             });
         }
 
-        public boolean removeAction(ActionList.Action action, int position) {
-            if (action.getEvent() == ActionList.EventType.GOAL) {
+        public boolean removeAction(Action action, int position) {
+            if (action.getEvent() == Action.EventType.GOAL) {
                 decrementScore(action.getIdTeam());
-            } else if (action.getEvent() == ActionList.EventType.OWN_GOAL) {
+            } else if (action.getEvent() == Action.EventType.OWN_GOAL) {
                 if (mMatch.getTeam1().getIdTeam().equals(action.getIdTeam())) {
                     decrementScore(mMatch.getTeam2().getIdTeam());
                 } else {
                     decrementScore(mMatch.getTeam1().getIdTeam());
                 }
             }
-            mMatch.getActions().remove(action);
+            mMatch.getActionList().remove(action);
             notifyItemRemoved(position);
             return true;
         }
@@ -106,7 +106,7 @@ public class ActionListActivity extends AppCompatActivity {
             public final View aView;
             public final TextView aIdView;
             public final TextView aContentView;
-            public ActionList.Action aAction;
+            public Action aAction;
 
             public ViewHolder(View view) {
                 super(view);

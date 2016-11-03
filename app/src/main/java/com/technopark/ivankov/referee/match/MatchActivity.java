@@ -19,9 +19,9 @@ import android.widget.Chronometer;
 import android.widget.TextView;
 
 import com.technopark.ivankov.referee.action_list.ActionListActivity;
+import com.technopark.ivankov.referee.content.Action;
 import com.technopark.ivankov.referee.https_client.HttpsClient;
 import com.technopark.ivankov.referee.R;
-import com.technopark.ivankov.referee.content.ActionList;
 import com.technopark.ivankov.referee.content.MatchList;
 import com.technopark.ivankov.referee.content.PlayerList;
 import com.technopark.ivankov.referee.content.TeamList;
@@ -59,7 +59,7 @@ public class MatchActivity extends AppCompatActivity {
     private long timePeriod;
     private int countPeriods;
     private int currentPeriod = 1;
-    public static List<ActionList.Action> actionList;
+    public static List<Action> actionList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public class MatchActivity extends AppCompatActivity {
         if (!getCurrentMatch().isStarted()) {
             actionList = new ArrayList<>();
         } else {
-            actionList = getCurrentMatch().getActions();
+            actionList = getCurrentMatch().getActionList();
         }
 
         additionalChronometer = (Chronometer) findViewById(R.id.additional_chronometer);
@@ -149,10 +149,10 @@ public class MatchActivity extends AppCompatActivity {
             if (currentPeriod < countPeriods + 1) {
                 if (!getCurrentMatch().isStarted()) {
                     getCurrentMatch().setStarted();
-                    HttpsClient.postAction(new ActionList.Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), ActionList.EventType.MATCH_START));
+                    HttpsClient.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.MATCH_START));
                 }
                 if (isStopped) {
-                    HttpsClient.postAction(new ActionList.Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), ActionList.EventType.TIME_START));
+                    HttpsClient.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.TIME_START));
                     isStopped = false;
                     if (!isAdditional) {
                         assert period != null;
@@ -177,7 +177,7 @@ public class MatchActivity extends AppCompatActivity {
             if (currentPeriod < countPeriods + 1) {
                 if (!isStopped) {
                     if (isAdditional) {
-                        HttpsClient.postAction(new ActionList.Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), ActionList.EventType.TIME_END));
+                        HttpsClient.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.TIME_END));
                         assert period != null;
                         period.setText("Break");
                         isStopped = true;
@@ -189,7 +189,7 @@ public class MatchActivity extends AppCompatActivity {
                         additionalChronometer.stop();
                         currentPeriod++;
                         if (currentPeriod > countPeriods) {
-                            HttpsClient.postAction(new ActionList.Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), ActionList.EventType.MATCH_END));
+                            HttpsClient.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.MATCH_END));
                             getCurrentMatch().setFinished();
                             period.setText("Full time");
                             additionalChronometer.setBase(SystemClock.elapsedRealtime());
@@ -231,16 +231,18 @@ public class MatchActivity extends AppCompatActivity {
     };
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, TeamList.Team team) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(team.getPlayers()));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(team.getPlayers(), team));
     }
 
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private final List<PlayerList.Player> mValues;
+        private final TeamList.Team mTeam;
 
-        public SimpleItemRecyclerViewAdapter(List<PlayerList.Player> players) {
-            mValues = players;
+        public SimpleItemRecyclerViewAdapter(List<PlayerList.Player> playerList, TeamList.Team team) {
+            mValues = playerList;
+            mTeam = team;
         }
 
         @Override
@@ -253,7 +255,7 @@ public class MatchActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mPlayer = mValues.get(position);
-            holder.mIdView.setText(Integer.toString(mValues.get(position).getNumber()));
+            holder.mIdView.setText(String.valueOf(mTeam.getNumberMap().get(mValues.get(position).getIdUser())));
             holder.mContentView.setText(mValues.get(position).getName());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {

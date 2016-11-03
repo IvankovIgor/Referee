@@ -10,12 +10,12 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import com.technopark.ivankov.referee.content.Action;
 import com.technopark.ivankov.referee.content.MatchList;
 import com.technopark.ivankov.referee.content.PlayerList;
 import com.technopark.ivankov.referee.content.TeamList;
 import com.technopark.ivankov.referee.https_client.HttpsClient;
 import com.technopark.ivankov.referee.R;
-import com.technopark.ivankov.referee.content.ActionList;
 
 /**
  * An activity representing a single Player detail screen. This
@@ -49,7 +49,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addAction(view, ActionList.EventType.GOAL);
+                addAction(view, Action.EventType.GOAL);
             }
         });
 
@@ -58,7 +58,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnOwnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addAction(view, ActionList.EventType.OWN_GOAL);
+                addAction(view, Action.EventType.OWN_GOAL);
             }
         });
 
@@ -67,7 +67,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnYellow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addAction(view, ActionList.EventType.YELLOW_CARD);
+                addAction(view, Action.EventType.YELLOW_CARD);
             }
         });
 
@@ -76,7 +76,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnRed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addAction(view, ActionList.EventType.RED_CARD);
+                addAction(view, Action.EventType.RED_CARD);
             }
         });
         // Show the Up button in the action bar.
@@ -89,6 +89,8 @@ public class PlayerDetailActivity extends AppCompatActivity {
             Bundle arguments = new Bundle();
             arguments.putString(MatchActivity.PLAYER_ID,
                     getIntent().getStringExtra(MatchActivity.PLAYER_ID));
+            arguments.putString(MatchActivity.TEAM_ID,
+                    getIntent().getStringExtra(MatchActivity.TEAM_ID));
             PlayerDetailFragment fragment = new PlayerDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -97,16 +99,16 @@ public class PlayerDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void addAction(View view, ActionList.EventType event) {
+    private void addAction(View view, Action.EventType event) {
         if (!mMatch.isStarted() || mMatch.isFinished()) {
             Snackbar.make(view, "Not allowed", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
             return;
         }
 
-        if (event == ActionList.EventType.GOAL) {
+        if (event == Action.EventType.GOAL) {
             incrementScore(mTeam);
-        } else if (event == ActionList.EventType.OWN_GOAL) {
+        } else if (event == Action.EventType.OWN_GOAL) {
             if (mMatch.getTeam1().equals(mTeam)) {
                 incrementScore(mMatch.getTeam2());
             } else {
@@ -117,7 +119,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         Snackbar.make(view, String.valueOf(event), Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
 
-        HttpsClient.postAction(new ActionList.Action(mMatch.getIdMatch(), mTeam.getIdTeam(), mPlayer.getIdUser(), mMinute, event));
+        HttpsClient.postAction(new Action(mMatch.getIdMatch(), mTeam.getIdTeam(), mPlayer.getIdUser(), mMinute, event));
     }
 
     public void incrementScore(TeamList.Team team) {
