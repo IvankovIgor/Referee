@@ -1,5 +1,6 @@
 package com.technopark.ivankov.referee.https_client;
 
+import com.google.gson.JsonObject;
 import com.technopark.ivankov.referee.content.Action;
 import com.technopark.ivankov.referee.content.MatchList;
 
@@ -16,7 +17,7 @@ import retrofit2.http.POST;
 interface APIService {
     @Headers("Content-Type: application/json")
     @POST("api-referee/get-my-matches")
-    Call<List<MatchList.Match>> getMatches(@Body String idUser);
+    Call<List<MatchList.Match>> getMatches(@Body JsonObject idVk);
 //    @GET("api-referee/{idUser}/get-my-matches")
 //    Call<List<MatchList.Match>> getMatches(@Path("idUser") String idUser);
 //    @GET("api-referee/{idMatch}/{idAction}/{event}/set-info")

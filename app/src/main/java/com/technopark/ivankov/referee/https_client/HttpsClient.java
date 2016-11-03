@@ -4,6 +4,8 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.Action;
 import com.technopark.ivankov.referee.content.MatchList;
@@ -32,17 +34,21 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class HttpsClient {
 
     private static final Logger LOGGER = Logger.getLogger(HttpsClient.class.getName());
 
-    public static void getMatches(String idUser) {
-        Call<List<MatchList.Match>> call = createAPIService().getMatches(idUser);
-
+    public static void getMatches(int idVk) {
+        Call<List<MatchList.Match>> call;
+        JsonObject param = new JsonObject();
+        param.addProperty("idVk", idVk);
+        call = createAPIService().getMatches(param);
         Response<List<MatchList.Match>> response;
         try {
             response = call.execute();
+            LOGGER.info(String.valueOf(call.request().body().contentLength()));
             try {
                 List<MatchList.Match> list = response.body();
                 for (int i = 0; i < list.size(); i++) {
@@ -83,9 +89,8 @@ public class HttpsClient {
             @Override
             public void onResponse(Call call, Response response) {
                 try {
-                    int code = response.code();
-                    LOGGER.info("idAction: " + action.getIdAction());
-                    LOGGER.info("response code: " + code);
+                    LOGGER.info("request body: " + call.request().body());
+                    LOGGER.info("response code: " + response.code());
                 } catch (JsonParseException e) {
                     e.printStackTrace();
                 }
@@ -107,6 +112,7 @@ public class HttpsClient {
                 .build();
 
         Retrofit retrofit = builder.client(client)
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

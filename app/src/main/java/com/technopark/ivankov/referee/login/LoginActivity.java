@@ -25,7 +25,7 @@ public class LoginActivity extends AppCompatActivity implements FragmentManager.
     public static String userId;
     public static String serverIP;
     public static String serverPort;
-    public static String myId = "4189816";
+    public static int myId = 4189816;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
