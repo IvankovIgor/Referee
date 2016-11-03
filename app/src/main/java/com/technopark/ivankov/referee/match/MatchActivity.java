@@ -176,25 +176,33 @@ public class MatchActivity extends AppCompatActivity {
         public void onClick(View view) {
             if (currentPeriod < countPeriods + 1) {
                 if (!isStopped) {
-                    HttpsClient.postAction(new ActionList.Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), ActionList.EventType.TIME_END));
-                    assert period != null;
-                    period.setText("Break");
-                    isStopped = true;
-                    isAdditional = false;
-                    timeWhenStopped = timePeriod * (currentPeriod);
-                    timeWhenAdditionalStopped = 0;
-                    mChronometer.stop();
-                    mChronometer.setBase(SystemClock.elapsedRealtime() - timeWhenStopped);
-                    additionalChronometer.stop();
-                    currentPeriod++;
-                    if (currentPeriod > countPeriods) {
-                        HttpsClient.postAction(new ActionList.Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), ActionList.EventType.MATCH_END));
-                        getCurrentMatch().setFinished();
-                        period.setText("Full time");
-                        additionalChronometer.setBase(SystemClock.elapsedRealtime());
-                        Snackbar.make(view, "Full time", Snackbar.LENGTH_LONG)
+                    if (isAdditional) {
+                        HttpsClient.postAction(new ActionList.Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), ActionList.EventType.TIME_END));
+                        assert period != null;
+                        period.setText("Break");
+                        isStopped = true;
+                        isAdditional = false;
+                        timeWhenStopped = timePeriod * (currentPeriod);
+                        timeWhenAdditionalStopped = 0;
+                        mChronometer.stop();
+                        mChronometer.setBase(SystemClock.elapsedRealtime() - timeWhenStopped);
+                        additionalChronometer.stop();
+                        currentPeriod++;
+                        if (currentPeriod > countPeriods) {
+                            HttpsClient.postAction(new ActionList.Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), ActionList.EventType.MATCH_END));
+                            getCurrentMatch().setFinished();
+                            period.setText("Full time");
+                            additionalChronometer.setBase(SystemClock.elapsedRealtime());
+                            Snackbar.make(view, "Full time", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        }
+                    } else {
+                        Snackbar.make(view, "Too early", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
                     }
+                } else {
+                    Snackbar.make(view, "Match is stopped", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
             } else {
                 Snackbar.make(view, "Full time", Snackbar.LENGTH_LONG)
