@@ -10,11 +10,12 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import com.technopark.ivankov.referee.content.MatchList;
+import com.technopark.ivankov.referee.content.PlayerList;
+import com.technopark.ivankov.referee.content.TeamList;
 import com.technopark.ivankov.referee.https_client.HttpsClient;
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.ActionList;
-import com.technopark.ivankov.referee.content.MatchList;
-import com.technopark.ivankov.referee.match_list.MatchListActivity;
 
 /**
  * An activity representing a single Player detail screen. This
@@ -24,13 +25,21 @@ import com.technopark.ivankov.referee.match_list.MatchListActivity;
  */
 public class PlayerDetailActivity extends AppCompatActivity {
 
-    public static int number = 0;
+    private MatchList.Match mMatch;
+    private TeamList.Team mTeam;
+    private PlayerList.Player mPlayer;
+    private Integer mMinute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_detail);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        mMatch = MatchList.MATCH_MAP.get(getIntent().getStringExtra(MatchActivity.MATCH_ID));
+        mTeam = TeamList.TEAM_MAP.get(getIntent().getStringExtra(MatchActivity.TEAM_ID));
+        mPlayer = PlayerList.PLAYER_MAP.get(getIntent().getStringExtra(MatchActivity.PLAYER_ID));
+        mMinute = getIntent().getIntExtra(MatchActivity.MINUTE, 0);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
@@ -40,11 +49,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String idTeam = addAction(view, ActionList.EventType.GOAL);
-                if (idTeam != null) {
-                    MatchList.getCurrentMatch().incrementScore(idTeam);
-                    MatchActivity.refresh();
-                }
+                addAction(view, ActionList.EventType.GOAL);
             }
         });
 
@@ -53,11 +58,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         btnOwnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String idTeam = addAction(view, ActionList.EventType.OWN_GOAL);
-                if (idTeam != null) {
-                    MatchList.getCurrentMatch().ownGoal(idTeam);
-                    MatchActivity.refresh();
-                }
+                addAction(view, ActionList.EventType.OWN_GOAL);
             }
         });
 
@@ -84,21 +85,10 @@ public class PlayerDetailActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        // savedInstanceState is non-null when there is fragment state
-        // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don't need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
         if (savedInstanceState == null) {
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(PlayerDetailFragment.PLAYER_ID,
-                    getIntent().getStringExtra(PlayerDetailFragment.PLAYER_ID));
+            arguments.putString(MatchActivity.PLAYER_ID,
+                    getIntent().getStringExtra(MatchActivity.PLAYER_ID));
             PlayerDetailFragment fragment = new PlayerDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -107,22 +97,36 @@ public class PlayerDetailActivity extends AppCompatActivity {
         }
     }
 
-    private String addAction(View view, ActionList.EventType event) {
-        if (!MatchList.getCurrentMatch().isStarted() || MatchList.getCurrentMatch().isFinished()) {
+    private void addAction(View view, ActionList.EventType event) {
+        if (!mMatch.isStarted() || mMatch.isFinished()) {
             Snackbar.make(view, "Not allowed", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
-            return null;
+            return;
         }
-        String idPlayer = getIntent().getStringExtra(PlayerDetailFragment.PLAYER_ID);
-        String idTeam = MatchListActivity.PLAYER_TEAM_MAP.get(idPlayer);
+
+        if (event == ActionList.EventType.GOAL) {
+            incrementScore(mTeam);
+        } else if (event == ActionList.EventType.OWN_GOAL) {
+            if (mMatch.getTeam1().equals(mTeam)) {
+                incrementScore(mMatch.getTeam2());
+            } else {
+                incrementScore(mMatch.getTeam1());
+            }
+        }
+
         Snackbar.make(view, String.valueOf(event), Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
 
-        HttpsClient.postAction(new ActionList.Action(MatchList.getCurrentMatchId(), idTeam, idPlayer, MatchActivity.getTime(), event));
-
-        return idTeam;
+        HttpsClient.postAction(new ActionList.Action(mMatch.getIdMatch(), mTeam.getIdTeam(), mPlayer.getIdUser(), mMinute, event));
     }
 
+    public void incrementScore(TeamList.Team team) {
+        if (mMatch.getTeam1().equals(team)) {
+            mMatch.setTeam1Score(mMatch.getTeam1Score() + 1);
+        } else {
+            mMatch.setTeam2Score(mMatch.getTeam2Score() + 1);
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

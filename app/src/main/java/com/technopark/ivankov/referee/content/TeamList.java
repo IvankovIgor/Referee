@@ -1,7 +1,5 @@
 package com.technopark.ivankov.referee.content;
 
-import com.technopark.ivankov.referee.match_list.MatchListActivity;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +27,6 @@ public class TeamList {
                     players.add(PLAYER_MAP.get(player.getIdUser()));
                 } else {
                     players.add(new PlayerList.Player(player));
-                    MatchListActivity.PLAYER_TEAM_MAP.put(player.getIdUser(), idTeam);
                 }
             }
             TEAM_MAP.put(idTeam, this);

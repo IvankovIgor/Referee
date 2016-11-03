@@ -10,18 +10,6 @@ public class MatchList {
     public static final List<Match> MATCHES = new ArrayList<>();
     public static final Map<String, Match> MATCH_MAP = new HashMap<>();
 
-    private static String currentMatchId;
-
-    public static String getCurrentMatchId() { return currentMatchId; }
-
-    public static void setCurrentMatchId(String currentMatchId) {
-        MatchList.currentMatchId = currentMatchId;
-    }
-
-    public static Match getCurrentMatch() {
-        return MATCH_MAP.get(currentMatchId);
-    }
-
     public static class Match {
         private final String idMatch;
         private final String federation;
@@ -87,9 +75,13 @@ public class MatchList {
             return team1Score;
         }
 
+        public void setTeam1Score(int team1Score) { this.team1Score = team1Score; }
+
         public int getTeam2Score() {
             return team2Score;
         }
+
+        public void setTeam2Score(int team2Score) { this.team2Score = team2Score; }
 
         public boolean isStarted() {
             return started;
@@ -108,38 +100,6 @@ public class MatchList {
         }
 
         public List<ActionList.Action> getActions() { return actions; }
-
-        public void incrementScore(String idTeam) {
-            if (team1.getIdTeam().equals(idTeam)) {
-                team1Score++;
-            } else {
-                team2Score++;
-            }
-        }
-
-        public void decrementScore(String idTeam) {
-            if (team1.getIdTeam().equals(idTeam)) {
-                team1Score--;
-            } else {
-                team2Score--;
-            }
-        }
-
-        public void ownGoal(String idTeam) {
-            if (team2.getIdTeam().equals(idTeam)) {
-                team1Score++;
-            } else {
-                team2Score++;
-            }
-        }
-
-        public void ownGoalDecrement(String idTeam) {
-            if (team2.getIdTeam().equals(idTeam)) {
-                team1Score--;
-            } else {
-                team2Score--;
-            }
-        }
 
         @Override
         public String toString() {

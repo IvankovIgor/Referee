@@ -20,11 +20,15 @@ import java.util.List;
 
 public class ActionListActivity extends AppCompatActivity {
 
+    private MatchList.Match mMatch;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_action_list);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        mMatch = MatchList.MATCH_MAP.get(getIntent().getStringExtra(MatchActivity.MATCH_ID));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -37,7 +41,7 @@ public class ActionListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(MatchList.getCurrentMatch().getActions()));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(mMatch.getActions()));
     }
 
     public class SimpleItemRecyclerViewAdapter
@@ -57,7 +61,7 @@ public class ActionListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, final int position) {
+        public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.aAction = aValues.get(position);
             holder.aIdView.setText(String.valueOf(aValues.get(position).getMinute()));
             holder.aContentView.setText(aValues.get(position).toString());
@@ -65,21 +69,32 @@ public class ActionListActivity extends AppCompatActivity {
             holder.aView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    return removeAction(holder.aAction, position);
+                    return removeAction(holder.aAction, holder.getAdapterPosition());
                 }
             });
         }
 
         public boolean removeAction(ActionList.Action action, int position) {
             if (action.getEvent() == ActionList.EventType.GOAL) {
-                MatchList.MATCH_MAP.get(action.getIdMatch()).decrementScore(action.getIdTeam());
+                decrementScore(action.getIdTeam());
             } else if (action.getEvent() == ActionList.EventType.OWN_GOAL) {
-                MatchList.MATCH_MAP.get(action.getIdMatch()).ownGoalDecrement(action.getIdTeam());
+                if (mMatch.getTeam1().getIdTeam().equals(action.getIdTeam())) {
+                    decrementScore(mMatch.getTeam2().getIdTeam());
+                } else {
+                    decrementScore(mMatch.getTeam1().getIdTeam());
+                }
             }
-            MatchList.MATCH_MAP.get(action.getIdMatch()).getActions().remove(action);
+            mMatch.getActions().remove(action);
             notifyItemRemoved(position);
-            MatchActivity.refresh();
             return true;
+        }
+
+        public void decrementScore(String idTeam) {
+            if (mMatch.getTeam1().getIdTeam().equals(idTeam)) {
+                mMatch.setTeam1Score(mMatch.getTeam1Score() - 1);
+            } else {
+                mMatch.setTeam2Score(mMatch.getTeam2Score() - 1);
+            }
         }
 
         @Override

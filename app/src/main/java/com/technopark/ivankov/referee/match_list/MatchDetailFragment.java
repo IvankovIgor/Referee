@@ -19,15 +19,9 @@ import com.technopark.ivankov.referee.content.MatchList;
  * on handsets.
  */
 public class MatchDetailFragment extends Fragment {
-    /**
-     * The fragment argument representing the match ID that this fragment
-     * represents.
-     */
+
     public static final String MATCH_ID = "com.technopark.ivankov.referee.match_list.MATCH_ID";
 
-    /**
-     * The match content this fragment is presenting.
-     */
     private MatchList.Match mMatch;
 
     /**
@@ -60,7 +54,6 @@ public class MatchDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.match_detail, container, false);
 
-        // Show the match content as text in a TextView.
         if (mMatch != null) {
             ((TextView) rootView.findViewById(R.id.match_detail)).setText(mMatch.toString());
         }

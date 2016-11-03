@@ -56,7 +56,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
-//        ((LoginActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
+
         vk = (Button) rootView.findViewById(R.id.vk);
         vk.setText(R.string.button_login_true);
         vk.setOnClickListener(loginClick);
@@ -64,23 +64,8 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         logout = (Button) rootView.findViewById(R.id.logout);
         logout.setOnClickListener(logoutClick);
 
-        Button resetIP = (Button) rootView.findViewById(R.id.resetIP);
-        resetIP.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v) {
-                    LoginActivity.serverIP = "ifootball.ml";
-                    SharedPreferences.Editor editor = LoginActivity.sSettings.edit();
-                    editor.putString(LoginActivity.APP_PREFERENCES_IP, LoginActivity.serverIP);
-                    editor.apply();
-                    curIP.setText(LoginActivity.serverIP);
-                    LoginActivity.serverPort = "443";
-                    editor.putString(LoginActivity.APP_PREFERENCES_PORT, LoginActivity.serverPort);
-                    editor.apply();
-                    curPort.setText(LoginActivity.serverPort);
-                }
-            }
-        );
+        Button btnResetIP = (Button) rootView.findViewById(R.id.btn_reset_IP);
+        btnResetIP.setOnClickListener(btnResetIPClick);
 
         curIP = (TextView) rootView.findViewById(R.id.curIP);
         curIP.setText(LoginActivity.serverIP);
@@ -89,44 +74,10 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         curPort.setText(LoginActivity.serverPort);
 
         editIP = (EditText) rootView.findViewById(R.id.editIP);
-        editIP.setOnKeyListener(new View.OnKeyListener()
-                {
-                    public boolean onKey(View v, int keyCode, KeyEvent event)
-                    {
-                        if(event.getAction() == KeyEvent.ACTION_DOWN &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER))
-                        {
-                            LoginActivity.serverIP = editIP.getText().toString();
-                            SharedPreferences.Editor editor = LoginActivity.sSettings.edit();
-                            editor.putString(LoginActivity.APP_PREFERENCES_IP, LoginActivity.serverIP);
-                            editor.apply();
-                            curIP.setText(LoginActivity.serverIP);
-                            return true;
-                        }
-                        return false;
-                    }
-                }
-        );
+        editIP.setOnKeyListener(editIPKeyEvent);
 
         editPort = (EditText) rootView.findViewById(R.id.editPort);
-        editPort.setOnKeyListener(new View.OnKeyListener()
-                {
-                    public boolean onKey(View v, int keyCode, KeyEvent event)
-                    {
-                        if(event.getAction() == KeyEvent.ACTION_DOWN &&
-                                (keyCode == KeyEvent.KEYCODE_ENTER))
-                        {
-                            LoginActivity.serverPort = editPort.getText().toString();
-                            SharedPreferences.Editor editor = LoginActivity.sSettings.edit();
-                            editor.putString(LoginActivity.APP_PREFERENCES_PORT, LoginActivity.serverPort);
-                            editor.apply();
-                            curPort.setText(LoginActivity.serverPort);
-                            return true;
-                        }
-                        return false;
-                    }
-                }
-        );
+        editPort.setOnKeyListener(editPortKeyEvent);
 
         //Get Keys for initiate SocialNetworks
         String VK_KEY = getActivity().getString(R.string.vk_app_id);
@@ -179,7 +130,6 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
             vk.setText(R.string.button_login_true);
             MatchList.MATCHES.clear();
             MatchList.MATCH_MAP.clear();
-            MatchListActivity.PLAYER_TEAM_MAP.clear();
             PlayerList.PLAYER_MAP.clear();
             TeamList.TEAM_MAP.clear();
             logout.setVisibility(View.VISIBLE);
@@ -225,11 +175,61 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         }
     };
 
+    private View.OnClickListener btnResetIPClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            LoginActivity.serverIP = "ifootball.ml";
+            SharedPreferences.Editor editor = LoginActivity.sSettings.edit();
+            editor.putString(LoginActivity.APP_PREFERENCES_IP, LoginActivity.serverIP);
+            editor.apply();
+            curIP.setText(LoginActivity.serverIP);
+            LoginActivity.serverPort = "443";
+            editor.putString(LoginActivity.APP_PREFERENCES_PORT, LoginActivity.serverPort);
+            editor.apply();
+            curPort.setText(LoginActivity.serverPort);
+        }
+    };
+
+    private View.OnKeyListener editIPKeyEvent = new View.OnKeyListener()
+    {
+        public boolean onKey(View v, int keyCode, KeyEvent event)
+        {
+            if (event.getAction() == KeyEvent.ACTION_DOWN &&
+                    (keyCode == KeyEvent.KEYCODE_ENTER))
+            {
+                LoginActivity.serverIP = editIP.getText().toString();
+                SharedPreferences.Editor editor = LoginActivity.sSettings.edit();
+                editor.putString(LoginActivity.APP_PREFERENCES_IP, LoginActivity.serverIP);
+                editor.apply();
+                curIP.setText(LoginActivity.serverIP);
+                return true;
+            }
+            return false;
+        }
+    };
+
+    private View.OnKeyListener editPortKeyEvent = new View.OnKeyListener()
+    {
+        public boolean onKey(View v, int keyCode, KeyEvent event)
+        {
+            if(event.getAction() == KeyEvent.ACTION_DOWN &&
+                    (keyCode == KeyEvent.KEYCODE_ENTER))
+            {
+                LoginActivity.serverPort = editPort.getText().toString();
+                SharedPreferences.Editor editor = LoginActivity.sSettings.edit();
+                editor.putString(LoginActivity.APP_PREFERENCES_PORT, LoginActivity.serverPort);
+                editor.apply();
+                curPort.setText(LoginActivity.serverPort);
+                return true;
+            }
+            return false;
+        }
+    };
+
     @Override
     public void onLoginSuccess(int networkId) {
         SocialNetwork socialNetwork = mSocialNetworkManager.getSocialNetwork(networkId);
         socialNetwork.requestCurrentPerson();
-//        showMatchList(networkId);
     }
 
     @Override
@@ -237,10 +237,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         Toast.makeText(getActivity(), "ERROR: " + errorMessage, Toast.LENGTH_LONG).show();
     }
 
-    private void showMatchList(){
-        if (MatchList.MATCHES.isEmpty()) {
-            HttpsClient.getMatches(LoginActivity.myId);
-        }
+    private void showMatchList() {
         Intent intent = new Intent(getActivity(), MatchListActivity.class);
         startActivity(intent);
 //        ProfileFragment profile = ProfileFragment.newInstance(networkId);

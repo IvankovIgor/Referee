@@ -12,20 +12,14 @@ import android.widget.TextView;
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.PlayerList;
 
+import static com.technopark.ivankov.referee.match.MatchActivity.PLAYER_ID;
+
 /**
  * A fragment representing a single Player detail screen.
  * This fragment is contained in a {@link PlayerDetailActivity}.
  */
 public class PlayerDetailFragment extends Fragment {
-    /**
-     * The fragment argument representing the player ID that this fragment
-     * represents.
-     */
-    public static final String PLAYER_ID = "com.technopark.ivankov.referee.match.PLAYER_ID";
 
-    /**
-     * The player content this fragment is presenting.
-     */
     private PlayerList.Player mPlayer;
 
     /**
@@ -58,7 +52,6 @@ public class PlayerDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.player_detail, container, false);
 
-        // Show the player content as text in a TextView.
         if (mPlayer != null) {
             ((TextView) rootView.findViewById(R.id.player_detail)).setText(mPlayer.getNumber() + " " + mPlayer.getName());
         }

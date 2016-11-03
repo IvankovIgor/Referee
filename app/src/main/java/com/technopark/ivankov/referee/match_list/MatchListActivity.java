@@ -15,10 +15,10 @@ import android.content.pm.ActivityInfo;
 
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.MatchList;
+import com.technopark.ivankov.referee.https_client.HttpsClient;
+import com.technopark.ivankov.referee.login.LoginActivity;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * An activity representing a list of Matches. This activity
@@ -30,8 +30,6 @@ import java.util.Map;
  */
 public class MatchListActivity extends AppCompatActivity {
 
-    public static final Map<String, String> PLAYER_TEAM_MAP = new HashMap<>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +40,11 @@ public class MatchListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         assert toolbar != null;
         toolbar.setTitle(getTitle());
+
+
+        if (MatchList.MATCHES.isEmpty()) {
+            HttpsClient.getMatches(LoginActivity.userId);
+        }
 
         View recyclerView = findViewById(R.id.match_list);
         assert recyclerView != null;

@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -26,7 +25,7 @@ public class LoginActivity extends AppCompatActivity implements FragmentManager.
     public static String userId;
     public static String serverIP;
     public static String serverPort;
-    public static String myId = "4189816";
+//    public static String myId = "4189816";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +43,7 @@ public class LoginActivity extends AppCompatActivity implements FragmentManager.
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                 .permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
 //        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
 //        for(int i = 0; i<fingerprints.length;i++)
 //            Log.i("myApp", "Fingerprint:"+fingerprints[i]);

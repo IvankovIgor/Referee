@@ -77,7 +77,7 @@ public class HttpsClient {
 
     public static void postAction(final ActionList.Action action) {
 
-        Call<ResponseBody> call = createAPIService().postAction(action.getIdMatch(), action.getIdAction(), action.getEvent().getIndex());
+        Call<ResponseBody> call = createAPIService().postAction(action);
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override

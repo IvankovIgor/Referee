@@ -14,7 +14,6 @@ import android.widget.Button;
 import com.technopark.ivankov.referee.match.MatchActivity;
 import com.technopark.ivankov.referee.match.PlayerDetailActivity;
 import com.technopark.ivankov.referee.R;
-import com.technopark.ivankov.referee.content.MatchList;
 
 /**
  * An activity representing a single Match detail screen. This
@@ -33,13 +32,12 @@ public class MatchDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
-        Button btnStartMatch = (Button) findViewById(R.id.to_match);
-        btnStartMatch.setOnClickListener(new View.OnClickListener() {
+        Button btnToMatch = (Button) findViewById(R.id.to_match);
+        btnToMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MatchList.setCurrentMatchId(getIntent().getStringExtra(MatchDetailFragment.MATCH_ID));
-                PlayerDetailActivity.number = 0;
                 Intent intent = new Intent(MatchDetailActivity.this, MatchActivity.class);
+                intent.putExtra(MatchActivity.MATCH_ID, getIntent().getStringExtra(MatchDetailFragment.MATCH_ID));
                 startActivity(intent);
             }
         });
@@ -50,18 +48,7 @@ public class MatchDetailActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        // savedInstanceState is non-null when there is fragment state
-        // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don't need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
         if (savedInstanceState == null) {
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
             Bundle arguments = new Bundle();
             arguments.putString(MatchDetailFragment.MATCH_ID,
                     getIntent().getStringExtra(MatchDetailFragment.MATCH_ID));
