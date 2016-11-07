@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.technopark.ivankov.referee.https_client.HttpsClient;
+import com.technopark.ivankov.referee.client.Client;
 import com.technopark.ivankov.referee.match_list.MatchListActivity;
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.MatchList;
@@ -244,7 +244,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
 
     private void showMatchList() {
         if (MatchList.MATCHES.isEmpty()) {
-            HttpsClient.getMatches(LoginActivity.myId);
+            Client.getMatches(LoginActivity.myId);
         }
         Intent intent = new Intent(getActivity(), MatchListActivity.class);
         startActivity(intent);

@@ -23,13 +23,13 @@ public class TeamList {
             players = new ArrayList<>();
             numberMap = new HashMap<>();
             for (PlayerList.Player player : team.getPlayers()) {
-                if (PLAYER_MAP.containsKey(player.getIdUser())) {
-                    players.add(PLAYER_MAP.get(player.getIdUser()));
+                if (PLAYER_MAP.containsKey(player.getId())) {
+                    players.add(PLAYER_MAP.get(player.getId()));
                 } else {
                     players.add(new PlayerList.Player(player));
                 }
-//                numberMap.put(player.getIdUser(), player.getNumber());
-                numberMap.put(player.getIdUser(), 1);
+//                numberMap.put(player.getId(), player.getNumber());
+                numberMap.put(player.getId(), numberMap.size());
             }
             TEAM_MAP.put(idTeam, this);
         }

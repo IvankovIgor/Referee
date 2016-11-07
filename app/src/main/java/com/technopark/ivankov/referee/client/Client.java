@@ -1,4 +1,4 @@
-package com.technopark.ivankov.referee.https_client;
+package com.technopark.ivankov.referee.client;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -20,12 +20,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
@@ -33,15 +34,16 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import okhttp3.internal.platform.Platform;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class HttpsClient {
+public class Client {
 
-    private static final Logger LOGGER = Logger.getLogger(HttpsClient.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
 
     public static void getMatches(int idVk) {
         Call<List<MatchList.Match>> call;
@@ -112,11 +114,18 @@ public class HttpsClient {
 
     private static APIService createAPIService() {
 
-        Retrofit.Builder builder = new Retrofit.Builder().baseUrl("https://" + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/");
+        String prefix = LoginActivity.serverPort.equals("443") ? "https://" : "http://";
+        Retrofit.Builder builder = new Retrofit.Builder().baseUrl(prefix + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/");
         OkHttpClient client;
 
-        client = new OkHttpClient.Builder().sslSocketFactory(getSSLConfig(LoginActivity.context).getSocketFactory())
+        SSLSocketFactory sslSocketFactory = getSSLConfig(LoginActivity.context).getSocketFactory();
+        X509TrustManager trustManager = Platform.get().trustManager(sslSocketFactory);
+//    if (LoginActivity.serverPort.equals("443")) {
+        client = new OkHttpClient.Builder().sslSocketFactory(sslSocketFactory, trustManager)
                 .build();
+//    } else {
+//        client = new OkHttpClient.Builder().build();
+//    }
 
         Retrofit retrofit = builder.client(client)
                 .addConverterFactory(GsonConverterFactory.create())

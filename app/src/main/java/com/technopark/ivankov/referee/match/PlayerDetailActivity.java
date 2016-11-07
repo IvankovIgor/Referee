@@ -14,7 +14,7 @@ import com.technopark.ivankov.referee.content.Action;
 import com.technopark.ivankov.referee.content.MatchList;
 import com.technopark.ivankov.referee.content.PlayerList;
 import com.technopark.ivankov.referee.content.TeamList;
-import com.technopark.ivankov.referee.https_client.HttpsClient;
+import com.technopark.ivankov.referee.client.Client;
 import com.technopark.ivankov.referee.R;
 
 /**
@@ -119,7 +119,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         Snackbar.make(view, String.valueOf(event), Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
 
-        HttpsClient.postAction(new Action(mMatch.getIdMatch(), mTeam.getIdTeam(), mPlayer.getIdUser(), mMinute, event));
+        Client.postAction(new Action(mMatch.getIdMatch(), mTeam.getIdTeam(), mPlayer.getId(), mMinute, event));
     }
 
     public void incrementScore(TeamList.Team team) {

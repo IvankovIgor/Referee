@@ -13,10 +13,8 @@ import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.PlayerList;
 import com.technopark.ivankov.referee.content.TeamList;
 
-import static com.technopark.ivankov.referee.R.id.container;
 import static com.technopark.ivankov.referee.match.MatchActivity.PLAYER_ID;
 import static com.technopark.ivankov.referee.match.MatchActivity.TEAM_ID;
-import static okhttp3.Protocol.get;
 
 /**
  * A fragment representing a single Player detail screen.
@@ -59,7 +57,7 @@ public class PlayerDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.player_detail, container, false);
 
         if (mPlayer != null) {
-            ((TextView) rootView.findViewById(R.id.player_detail)).setText(mTeam.getNumberMap().get(mPlayer.getIdUser()) + " " + mPlayer.getName());
+            ((TextView) rootView.findViewById(R.id.player_detail)).setText(mTeam.getNumberMap().get(mPlayer.getId()) + " " + mPlayer.getName());
         }
 
         return rootView;

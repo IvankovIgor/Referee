@@ -1,4 +1,4 @@
-package com.technopark.ivankov.referee.https_client;
+package com.technopark.ivankov.referee.client;
 
 import com.google.gson.JsonObject;
 import com.technopark.ivankov.referee.content.Action;

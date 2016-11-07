@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.technopark.ivankov.referee.action_list.ActionListActivity;
 import com.technopark.ivankov.referee.content.Action;
-import com.technopark.ivankov.referee.https_client.HttpsClient;
+import com.technopark.ivankov.referee.client.Client;
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.MatchList;
 import com.technopark.ivankov.referee.content.PlayerList;
@@ -149,10 +149,10 @@ public class MatchActivity extends AppCompatActivity {
             if (currentPeriod < countPeriods + 1) {
                 if (!getCurrentMatch().isStarted()) {
                     getCurrentMatch().setStarted();
-                    HttpsClient.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.MATCH_START));
+                    Client.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.MATCH_START));
                 }
                 if (isStopped) {
-                    HttpsClient.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.TIME_START));
+                    Client.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.TIME_START));
                     isStopped = false;
                     if (!isAdditional) {
                         assert period != null;
@@ -177,7 +177,7 @@ public class MatchActivity extends AppCompatActivity {
             if (currentPeriod < countPeriods + 1) {
                 if (!isStopped) {
                     if (isAdditional) {
-                        HttpsClient.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.TIME_END));
+                        Client.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.TIME_END));
                         assert period != null;
                         period.setText("Break");
                         isStopped = true;
@@ -189,7 +189,7 @@ public class MatchActivity extends AppCompatActivity {
                         additionalChronometer.stop();
                         currentPeriod++;
                         if (currentPeriod > countPeriods) {
-                            HttpsClient.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.MATCH_END));
+                            Client.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.MATCH_END));
                             getCurrentMatch().setFinished();
                             period.setText("Full time");
                             additionalChronometer.setBase(SystemClock.elapsedRealtime());
@@ -255,7 +255,7 @@ public class MatchActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mPlayer = mValues.get(position);
-            holder.mIdView.setText(String.valueOf(mTeam.getNumberMap().get(mValues.get(position).getIdUser())));
+            holder.mIdView.setText(String.valueOf(mTeam.getNumberMap().get(mValues.get(position).getId())));
             holder.mContentView.setText(mValues.get(position).getName());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -264,7 +264,7 @@ public class MatchActivity extends AppCompatActivity {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, PlayerDetailActivity.class);
                 intent.putExtra(MATCH_ID, currentMatchId);
-                intent.putExtra(PLAYER_ID, holder.mPlayer.getIdUser());
+                intent.putExtra(PLAYER_ID, holder.mPlayer.getId());
                 intent.putExtra(TEAM_ID, currentMatch.getTeam1().getPlayers()
                                 .contains(holder.mPlayer) ? currentMatch.getTeam1().getIdTeam() :
                                 currentMatch.getTeam2().getIdTeam());
