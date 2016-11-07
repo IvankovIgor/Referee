@@ -126,6 +126,9 @@ public class MatchActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         score.setText(currentMatch.getTeam1Score() + ":" + currentMatch.getTeam2Score());
+        if (currentMatch.isFinished()) {
+            period.setText("Full time");
+        }
     }
 
     static int getTime() {
@@ -146,7 +149,7 @@ public class MatchActivity extends AppCompatActivity {
     private View.OnClickListener btnStartClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (currentPeriod < countPeriods + 1) {
+            if (currentPeriod < countPeriods + 1 && !currentMatch.isFinished()) {
                 if (!getCurrentMatch().isStarted()) {
                     getCurrentMatch().setStarted();
                     Client.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.MATCH_START));
@@ -174,7 +177,7 @@ public class MatchActivity extends AppCompatActivity {
     private View.OnClickListener btnEndTimeClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (currentPeriod < countPeriods + 1) {
+            if (currentPeriod < countPeriods + 1 && !currentMatch.isFinished()) {
                 if (!isStopped) {
                     if (isAdditional) {
                         Client.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.TIME_END));
