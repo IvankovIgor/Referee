@@ -13,11 +13,11 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 interface APIService {
-    @Headers("Content-Type: application/json")
+    @Headers("Content-Type: application/json;charset=UTF-8")
     @POST("api-referee/get-my-matches")
     Call<List<MatchList.Match>> getMatches(@Body JsonObject user);
 
-    @Headers("Content-Type: application/json")
+    @Headers("Content-Type: application/json;charset=UTF-8")
     @POST("api-referee/set-info")
     Call<ResponseBody> postAction(@Body Action action);
 }

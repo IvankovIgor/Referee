@@ -55,8 +55,8 @@ public class Client {
         try {
             response = call.execute();
             try {
-//                checkRequestContent(call.request());
-//                checkResponseContent(response);
+                checkRequestContent(call.request());
+                checkResponseContent(response);
                 List<MatchList.Match> list = response.body();
                 for (int i = 0; i < list.size(); i++) {
                     new MatchList.Match(list.get(i));
@@ -98,8 +98,8 @@ public class Client {
             @Override
             public void onResponse(Call call, Response response) {
                 try {
-//                    checkRequestContent(call.request());
-//                    checkResponseContent(response);
+                    checkRequestContent(call.request());
+                    checkResponseContent(response);
                 } catch (JsonParseException e) {
                     e.printStackTrace();
                 }
