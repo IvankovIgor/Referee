@@ -74,22 +74,42 @@ public class ActionListActivity extends AppCompatActivity {
             });
         }
 
-        public boolean removeAction(Action action, int position) {
-            if (action.getIdEvent() == Action.EventType.GOAL) {
-                decrementScore(action.getIdTeam());
-            } else if (action.getIdEvent() == Action.EventType.OWN_GOAL) {
-                if (mMatch.getTeam1().getIdTeam().equals(action.getIdTeam())) {
-                    decrementScore(mMatch.getTeam2().getIdTeam());
-                } else {
-                    decrementScore(mMatch.getTeam1().getIdTeam());
-                }
+        private boolean removeAction(Action action, int position) {
+            Action.EventType eventType = action.getIdEvent();
+            switch (eventType) {
+                case MATCH_END:
+                case MATCH_START:
+                case TIME_END:
+                case TIME_START:
+                    return false;
+                case GOAL:
+                    decrementScore(action.getIdTeam());
+                    break;
+                case OWN_GOAL:
+                    if (mMatch.getTeam1().getIdTeam().equals(action.getIdTeam())) {
+                        decrementScore(mMatch.getTeam2().getIdTeam());
+                    } else {
+                        decrementScore(mMatch.getTeam1().getIdTeam());
+                    }
+                    break;
+                default:
+                    break;
             }
+//            if (eventType == Action.EventType.GOAL) {
+//                decrementScore(action.getIdTeam());
+//            } else if (eventType == Action.EventType.OWN_GOAL) {
+//                if (mMatch.getTeam1().getIdTeam().equals(action.getIdTeam())) {
+//                    decrementScore(mMatch.getTeam2().getIdTeam());
+//                } else {
+//                    decrementScore(mMatch.getTeam1().getIdTeam());
+//                }
+//            }
             mMatch.getActionList().remove(action);
             notifyItemRemoved(position);
             return true;
         }
 
-        public void decrementScore(String idTeam) {
+        private void decrementScore(String idTeam) {
             if (mMatch.getTeam1().getIdTeam().equals(idTeam)) {
                 mMatch.setTeam1Score(mMatch.getTeam1Score() - 1);
             } else {

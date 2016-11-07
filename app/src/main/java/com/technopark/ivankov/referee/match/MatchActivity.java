@@ -28,7 +28,6 @@ import com.technopark.ivankov.referee.content.MatchList;
 import com.technopark.ivankov.referee.content.PlayerList;
 import com.technopark.ivankov.referee.content.TeamList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,9 +47,8 @@ public class MatchActivity extends AppCompatActivity {
 
     private String currentMatchId;
     private MatchList.Match currentMatch;
-    final private int vibrateTime = 500;
-    private static Chronometer mChronometer;
-    private static Chronometer additionalChronometer;
+    private Chronometer mChronometer;
+    private Chronometer additionalChronometer;
     private Vibrator vibrator;
     private long timeWhenStopped = 0L;
     private long timeWhenAdditionalStopped = 0L;
@@ -76,28 +74,27 @@ public class MatchActivity extends AppCompatActivity {
 
         currentMatchId = getIntent().getStringExtra(MATCH_ID);
         currentMatch = MatchList.MATCH_MAP.get(currentMatchId);
+        actionList = getCurrentMatch().getActionList();
 
-        if (!getCurrentMatch().isStarted()) {
-            actionList = new ArrayList<>();
-        } else {
-            actionList = getCurrentMatch().getActionList();
-        }
-
-        additionalChronometer = (Chronometer) findViewById(R.id.additional_chronometer);
         Context context = getApplicationContext();
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+
         score = (TextView) findViewById(R.id.score);
-        TextView firstTeamName = (TextView) findViewById(R.id.team1);
-        TextView secondTeamName = (TextView) findViewById(R.id.team2);
+        score.setText(getCurrentMatch().getTeam1Score() + ":" + getCurrentMatch().getTeam2Score());
+
         period = (TextView) findViewById(R.id.period);
+
+        TextView firstTeamName = (TextView) findViewById(R.id.team1);
         assert firstTeamName != null;
         firstTeamName.setText(getCurrentMatch().getTeam1().getName());
+
+        TextView secondTeamName = (TextView) findViewById(R.id.team2);
         assert secondTeamName != null;
         secondTeamName.setText(getCurrentMatch().getTeam2().getName());
+
         timePeriod = getCurrentMatch().getMatchConfig().getTimePeriod() * 60 * 1000;
         timePeriod = 3000L;
         countPeriods = getCurrentMatch().getMatchConfig().getCountPeriods();
-        score.setText(getCurrentMatch().getTeam1Score() + ":" + getCurrentMatch().getTeam2Score());
 
         final Button actions = (Button) findViewById(R.id.actions);
         assert actions != null;
@@ -114,6 +111,12 @@ public class MatchActivity extends AppCompatActivity {
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
         assert mChronometer != null;
         mChronometer.setOnChronometerTickListener(mChronometerTick);
+        if (currentMatch.isFinished()) {
+            mChronometer.setVisibility(View.INVISIBLE);
+        }
+
+        additionalChronometer = (Chronometer) findViewById(R.id.additional_chronometer);
+        additionalChronometer.setVisibility(View.INVISIBLE);
 
         View recyclerViewTeam1 = findViewById(R.id.player_list_team1);
         assert recyclerViewTeam1 != null;
@@ -171,7 +174,7 @@ public class MatchActivity extends AppCompatActivity {
         quitDialog.show();
     }
 
-    static int getTime() {
+    public int getTime() {
         String chronoText = mChronometer.getText().toString();
         String array[] = chronoText.split(":");
         return Integer.parseInt(array[1]);
@@ -192,10 +195,11 @@ public class MatchActivity extends AppCompatActivity {
             if (currentPeriod < countPeriods + 1 && !currentMatch.isFinished()) {
                 if (!getCurrentMatch().isStarted()) {
                     getCurrentMatch().setStarted(true);
-                    Client.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.MATCH_START));
+                    Client.postAction(new Action(getCurrentMatchId(), null, null, getTime(), Action.EventType.MATCH_START));
                 }
                 if (isStopped) {
-                    Client.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.TIME_START));
+                    additionalChronometer.setVisibility(View.INVISIBLE);
+                    Client.postAction(new Action(getCurrentMatchId(), null, null, getTime(), Action.EventType.TIME_START));
                     isStopped = false;
                     if (!isAdditional) {
                         assert period != null;
@@ -220,7 +224,7 @@ public class MatchActivity extends AppCompatActivity {
             if (currentPeriod < countPeriods + 1 && !currentMatch.isFinished()) {
                 if (!isStopped) {
                     if (isAdditional) {
-                        Client.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.TIME_END));
+                        Client.postAction(new Action(getCurrentMatchId(), null, null, getTime(), Action.EventType.TIME_END));
                         assert period != null;
                         period.setText("Break");
                         isStopped = true;
@@ -232,10 +236,11 @@ public class MatchActivity extends AppCompatActivity {
                         additionalChronometer.stop();
                         currentPeriod++;
                         if (currentPeriod > countPeriods) {
-                            Client.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.MATCH_END));
+                            Client.postAction(new Action(getCurrentMatchId(), null, null, getTime(), Action.EventType.MATCH_END));
                             getCurrentMatch().setFinished(true);
                             period.setText("Full time");
-                            additionalChronometer.setBase(SystemClock.elapsedRealtime());
+//                            additionalChronometer.setBase(SystemClock.elapsedRealtime());
+//                            additionalChronometer.setVisibility(View.INVISIBLE);
                             Snackbar.make(view, "Full time", Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }
@@ -260,6 +265,7 @@ public class MatchActivity extends AppCompatActivity {
             long elapsedMillis = SystemClock.elapsedRealtime() - mChronometer.getBase();
             if (elapsedMillis > timePeriod * (currentPeriod)) {
                 isAdditional = true;
+                additionalChronometer.setVisibility(View.VISIBLE);
                 timeWhenAdditionalStopped = 0;
 
                 mChronometer.stop();
@@ -268,6 +274,7 @@ public class MatchActivity extends AppCompatActivity {
                 additionalChronometer.setBase(SystemClock.elapsedRealtime() - timeWhenAdditionalStopped);
                 additionalChronometer.start();
 
+                int vibrateTime = 500;
                 vibrator.vibrate(vibrateTime);
             }
         }
