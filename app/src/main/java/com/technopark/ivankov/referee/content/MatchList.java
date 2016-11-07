@@ -87,17 +87,15 @@ public class MatchList {
             return started;
         }
 
-        public void setStarted() {
-            this.started = true;
+        public void setStarted(boolean started) {
+            this.started = started;
         }
 
         public boolean isFinished() {
             return finished;
         }
 
-        public void setFinished() {
-            this.finished = true;
-        }
+        public void setFinished(boolean finished) { this.finished = finished; }
 
         public List<Action> getActionList() { return actionList; }
 

@@ -137,7 +137,11 @@ public class MatchActivity extends AppCompatActivity {
     public void onBackPressed() {
         // TODO Auto-generated method stub
         // super.onBackPressed();
-        openQuitDialog();
+        if (!currentMatch.isFinished() && currentMatch.isStarted()) {
+            openQuitDialog();
+        } else {
+            finish();
+        }
     }
 
     private void openQuitDialog() {
@@ -148,7 +152,11 @@ public class MatchActivity extends AppCompatActivity {
         quitDialog.setPositiveButton("Да", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TODO Auto-generated method stub
+                currentMatch.setFinished(false);
+                currentMatch.setStarted(false);
+                currentMatch.setTeam1Score(0);
+                currentMatch.setTeam2Score(0);
+                currentMatch.getActionList().clear();
                 finish();
             }
         });
@@ -183,7 +191,7 @@ public class MatchActivity extends AppCompatActivity {
         public void onClick(View view) {
             if (currentPeriod < countPeriods + 1 && !currentMatch.isFinished()) {
                 if (!getCurrentMatch().isStarted()) {
-                    getCurrentMatch().setStarted();
+                    getCurrentMatch().setStarted(true);
                     Client.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.MATCH_START));
                 }
                 if (isStopped) {
@@ -225,7 +233,7 @@ public class MatchActivity extends AppCompatActivity {
                         currentPeriod++;
                         if (currentPeriod > countPeriods) {
                             Client.postAction(new Action(getCurrentMatchId(), null, null, MatchActivity.getTime(), Action.EventType.MATCH_END));
-                            getCurrentMatch().setFinished();
+                            getCurrentMatch().setFinished(true);
                             period.setText("Full time");
                             additionalChronometer.setBase(SystemClock.elapsedRealtime());
                             Snackbar.make(view, "Full time", Snackbar.LENGTH_LONG)
