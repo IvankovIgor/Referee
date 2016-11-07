@@ -305,7 +305,7 @@ public class MatchActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mPlayer = mValues.get(position);
-            holder.mIdView.setText(String.valueOf(mTeam.getNumberMap().get(mValues.get(position).getId())));
+            holder.mIdView.setText(String.valueOf(mTeam.getNumberMap().get(mValues.get(position).getIdUser())));
             holder.mContentView.setText(mValues.get(position).getName());
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -314,7 +314,7 @@ public class MatchActivity extends AppCompatActivity {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, PlayerDetailActivity.class);
                 intent.putExtra(MATCH_ID, currentMatchId);
-                intent.putExtra(PLAYER_ID, holder.mPlayer.getId());
+                intent.putExtra(PLAYER_ID, holder.mPlayer.getIdUser());
                 intent.putExtra(TEAM_ID, currentMatch.getTeam1().getPlayers()
                                 .contains(holder.mPlayer) ? currentMatch.getTeam1().getIdTeam() :
                                 currentMatch.getTeam2().getIdTeam());

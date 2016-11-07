@@ -57,7 +57,7 @@ public class PlayerDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.player_detail, container, false);
 
         if (mPlayer != null) {
-            ((TextView) rootView.findViewById(R.id.player_detail)).setText(mTeam.getNumberMap().get(mPlayer.getId()) + " " + mPlayer.getName());
+            ((TextView) rootView.findViewById(R.id.player_detail)).setText(mTeam.getNumberMap().get(mPlayer.getIdUser()) + " " + mPlayer.getName());
         }
 
         return rootView;

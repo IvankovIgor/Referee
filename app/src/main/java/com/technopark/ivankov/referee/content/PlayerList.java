@@ -8,18 +8,18 @@ public class PlayerList {
     public static final Map<String, Player> PLAYER_MAP = new HashMap<>();
 
     public static class Player {
-        private final String id;
+        private final String idUser;
         private final String name;
 //        private final Integer number;
 
         Player(Player player) {
-            id = player.getId();
+            idUser = player.getIdUser();
             name = player.getName();
 //            number = player.getNumber();
-            PLAYER_MAP.put(id, this);
+            PLAYER_MAP.put(idUser, this);
         }
 
-        public String getId() { return id; }
+        public String getIdUser() { return idUser; }
 
         public String getName() { return name; }
 

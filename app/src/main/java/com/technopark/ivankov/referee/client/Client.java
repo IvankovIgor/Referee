@@ -5,10 +5,10 @@ import android.content.Context;
 import android.os.Build;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.Action;
 import com.technopark.ivankov.referee.content.MatchList;
-import com.google.gson.JsonParseException;
 import com.technopark.ivankov.referee.login.LoginActivity;
 
 import java.io.IOException;

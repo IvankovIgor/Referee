@@ -119,7 +119,7 @@ public class PlayerDetailActivity extends AppCompatActivity {
         Snackbar.make(view, String.valueOf(event), Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
 
-        Client.postAction(new Action(mMatch.getIdMatch(), mTeam.getIdTeam(), mPlayer.getId(), mMinute, event));
+        Client.postAction(new Action(mMatch.getIdMatch(), mTeam.getIdTeam(), mPlayer.getIdUser(), mMinute, event));
     }
 
     public void incrementScore(TeamList.Team team) {

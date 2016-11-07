@@ -22,11 +22,11 @@ public class LoginActivity extends AppCompatActivity implements FragmentManager.
     public static SharedPreferences sSettings;
     public static Context context;
     public static String userName;
-    public static String userId;
     public static String serverIP;
     public static String serverPort;
-    //    public static int myId = 4189816;
-    public static int myId = 52057885;
+    //    public static int idVk = 4189816;
+//    public static int idVk = 52057885;
+    public static int idVk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +34,8 @@ public class LoginActivity extends AppCompatActivity implements FragmentManager.
         setContentView(R.layout.activity_login);
         context = this;
         sSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        if (sSettings.contains(APP_PREFERENCES_IP)) {
-            serverIP = sSettings.getString(APP_PREFERENCES_IP, "ifootball.ml");
-        }
-        if (sSettings.contains(APP_PREFERENCES_PORT)) {
-            serverPort = sSettings.getString(APP_PREFERENCES_PORT, "443");
-        }
+        serverIP = sSettings.getString(APP_PREFERENCES_IP, "ifootball.ml");
+        serverPort = sSettings.getString(APP_PREFERENCES_PORT, "443");
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                 .permitAll().build();

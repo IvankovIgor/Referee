@@ -117,7 +117,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
             }
         }
         if (VKAccessToken.currentToken() != null) {
-            LoginActivity.myId = Integer.parseInt(VKAccessToken.currentToken().userId);
+            LoginActivity.idVk = Integer.parseInt(VKAccessToken.currentToken().userId);
             vk.setText(R.string.button_login_true);
         }
         return rootView;
@@ -125,7 +125,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
 
     @Override
     public void onRequestSocialPersonSuccess(int i, SocialPerson socialPerson) {
-        LoginActivity.myId = Integer.parseInt(socialPerson.id);
+        LoginActivity.idVk = Integer.parseInt(socialPerson.id);
         LoginActivity.userName = socialPerson.name;
         ((LoginActivity)getActivity()).getSupportActionBar().setTitle(LoginActivity.userName);
     }
@@ -173,7 +173,6 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
             vk.setText(R.string.button_login_false);
             ((LoginActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
             logout.setVisibility(View.GONE);
-            LoginActivity.userId = null;
             LoginActivity.userName = null;
             MatchList.MATCHES.clear();
             VKSdk.logout();
@@ -244,7 +243,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
 
     private void showMatchList() {
         if (MatchList.MATCHES.isEmpty()) {
-            Client.getMatches(LoginActivity.myId);
+            Client.getMatches(LoginActivity.idVk);
         }
         Intent intent = new Intent(getActivity(), MatchListActivity.class);
         startActivity(intent);
