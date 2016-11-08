@@ -15,9 +15,9 @@ public class Action {
                         MatchList.MATCH_MAP.get(idMatch).getDeletedActionList().size();
         this.idMatch = idMatch;
         this.idTeam = idTeam;
-        this.teamName = TeamList.TEAM_MAP.get(idTeam).getName();
+        this.teamName = idTeam == null ? null : TeamList.TEAM_MAP.get(idTeam).getName();
         this.idPlayer = idPlayer;
-        this.playerName = PlayerList.PLAYER_MAP.get(idPlayer).getName();
+        this.playerName = idPlayer == null ? null : PlayerList.PLAYER_MAP.get(idPlayer).getName();
         this.minute = minute;
         this.idEvent = idEvent;
         MatchList.MATCH_MAP.get(idMatch).getActionList().add(0, this);
