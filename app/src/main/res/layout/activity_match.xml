@@ -133,28 +133,28 @@
             <Button
                 android:text="@string/button_goal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:id="@+id/btn_goal" />
 
             <Button
                 android:text="@string/button_own_goal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:id="@+id/btn_own_goal" />
 
             <Button
                 android:text="@string/button_yellow_card"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:id="@+id/btn_yellow" />
 
             <Button
                 android:text="@string/button_red_card"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:id="@+id/btn_red" />
 
