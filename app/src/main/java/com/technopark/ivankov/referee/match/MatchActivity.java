@@ -87,8 +87,8 @@ public class MatchActivity extends AppCompatActivity {
         assert secondTeamName != null;
         secondTeamName.setText(getCurrentMatch().getTeam2().getName());
 
-        timePeriod = getCurrentMatch().getMatchConfig().getTimePeriod() * 60 * 1000;
-        timePeriod = 3000L;
+        timePeriod = getCurrentMatch().getMatchConfig().getTimePeriod() * 1000;
+//        timePeriod = 3000L;
         countPeriods = getCurrentMatch().getMatchConfig().getCountPeriods();
 
         recyclerViewTeam1 = findViewById(R.id.player_list_team1);
