@@ -9,13 +9,14 @@ public class Action {
     private final EventType idEvent;
 
     public Action(String idMatch, String idTeam, String idPlayer, int minute, EventType idEvent) {
-        this.idAction = MatchList.MATCH_MAP.get(idMatch).getActionList().size();
+        this.idAction = MatchList.MATCH_MAP.get(idMatch).getActionList().size() +
+                        MatchList.MATCH_MAP.get(idMatch).getDeletedActionList().size();
         this.idMatch = idMatch;
         this.idTeam = idTeam;
         this.idPlayer = idPlayer;
         this.minute = minute;
         this.idEvent = idEvent;
-        MatchList.MATCH_MAP.get(idMatch).getActionList().add(this);
+        MatchList.MATCH_MAP.get(idMatch).getActionList().add(0, this);
     }
 
     public enum EventType {

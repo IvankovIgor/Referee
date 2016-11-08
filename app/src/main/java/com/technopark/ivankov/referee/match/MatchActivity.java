@@ -3,7 +3,6 @@ package com.technopark.ivankov.referee.match;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -11,6 +10,7 @@ import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -20,30 +20,21 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 
-import com.technopark.ivankov.referee.action_list.ActionListActivity;
 import com.technopark.ivankov.referee.content.Action;
-import com.technopark.ivankov.referee.client.Client;
-import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.MatchList;
 import com.technopark.ivankov.referee.content.PlayerList;
+import com.technopark.ivankov.referee.client.Client;
+import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.TeamList;
 
 import java.util.List;
 
 /**
- * An activity representing a list of Players. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of players, which when touched,
- * lead to a {@link PlayerDetailActivity} representing
- * player details. On tablets, the activity presents the list of players and
- * player details side-by-side using two vertical panes.
+ * An activity representing a chronometer and a list of Actions {@link Action}.
  */
 public class MatchActivity extends AppCompatActivity {
 
     public static final String MATCH_ID = "com.technopark.ivankov.referee.match.MATCH_ID";
-    public static final String TEAM_ID = "com.technopark.ivankov.referee.match.TEAM_ID";
-    public static final String PLAYER_ID = "com.technopark.ivankov.referee.match.PLAYER_ID";
-    public static final String MINUTE = "com.technopark.ivankov.referee.match.MINUTE";
 
     private String currentMatchId;
     private MatchList.Match currentMatch;
@@ -59,7 +50,12 @@ public class MatchActivity extends AppCompatActivity {
     private long timePeriod;
     private int countPeriods;
     private int currentPeriod = 1;
-    public static List<Action> actionList;
+    private ActionListRecyclerViewAdapter actionListRecyclerViewAdapter;
+    private Action.EventType chosenAction;
+    private View recyclerViewTeam1;
+    private View recyclerViewTeam2;
+    private RecyclerView actionListRecyclerView;
+    private LinearLayoutManager linearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +70,6 @@ public class MatchActivity extends AppCompatActivity {
 
         currentMatchId = getIntent().getStringExtra(MATCH_ID);
         currentMatch = MatchList.MATCH_MAP.get(currentMatchId);
-        actionList = getCurrentMatch().getActionList();
 
         Context context = getApplicationContext();
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -96,9 +91,22 @@ public class MatchActivity extends AppCompatActivity {
         timePeriod = 3000L;
         countPeriods = getCurrentMatch().getMatchConfig().getCountPeriods();
 
-        final Button actions = (Button) findViewById(R.id.actions);
-        assert actions != null;
-        actions.setOnClickListener(actionsClick);
+        recyclerViewTeam1 = findViewById(R.id.player_list_team1);
+        assert recyclerViewTeam1 != null;
+        setupRecyclerView((RecyclerView) recyclerViewTeam1, getCurrentMatch().getTeam1());
+        recyclerViewTeam1.setVisibility(View.GONE);
+
+        recyclerViewTeam2 = findViewById(R.id.player_list_team2);
+        assert recyclerViewTeam2 != null;
+        setupRecyclerView((RecyclerView) recyclerViewTeam2, getCurrentMatch().getTeam2());
+        recyclerViewTeam2.setVisibility(View.GONE);
+
+        actionListRecyclerView = (RecyclerView) findViewById(R.id.action_list);
+        assert actionListRecyclerView != null;
+        actionListRecyclerViewAdapter = new ActionListRecyclerViewAdapter(currentMatch.getActionList());
+        actionListRecyclerView.setAdapter(actionListRecyclerViewAdapter);
+        linearLayoutManager = new LinearLayoutManager(this);
+        actionListRecyclerView.setLayoutManager(linearLayoutManager);
 
         final Button btnStart = (Button) findViewById(R.id.btn_start);
         assert btnStart != null;
@@ -107,6 +115,42 @@ public class MatchActivity extends AppCompatActivity {
         final Button btnEndTime = (Button) findViewById(R.id.btn_reset);
         assert btnEndTime != null;
         btnEndTime.setOnClickListener(btnEndTimeClick);
+
+        final Button btnGoal = (Button) findViewById(R.id.btn_goal);
+        assert btnGoal != null;
+        btnGoal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                act(Action.EventType.GOAL);
+            }
+        });
+
+        final Button btnOwnGoal = (Button) findViewById(R.id.btn_own_goal);
+        assert btnOwnGoal != null;
+        btnOwnGoal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                act(Action.EventType.OWN_GOAL);
+            }
+        });
+
+        final Button btnYellow = (Button) findViewById(R.id.btn_yellow);
+        assert btnYellow != null;
+        btnYellow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                act(Action.EventType.YELLOW_CARD);
+            }
+        });
+
+        final Button btnRed = (Button) findViewById(R.id.btn_red);
+        assert btnRed != null;
+        btnRed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                act(Action.EventType.RED_CARD);
+            }
+        });
 
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
         assert mChronometer != null;
@@ -118,13 +162,16 @@ public class MatchActivity extends AppCompatActivity {
         additionalChronometer = (Chronometer) findViewById(R.id.additional_chronometer);
         additionalChronometer.setVisibility(View.INVISIBLE);
 
-        View recyclerViewTeam1 = findViewById(R.id.player_list_team1);
-        assert recyclerViewTeam1 != null;
-        setupRecyclerView((RecyclerView) recyclerViewTeam1, getCurrentMatch().getTeam1());
+        chosenAction = null;
+    }
 
-        View recyclerViewTeam2 = findViewById(R.id.player_list_team2);
-        assert recyclerViewTeam2 != null;
-        setupRecyclerView((RecyclerView) recyclerViewTeam2, getCurrentMatch().getTeam2());
+    private void act(Action.EventType eventType) {
+        if (!isStopped) {
+            chosenAction = eventType;
+            actionListRecyclerView.setVisibility(View.GONE);
+            recyclerViewTeam1.setVisibility(View.VISIBLE);
+            recyclerViewTeam2.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -146,11 +193,55 @@ public class MatchActivity extends AppCompatActivity {
             finish();
         }
     }
+    private void addAction(View view, Action.EventType event, TeamList.Team team, PlayerList.Player player) {
+        switch (event) {
+            case MATCH_END:
+            case MATCH_START:
+            case TIME_END:
+            case TIME_START:
+                Client.postAction(new Action(currentMatch.getIdMatch(), null,
+                        null, getTime(), event));
+                actionListRecyclerViewAdapter.notifyItemInserted(0);
+                linearLayoutManager.scrollToPosition(0);
+                return;
+            default:
+                break;
+        }
+
+        if (!currentMatch.isStarted() || currentMatch.isFinished()) {
+            Snackbar.make(view, "Not allowed", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+            return;
+        }
+
+        if (event == Action.EventType.GOAL) {
+            incrementScore(team);
+        } else if (event == Action.EventType.OWN_GOAL) {
+            if (team.equals(currentMatch.getTeam1())) {
+                incrementScore(currentMatch.getTeam2());
+            } else {
+                incrementScore(currentMatch.getTeam1());
+            }
+        }
+
+        Client.postAction(new Action(currentMatch.getIdMatch(), team.getIdTeam(),
+                player.getIdUser(), getTime(), event));
+        actionListRecyclerViewAdapter.notifyItemInserted(0);
+        linearLayoutManager.scrollToPosition(0);
+    }
+
+    public void incrementScore(TeamList.Team team) {
+        if (currentMatch.getTeam1().equals(team)) {
+            currentMatch.setTeam1Score(currentMatch.getTeam1Score() + 1);
+        } else {
+            currentMatch.setTeam2Score(currentMatch.getTeam2Score() + 1);
+        }
+        score.setText(currentMatch.getTeam1Score() + ":" + currentMatch.getTeam2Score());
+    }
 
     private void openQuitDialog() {
-        AlertDialog.Builder quitDialog = new AlertDialog.Builder(
-                MatchActivity.this);
-        quitDialog.setTitle("Выход: Вы уверены?");
+        AlertDialog.Builder quitDialog = new AlertDialog.Builder(MatchActivity.this);
+        quitDialog.setTitle("Матч будет сброшен, Вы уверены?");
 
         quitDialog.setPositiveButton("Да", new DialogInterface.OnClickListener() {
             @Override
@@ -174,20 +265,129 @@ public class MatchActivity extends AppCompatActivity {
         quitDialog.show();
     }
 
-    public int getTime() {
-        String chronoText = mChronometer.getText().toString();
-        String array[] = chronoText.split(":");
-        return Integer.parseInt(array[1]);
+    private void openItemDialog(final Action action, final int position){
+        AlertDialog.Builder itemDialog = new AlertDialog.Builder(MatchActivity.this);
+        itemDialog.setTitle("Удалить событие?");
+
+        itemDialog.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                removeAction(action, position);
+            }
+        });
+
+        itemDialog.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO Auto-generated method stub
+            }
+        });
+
+        itemDialog.show();
     }
 
-    private View.OnClickListener actionsClick =  new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Intent intent = new Intent(MatchActivity.this, ActionListActivity.class);
-            intent.putExtra(MATCH_ID, currentMatchId);
-            startActivity(intent);
+    private void removeAction(Action action, int position) {
+        switch (action.getIdEvent()) {
+            case MATCH_END:
+            case MATCH_START:
+            case TIME_END:
+            case TIME_START:
+                return;
+            case GOAL:
+                decrementScore(action.getIdTeam());
+                break;
+            case OWN_GOAL:
+                if (currentMatch.getTeam1().getIdTeam().equals(action.getIdTeam())) {
+                    decrementScore(currentMatch.getTeam2().getIdTeam());
+                } else {
+                    decrementScore(currentMatch.getTeam1().getIdTeam());
+                }
+                break;
+            default:
+                break;
         }
-    };
+        currentMatch.getDeletedActionList().add(action);
+        currentMatch.getActionList().remove(action);
+        actionListRecyclerViewAdapter.notifyItemRemoved(position);
+    }
+
+    private void decrementScore(String idTeam) {
+        if (currentMatch.getTeam1().getIdTeam().equals(idTeam)) {
+            currentMatch.setTeam1Score(currentMatch.getTeam1Score() - 1);
+        } else {
+            currentMatch.setTeam2Score(currentMatch.getTeam2Score() - 1);
+        }
+        score.setText(currentMatch.getTeam1Score() + ":" + currentMatch.getTeam2Score());
+    }
+
+    public class ActionListRecyclerViewAdapter
+            extends RecyclerView.Adapter<ActionListRecyclerViewAdapter.ViewHolder> {
+
+        private final List<Action> aValues;
+
+        public ActionListRecyclerViewAdapter(List<Action> items) {
+            aValues = items;
+        }
+
+        @Override
+        public ActionListRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.action_list_content, parent, false);
+            return new ActionListRecyclerViewAdapter.ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(final ActionListRecyclerViewAdapter.ViewHolder holder, int position) {
+            holder.aAction = aValues.get(position);
+            holder.aMinute.setText(String.valueOf(aValues.get(position).getMinute()));
+            holder.aContentView.setText(aValues.get(position).toString());
+
+            switch (holder.aAction.getIdEvent()) {
+                case MATCH_END:
+                case MATCH_START:
+                case TIME_END:
+                case TIME_START:
+                    return;
+            }
+            holder.aView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openItemDialog(holder.aAction, holder.getAdapterPosition());
+                }
+            });
+        }
+
+
+        @Override
+        public int getItemCount() {
+            return aValues.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            public final View aView;
+            public final TextView aMinute;
+            public final TextView aContentView;
+            public Action aAction;
+
+            public ViewHolder(View view) {
+                super(view);
+                aView = view;
+                aMinute = (TextView) view.findViewById(R.id.id);
+                aContentView = (TextView) view.findViewById(R.id.content);
+            }
+
+            @Override
+            public String toString() {
+                return super.toString() + " '" + aContentView.getText() + "'";
+            }
+        }
+    }
+
+    public int getTime() {
+        String chronometerText = mChronometer.getText().toString();
+        String array[] = chronometerText.split(":");
+        return Integer.parseInt(array[1]);
+    }
 
     private View.OnClickListener btnStartClick = new View.OnClickListener() {
         @Override
@@ -195,11 +395,12 @@ public class MatchActivity extends AppCompatActivity {
             if (currentPeriod < countPeriods + 1 && !currentMatch.isFinished()) {
                 if (!getCurrentMatch().isStarted()) {
                     getCurrentMatch().setStarted(true);
-                    Client.postAction(new Action(getCurrentMatchId(), null, null, getTime(), Action.EventType.MATCH_START));
+                    addAction(view, Action.EventType.MATCH_START, null, null);
+//                    actionListRecyclerViewAdapter.notifyItemInserted(0);
                 }
                 if (isStopped) {
                     additionalChronometer.setVisibility(View.INVISIBLE);
-                    Client.postAction(new Action(getCurrentMatchId(), null, null, getTime(), Action.EventType.TIME_START));
+                    addAction(view, Action.EventType.TIME_START, null, null);
                     isStopped = false;
                     if (!isAdditional) {
                         assert period != null;
@@ -224,7 +425,7 @@ public class MatchActivity extends AppCompatActivity {
             if (currentPeriod < countPeriods + 1 && !currentMatch.isFinished()) {
                 if (!isStopped) {
                     if (isAdditional) {
-                        Client.postAction(new Action(getCurrentMatchId(), null, null, getTime(), Action.EventType.TIME_END));
+                        addAction(view, Action.EventType.TIME_END, null, null);
                         assert period != null;
                         period.setText("Break");
                         isStopped = true;
@@ -236,7 +437,7 @@ public class MatchActivity extends AppCompatActivity {
                         additionalChronometer.stop();
                         currentPeriod++;
                         if (currentPeriod > countPeriods) {
-                            Client.postAction(new Action(getCurrentMatchId(), null, null, getTime(), Action.EventType.MATCH_END));
+                            addAction(view, Action.EventType.MATCH_END, null, null);
                             getCurrentMatch().setFinished(true);
                             period.setText("Full time");
 //                            additionalChronometer.setBase(SystemClock.elapsedRealtime());
@@ -281,16 +482,16 @@ public class MatchActivity extends AppCompatActivity {
     };
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, TeamList.Team team) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(team.getPlayers(), team));
+        recyclerView.setAdapter(new PlayerListRecyclerViewAdapter(team.getPlayers(), team));
     }
 
-    public class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
+    public class PlayerListRecyclerViewAdapter
+            extends RecyclerView.Adapter<PlayerListRecyclerViewAdapter.ViewHolder> {
 
         private final List<PlayerList.Player> mValues;
         private final TeamList.Team mTeam;
 
-        public SimpleItemRecyclerViewAdapter(List<PlayerList.Player> playerList, TeamList.Team team) {
+        public PlayerListRecyclerViewAdapter(List<PlayerList.Player> playerList, TeamList.Team team) {
             mValues = playerList;
             mTeam = team;
         }
@@ -311,16 +512,12 @@ public class MatchActivity extends AppCompatActivity {
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                Context context = v.getContext();
-                Intent intent = new Intent(context, PlayerDetailActivity.class);
-                intent.putExtra(MATCH_ID, currentMatchId);
-                intent.putExtra(PLAYER_ID, holder.mPlayer.getIdUser());
-                intent.putExtra(TEAM_ID, currentMatch.getTeam1().getPlayers()
-                                .contains(holder.mPlayer) ? currentMatch.getTeam1().getIdTeam() :
-                                currentMatch.getTeam2().getIdTeam());
-                intent.putExtra(MINUTE, getTime());
-
-                context.startActivity(intent);
+                    assert chosenAction != null;
+                    addAction(v, chosenAction, mTeam, holder.mPlayer);
+                    chosenAction = null;
+                    actionListRecyclerView.setVisibility(View.VISIBLE);
+                    recyclerViewTeam1.setVisibility(View.GONE);
+                    recyclerViewTeam2.setVisibility(View.GONE);
                 }
             });
         }
@@ -357,5 +554,4 @@ public class MatchActivity extends AppCompatActivity {
     public MatchList.Match getCurrentMatch() { return currentMatch; }
 
     public void setCurrentMatch(MatchList.Match currentMatch) { this.currentMatch = currentMatch; }
-
 }

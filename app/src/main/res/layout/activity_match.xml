@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:animateLayoutChanges="true"
     tools:context="com.technopark.ivankov.referee.match.MatchActivity">
 
     <RelativeLayout
@@ -107,13 +108,6 @@
             <!--android:layout_alignParentBottom="true"-->
 
             <Button
-                android:text="@string/button_actions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:id="@+id/actions" />
-
-            <Button
                 android:text="@string/button_start_match"
                 android:layout_height="wrap_content"
                 android:id="@+id/btn_start"
@@ -133,9 +127,46 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/buttons"
+            android:id="@+id/action_buttons">
+
+            <Button
+                android:text="@string/button_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/btn_goal" />
+
+            <Button
+                android:text="@string/button_own_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/btn_own_goal" />
+
+            <Button
+                android:text="@string/button_yellow_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/btn_yellow" />
+
+            <Button
+                android:text="@string/button_red_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/btn_red" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/commands"
-            android:layout_below="@+id/buttons">
+            android:layout_below="@+id/action_buttons">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -197,51 +228,75 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/lists_container"
+            android:layout_height="wrap_content"
+            android:id="@+id/action_container"
             android:layout_below="@+id/commands"
             android:baselineAligned="false">
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:id="@+id/list1">
-
-                <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
                     xmlns:app="http://schemas.android.com/apk/res-auto"
                     xmlns:tools="http://schemas.android.com/tools"
-                    android:id="@+id/player_list_team1"
+                    android:id="@+id/action_list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:layoutManager="LinearLayoutManager"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
                     tools:context="com.technopark.ivankov.referee.match.MatchActivity"
-                    tools:listitem="@layout/match_content"
-                    android:textAlignment="center" />
+                    tools:listitem="@layout/action_list_content" >
+
+            </android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/action_container"
+            android:id="@+id/player_container"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false">
+
+            <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:id="@+id/list1">
+
+                <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/player_list_team1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="LinearLayoutManager"
+                tools:context="com.technopark.ivankov.referee.match.MatchActivity"
+                tools:listitem="@layout/match_content"
+                android:textAlignment="center" />
+
             </FrameLayout>
 
             <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                android:id="@+id/list2">
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:id="@+id/list2">
 
                 <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    android:id="@+id/player_list_team2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layoutManager="LinearLayoutManager"
-                    tools:context="com.technopark.ivankov.referee.match.MatchActivity"
-                    tools:listitem="@layout/match_content"
-                    android:textAlignment="center" />
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/player_list_team2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="LinearLayoutManager"
+                tools:context="com.technopark.ivankov.referee.match.MatchActivity"
+                tools:listitem="@layout/match_content"
+                android:textAlignment="center" />
+
             </FrameLayout>
 
         </LinearLayout>
 
     </RelativeLayout>
-
 
 </android.support.design.widget.CoordinatorLayout>

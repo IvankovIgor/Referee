@@ -23,6 +23,7 @@ public class MatchList {
         private boolean started;
         private boolean finished;
         private final List<Action> actionList;
+        private final List<Action> deletedActionList;
 
         public Match(Match match) {
             idMatch = match.getIdMatch();
@@ -41,6 +42,7 @@ public class MatchList {
                 team2 = new TeamList.Team(match.getTeam2());
             }
             actionList = new ArrayList<>();
+            deletedActionList = new ArrayList<>();
             MATCHES.add(this);
             MATCH_MAP.put(idMatch, this);
         }
@@ -98,6 +100,8 @@ public class MatchList {
         public void setFinished(boolean finished) { this.finished = finished; }
 
         public List<Action> getActionList() { return actionList; }
+
+        public List<Action> getDeletedActionList() { return deletedActionList; }
 
         @Override
         public String toString() {

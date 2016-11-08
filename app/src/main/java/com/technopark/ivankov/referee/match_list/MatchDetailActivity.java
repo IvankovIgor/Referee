@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.widget.Button;
 
 import com.technopark.ivankov.referee.match.MatchActivity;
-import com.technopark.ivankov.referee.match.PlayerDetailActivity;
 import com.technopark.ivankov.referee.R;
 
 /**

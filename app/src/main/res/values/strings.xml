@@ -105,4 +105,8 @@
     <string name="button_logout">Logout</string>
     <string name="button_login_false">Login via vk</string>
     <string name="button_login_true">Show match list</string>
+    <string name="button_goal">Goal</string>
+    <string name="button_own_goal">own goal</string>
+    <string name="button_yellow_card">yellow card</string>
+    <string name="button_red_card">red card</string>
 </resources>
