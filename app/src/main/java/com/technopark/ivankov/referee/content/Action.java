@@ -4,7 +4,9 @@ public class Action {
     private final int idAction;
     private final String idMatch;
     private final String idTeam;
+    private final String teamName;
     private final String idPlayer;
+    private final String playerName;
     private final int minute;
     private final EventType idEvent;
 
@@ -13,7 +15,9 @@ public class Action {
                         MatchList.MATCH_MAP.get(idMatch).getDeletedActionList().size();
         this.idMatch = idMatch;
         this.idTeam = idTeam;
+        this.teamName = TeamList.TEAM_MAP.get(idTeam).getName();
         this.idPlayer = idPlayer;
+        this.playerName = PlayerList.PLAYER_MAP.get(idPlayer).getName();
         this.minute = minute;
         this.idEvent = idEvent;
         MatchList.MATCH_MAP.get(idMatch).getActionList().add(0, this);
@@ -52,9 +56,13 @@ public class Action {
         return this.idTeam;
     }
 
+    public String getTeamName() { return this.teamName; }
+
     public String getIdPlayer() {
         return this.idPlayer;
     }
+
+    public String getPlayerName() { return this.playerName; }
 
     public int getMinute() {
         return this.minute;
