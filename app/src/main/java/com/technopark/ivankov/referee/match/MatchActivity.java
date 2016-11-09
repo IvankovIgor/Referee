@@ -23,9 +23,9 @@ import android.widget.TextView;
 import com.technopark.ivankov.referee.content.Action;
 import com.technopark.ivankov.referee.content.MatchList;
 import com.technopark.ivankov.referee.content.PlayerList;
+import com.technopark.ivankov.referee.content.TeamList;
 import com.technopark.ivankov.referee.client.Client;
 import com.technopark.ivankov.referee.R;
-import com.technopark.ivankov.referee.content.TeamList;
 
 import java.util.List;
 
@@ -66,7 +66,7 @@ public class MatchActivity extends AppCompatActivity {
 
         currentMatch = MatchList.MATCH_MAP.get(getIntent().getStringExtra(MATCH_ID));
         timePeriod = currentMatch.getMatchConfig().getTimePeriod() * 1000;
-        timePeriod = 3000L;
+//        timePeriod = 3000L;
         countPeriods = currentMatch.getMatchConfig().getCountPeriods();
         currentPeriod = 0;
         chosenAction = null;
@@ -88,11 +88,13 @@ public class MatchActivity extends AppCompatActivity {
         assert team1RecyclerView != null;
         setupPlayerListRecyclerView((RecyclerView) team1RecyclerView, currentMatch.getTeam1());
         team1RecyclerView.setVisibility(View.GONE);
+        team1RecyclerView.setEnabled(false);
 
         team2RecyclerView = findViewById(R.id.team2_player_list);
         assert team2RecyclerView != null;
         setupPlayerListRecyclerView((RecyclerView) team2RecyclerView, currentMatch.getTeam2());
         team2RecyclerView.setVisibility(View.GONE);
+        team2RecyclerView.setEnabled(false);
 
         actionListRecyclerView = (RecyclerView) findViewById(R.id.action_list);
         assert actionListRecyclerView != null;
@@ -161,7 +163,9 @@ public class MatchActivity extends AppCompatActivity {
         if (currentMatch.getMatchStatus() == MatchList.MatchStatus.FINISHED) {
             period.setText(R.string.match_finished);
             mChronometer.setVisibility(View.GONE);
+            mChronometer.setEnabled(false);
             additionalChronometer.setVisibility(View.GONE);
+            additionalChronometer.setEnabled(false);
         }
     }
 
@@ -223,8 +227,11 @@ public class MatchActivity extends AppCompatActivity {
         if (currentMatch.getMatchStatus() == MatchList.MatchStatus.STARTED) {
             chosenAction = eventType;
             actionListRecyclerView.setVisibility(View.GONE);
+            actionListRecyclerView.setEnabled(false);
             team1RecyclerView.setVisibility(View.VISIBLE);
+            team1RecyclerView.setEnabled(true);
             team2RecyclerView.setVisibility(View.VISIBLE);
+            team2RecyclerView.setEnabled(true);
         } else {
             Snackbar.make(view, R.string.error_not_allowed, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
@@ -506,8 +513,11 @@ public class MatchActivity extends AppCompatActivity {
                     addAction(v, chosenAction, mTeam.getIdTeam(), holder.mPlayer.getIdUser());
                     chosenAction = null;
                     actionListRecyclerView.setVisibility(View.VISIBLE);
+                    actionListRecyclerView.setEnabled(true);
                     team1RecyclerView.setVisibility(View.GONE);
+                    team1RecyclerView.setEnabled(false);
                     team2RecyclerView.setVisibility(View.GONE);
+                    team2RecyclerView.setEnabled(false);
                 }
             });
         }

@@ -120,12 +120,8 @@ public class Client {
 
         SSLSocketFactory sslSocketFactory = getSSLConfig(LoginActivity.context).getSocketFactory();
         X509TrustManager trustManager = Platform.get().trustManager(sslSocketFactory);
-//    if (LoginActivity.serverPort.equals("443")) {
         client = new OkHttpClient.Builder().sslSocketFactory(sslSocketFactory, trustManager)
                 .build();
-//    } else {
-//        client = new OkHttpClient.Builder().build();
-//    }
 
         Retrofit retrofit = builder.client(client)
                 .addConverterFactory(GsonConverterFactory.create())
