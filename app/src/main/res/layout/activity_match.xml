@@ -108,14 +108,14 @@
             <!--android:layout_alignParentBottom="true"-->
 
             <Button
-                android:text="@string/button_start_match"
+                android:text="@string/button_start_time"
                 android:layout_height="wrap_content"
                 android:id="@+id/btn_start"
                 android:layout_weight="1"
                 android:layout_width="wrap_content" />
 
             <Button
-                android:text="@string/button_end_time"
+                android:text="@string/button_finish_time"
                 android:layout_height="wrap_content"
                 android:id="@+id/btn_reset"
                 android:layout_weight="1"

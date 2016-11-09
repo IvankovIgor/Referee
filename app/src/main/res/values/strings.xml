@@ -99,8 +99,8 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="button_to_match">to match</string>
-    <string name="button_start_match">start match</string>
-    <string name="button_end_time">end time</string>
+    <string name="button_start_time">start time</string>
+    <string name="button_finish_time">finish time</string>
     <string name="button_actions">actions</string>
     <string name="button_logout">Logout</string>
     <string name="button_login_false">Login via vk</string>

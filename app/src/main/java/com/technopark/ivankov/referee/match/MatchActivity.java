@@ -185,53 +185,46 @@ public class MatchActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // TODO Auto-generated method stub
-        // super.onBackPressed();
         if (currentMatch.getMatchStatus() == MatchList.MatchStatus.STARTED) {
             openQuitDialog();
         } else {
             finish();
         }
     }
-    private void addAction(View view, Action.EventType event, TeamList.Team team, PlayerList.Player player) {
+
+    private void addAction(View view, Action.EventType event, String idTeam, String idUser) {
         switch (event) {
             case MATCH_END:
             case MATCH_START:
             case TIME_END:
             case TIME_START:
-                Client.postAction(new Action(currentMatch.getIdMatch(), null,
-                        null, getTime(), event));
-                actionListRecyclerViewAdapter.notifyItemInserted(0);
-                linearLayoutManager.scrollToPosition(0);
-                return;
+                break;
             default:
+                if (!(currentMatch.getMatchStatus() == MatchList.MatchStatus.STARTED)) {
+                    Snackbar.make(view, "Not allowed", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    return;
+                }
+                if (event == Action.EventType.GOAL) {
+                    incrementScore(idTeam);
+                } else if (event == Action.EventType.OWN_GOAL) {
+                    if (currentMatch.getTeam1().getIdTeam().equals(idTeam)) {
+                        incrementScore(currentMatch.getTeam2().getIdTeam());
+                    } else {
+                        incrementScore(currentMatch.getTeam1().getIdTeam());
+                    }
+                }
                 break;
         }
 
-        if (!(currentMatch.getMatchStatus() == MatchList.MatchStatus.STARTED)) {
-            Snackbar.make(view, "Not allowed", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-            return;
-        }
-
-        if (event == Action.EventType.GOAL) {
-            incrementScore(team);
-        } else if (event == Action.EventType.OWN_GOAL) {
-            if (team.equals(currentMatch.getTeam1())) {
-                incrementScore(currentMatch.getTeam2());
-            } else {
-                incrementScore(currentMatch.getTeam1());
-            }
-        }
-
-        Client.postAction(new Action(currentMatch.getIdMatch(), team.getIdTeam(),
-                player.getIdUser(), getTime(), event));
+        Client.postAction(new Action(currentMatch.getIdMatch(), idTeam,
+                idUser, getTime(), event));
         actionListRecyclerViewAdapter.notifyItemInserted(0);
         linearLayoutManager.scrollToPosition(0);
     }
 
-    public void incrementScore(TeamList.Team team) {
-        if (currentMatch.getTeam1().equals(team)) {
+    public void incrementScore(String idTeam) {
+        if (currentMatch.getTeam1().getIdTeam().equals(idTeam)) {
             currentMatch.setTeam1Score(currentMatch.getTeam1Score() + 1);
         } else {
             currentMatch.setTeam2Score(currentMatch.getTeam2Score() + 1);
@@ -513,7 +506,7 @@ public class MatchActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     assert chosenAction != null;
-                    addAction(v, chosenAction, mTeam, holder.mPlayer);
+                    addAction(v, chosenAction, mTeam.getIdTeam(), holder.mPlayer.getIdUser());
                     chosenAction = null;
                     actionListRecyclerView.setVisibility(View.VISIBLE);
                     recyclerViewTeam1.setVisibility(View.GONE);
