@@ -1,4 +1,4 @@
-package com.technopark.ivankov.referee.match_list;
+package com.technopark.ivankov.referee.match;
 
 import android.app.Activity;
 import android.support.design.widget.CollapsingToolbarLayout;

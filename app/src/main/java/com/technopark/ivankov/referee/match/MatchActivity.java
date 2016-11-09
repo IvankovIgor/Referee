@@ -332,7 +332,8 @@ public class MatchActivity extends AppCompatActivity {
                         mChronometer.start();
                         currentPeriod++;
                         assert period != null;
-                        period.setText(String.valueOf(currentPeriod));
+                        period.setText(R.string.match_period);
+                        period.append(" " + currentPeriod);
                         break;
                     case STARTED:
                         Snackbar.make(view, R.string.error_already_started, Snackbar.LENGTH_LONG)

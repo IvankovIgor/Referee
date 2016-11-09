@@ -1,4 +1,4 @@
-package com.technopark.ivankov.referee.match_list;
+package com.technopark.ivankov.referee.match;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -11,7 +11,6 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.widget.Button;
 
-import com.technopark.ivankov.referee.match.MatchActivity;
 import com.technopark.ivankov.referee.R;
 
 /**

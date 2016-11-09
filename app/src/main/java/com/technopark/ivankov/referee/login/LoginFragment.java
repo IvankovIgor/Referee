@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.technopark.ivankov.referee.client.Client;
-import com.technopark.ivankov.referee.match_list.MatchListActivity;
+import com.technopark.ivankov.referee.match.MatchListActivity;
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.MatchList;
 import com.technopark.ivankov.referee.content.PlayerList;

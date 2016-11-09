@@ -20,6 +20,7 @@
     <string name="btn_red_card">red card</string>
 
     <string name="match_not_started">Not started</string>
+    <string name="match_period">Period</string>
     <string name="match_break">Break</string>
     <string name="match_finished">Full time</string>
     <string name="error_not_allowed">Not allowed</string>
