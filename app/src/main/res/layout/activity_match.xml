@@ -54,7 +54,7 @@
                     android:layout_weight="1"
                     android:textAlignment="center"
                     android:gravity="center_vertical|center_horizontal"
-                    android:textSize="20sp"
+                    android:textSize="25sp"
                     android:textStyle="bold|italic" />
             </LinearLayout>
 
@@ -62,7 +62,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="1.4">
 
                 <Chronometer
                     android:layout_width="wrap_content"
@@ -92,7 +92,7 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical|center_horizontal"
                     android:textColor="#00f"
-                    android:textSize="20sp"
+                    android:textSize="25sp"
                     android:textStyle="bold|italic"
                     android:textAlignment="center" />
             </LinearLayout>
@@ -108,16 +108,16 @@
             <!--android:layout_alignParentBottom="true"-->
 
             <Button
-                android:text="@string/button_start_time"
+                android:text="@string/btn_start_time"
                 android:layout_height="wrap_content"
-                android:id="@+id/btn_start"
+                android:id="@+id/btn_start_time"
                 android:layout_weight="1"
                 android:layout_width="wrap_content" />
 
             <Button
-                android:text="@string/button_finish_time"
+                android:text="@string/btn_finish_time"
                 android:layout_height="wrap_content"
-                android:id="@+id/btn_reset"
+                android:id="@+id/btn_finish_time"
                 android:layout_weight="1"
                 android:layout_width="wrap_content" />
 
@@ -131,32 +131,32 @@
             android:id="@+id/action_buttons">
 
             <Button
-                android:text="@string/button_goal"
+                android:text="@string/btn_goal"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:id="@+id/btn_goal" />
 
             <Button
-                android:text="@string/button_own_goal"
+                android:text="@string/btn_own_goal"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:id="@+id/btn_own_goal" />
 
             <Button
-                android:text="@string/button_yellow_card"
+                android:text="@string/btn_yellow_card"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:id="@+id/btn_yellow" />
+                android:id="@+id/btn_yellow_card" />
 
             <Button
-                android:text="@string/button_red_card"
+                android:text="@string/btn_red_card"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:id="@+id/btn_red" />
+                android:id="@+id/btn_red_card" />
 
         </LinearLayout>
 
@@ -181,7 +181,7 @@
                     android:layout_weight="1"
                     android:textAlignment="center"
                     android:textSize="25sp"
-                    android:id="@+id/team1"
+                    android:id="@+id/team1_name"
                     android:gravity="left|center_vertical" />
 
             </LinearLayout>
@@ -218,7 +218,7 @@
                     android:layout_weight="1"
                     android:textAlignment="center"
                     android:textSize="25sp"
-                    android:id="@+id/team2"
+                    android:id="@+id/team2_name"
                     android:gravity="right|center_vertical" />
 
             </LinearLayout>
@@ -265,7 +265,7 @@
                 <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/player_list_team1"
+                android:id="@+id/team1_player_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layoutManager="LinearLayoutManager"
@@ -285,7 +285,7 @@
                 <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/player_list_team2"
+                android:id="@+id/team2_player_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layoutManager="LinearLayoutManager"

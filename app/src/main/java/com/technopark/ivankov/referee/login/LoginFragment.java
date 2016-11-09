@@ -59,7 +59,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
 
         vk = (Button) rootView.findViewById(R.id.vk);
-        vk.setText(R.string.button_login_false);
+        vk.setText(R.string.btn_login_false);
         vk.setOnClickListener(loginClick);
 
         logout = (Button) rootView.findViewById(R.id.logout);
@@ -118,7 +118,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         }
         if (VKAccessToken.currentToken() != null) {
             LoginActivity.idVk = Integer.parseInt(VKAccessToken.currentToken().userId);
-            vk.setText(R.string.button_login_true);
+            vk.setText(R.string.btn_login_true);
         }
         return rootView;
     }
@@ -132,7 +132,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
 
     private void initSocialNetwork(SocialNetwork socialNetwork){
         if(socialNetwork.isConnected()){
-            vk.setText(R.string.button_login_true);
+            vk.setText(R.string.btn_login_true);
             MatchList.MATCHES.clear();
             MatchList.MATCH_MAP.clear();
             PlayerList.PLAYER_MAP.clear();
@@ -170,7 +170,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
     private View.OnClickListener logoutClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            vk.setText(R.string.button_login_false);
+            vk.setText(R.string.btn_login_false);
             ((LoginActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
             logout.setVisibility(View.GONE);
             LoginActivity.userName = null;

@@ -36,25 +36,21 @@ public class MatchActivity extends AppCompatActivity {
 
     public static final String MATCH_ID = "com.technopark.ivankov.referee.match.MATCH_ID";
 
-    private String currentMatchId;
     private MatchList.Match currentMatch;
+    private long timePeriod;
+    private int countPeriods;
+    private int currentPeriod;
+    private Action.EventType chosenAction;
+    private boolean isAdditional;
     private Chronometer mChronometer;
     private Chronometer additionalChronometer;
     private Vibrator vibrator;
-    private long timeWhenStopped = 0L;
-    private long timeWhenAdditionalStopped = 0L;
-    private boolean isAdditional = false;
-    private boolean isStopped = true;
     private TextView score;
     private TextView period;
-    private long timePeriod;
-    private int countPeriods;
-    private int currentPeriod = 1;
-    private ActionListRecyclerViewAdapter actionListRecyclerViewAdapter;
-    private Action.EventType chosenAction;
-    private View recyclerViewTeam1;
-    private View recyclerViewTeam2;
+    private View team1RecyclerView;
+    private View team2RecyclerView;
     private RecyclerView actionListRecyclerView;
+    private ActionListRecyclerViewAdapter actionListRecyclerViewAdapter;
     private LinearLayoutManager linearLayoutManager;
 
     @Override
@@ -68,38 +64,35 @@ public class MatchActivity extends AppCompatActivity {
         assert toolbar != null;
         toolbar.setTitle(getTitle());
 
-        currentMatchId = getIntent().getStringExtra(MATCH_ID);
-        currentMatch = MatchList.MATCH_MAP.get(currentMatchId);
+        currentMatch = MatchList.MATCH_MAP.get(getIntent().getStringExtra(MATCH_ID));
+        timePeriod = currentMatch.getMatchConfig().getTimePeriod() * 1000;
+        timePeriod = 3000L;
+        countPeriods = currentMatch.getMatchConfig().getCountPeriods();
+        currentPeriod = 0;
+        chosenAction = null;
+        isAdditional = false;
 
+        mChronometer = (Chronometer) findViewById(R.id.chronometer);
+        assert mChronometer != null;
+        mChronometer.setOnChronometerTickListener(mChronometerTick);
+
+        additionalChronometer = (Chronometer) findViewById(R.id.additional_chronometer);
         Context context = getApplicationContext();
+
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
         score = (TextView) findViewById(R.id.score);
-        score.setText(getCurrentMatch().getTeam1Score() + ":" + getCurrentMatch().getTeam2Score());
-
         period = (TextView) findViewById(R.id.period);
 
-        TextView firstTeamName = (TextView) findViewById(R.id.team1);
-        assert firstTeamName != null;
-        firstTeamName.setText(getCurrentMatch().getTeam1().getName());
+        team1RecyclerView = findViewById(R.id.team1_player_list);
+        assert team1RecyclerView != null;
+        setupPlayerListRecyclerView((RecyclerView) team1RecyclerView, currentMatch.getTeam1());
+        team1RecyclerView.setVisibility(View.GONE);
 
-        TextView secondTeamName = (TextView) findViewById(R.id.team2);
-        assert secondTeamName != null;
-        secondTeamName.setText(getCurrentMatch().getTeam2().getName());
-
-        timePeriod = getCurrentMatch().getMatchConfig().getTimePeriod() * 1000;
-//        timePeriod = 3000L;
-        countPeriods = getCurrentMatch().getMatchConfig().getCountPeriods();
-
-        recyclerViewTeam1 = findViewById(R.id.player_list_team1);
-        assert recyclerViewTeam1 != null;
-        setupRecyclerView((RecyclerView) recyclerViewTeam1, getCurrentMatch().getTeam1());
-        recyclerViewTeam1.setVisibility(View.GONE);
-
-        recyclerViewTeam2 = findViewById(R.id.player_list_team2);
-        assert recyclerViewTeam2 != null;
-        setupRecyclerView((RecyclerView) recyclerViewTeam2, getCurrentMatch().getTeam2());
-        recyclerViewTeam2.setVisibility(View.GONE);
+        team2RecyclerView = findViewById(R.id.team2_player_list);
+        assert team2RecyclerView != null;
+        setupPlayerListRecyclerView((RecyclerView) team2RecyclerView, currentMatch.getTeam2());
+        team2RecyclerView.setVisibility(View.GONE);
 
         actionListRecyclerView = (RecyclerView) findViewById(R.id.action_list);
         assert actionListRecyclerView != null;
@@ -108,20 +101,28 @@ public class MatchActivity extends AppCompatActivity {
         linearLayoutManager = new LinearLayoutManager(this);
         actionListRecyclerView.setLayoutManager(linearLayoutManager);
 
-        final Button btnStart = (Button) findViewById(R.id.btn_start);
-        assert btnStart != null;
-        btnStart.setOnClickListener(btnStartClick);
+        final TextView team1Name = (TextView) findViewById(R.id.team1_name);
+        assert team1Name != null;
+        team1Name.setText(currentMatch.getTeam1().getName());
 
-        final Button btnEndTime = (Button) findViewById(R.id.btn_reset);
-        assert btnEndTime != null;
-        btnEndTime.setOnClickListener(btnEndTimeClick);
+        final TextView team2Name = (TextView) findViewById(R.id.team2_name);
+        assert team2Name != null;
+        team2Name.setText(currentMatch.getTeam2().getName());
+
+        final Button btnStartTime = (Button) findViewById(R.id.btn_start_time);
+        assert btnStartTime != null;
+        btnStartTime.setOnClickListener(btnStartTimeClick);
+
+        final Button btnFinishTime = (Button) findViewById(R.id.btn_finish_time);
+        assert btnFinishTime != null;
+        btnFinishTime.setOnClickListener(btnFinishTimeClick);
 
         final Button btnGoal = (Button) findViewById(R.id.btn_goal);
         assert btnGoal != null;
         btnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                act(Action.EventType.GOAL);
+                act(view, Action.EventType.GOAL);
             }
         });
 
@@ -130,48 +131,27 @@ public class MatchActivity extends AppCompatActivity {
         btnOwnGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                act(Action.EventType.OWN_GOAL);
+                act(view, Action.EventType.OWN_GOAL);
             }
         });
 
-        final Button btnYellow = (Button) findViewById(R.id.btn_yellow);
-        assert btnYellow != null;
-        btnYellow.setOnClickListener(new View.OnClickListener() {
+        final Button btnYellowCard = (Button) findViewById(R.id.btn_yellow_card);
+        assert btnYellowCard != null;
+        btnYellowCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                act(Action.EventType.YELLOW_CARD);
+                act(view, Action.EventType.YELLOW_CARD);
             }
         });
 
-        final Button btnRed = (Button) findViewById(R.id.btn_red);
-        assert btnRed != null;
-        btnRed.setOnClickListener(new View.OnClickListener() {
+        final Button btnRedCard = (Button) findViewById(R.id.btn_red_card);
+        assert btnRedCard != null;
+        btnRedCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                act(Action.EventType.RED_CARD);
+                act(view, Action.EventType.RED_CARD);
             }
         });
-
-        mChronometer = (Chronometer) findViewById(R.id.chronometer);
-        assert mChronometer != null;
-        mChronometer.setOnChronometerTickListener(mChronometerTick);
-        if (currentMatch.getMatchStatus() == MatchList.MatchStatus.FINISHED) {
-            mChronometer.setVisibility(View.INVISIBLE);
-        }
-
-        additionalChronometer = (Chronometer) findViewById(R.id.additional_chronometer);
-        additionalChronometer.setVisibility(View.INVISIBLE);
-
-        chosenAction = null;
-    }
-
-    private void act(Action.EventType eventType) {
-        if (!isStopped) {
-            chosenAction = eventType;
-            actionListRecyclerView.setVisibility(View.GONE);
-            recyclerViewTeam1.setVisibility(View.VISIBLE);
-            recyclerViewTeam2.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
@@ -179,7 +159,9 @@ public class MatchActivity extends AppCompatActivity {
         super.onStart();
         score.setText(currentMatch.getTeam1Score() + ":" + currentMatch.getTeam2Score());
         if (currentMatch.getMatchStatus() == MatchList.MatchStatus.FINISHED) {
-            period.setText("Full time");
+            period.setText(R.string.match_finished);
+            mChronometer.setVisibility(View.GONE);
+            additionalChronometer.setVisibility(View.GONE);
         }
     }
 
@@ -192,16 +174,73 @@ public class MatchActivity extends AppCompatActivity {
         }
     }
 
+    private void openQuitDialog() {
+        AlertDialog.Builder quitDialog = new AlertDialog.Builder(MatchActivity.this);
+        quitDialog.setTitle(R.string.title_quit_dialog);
+
+        quitDialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                currentMatch.setTeam1Score(0);
+                currentMatch.setTeam2Score(0);
+                currentMatch.getActionList().clear();
+                currentMatch.getDeletedActionList().clear();
+                currentMatch.setMatchStatus(MatchList.MatchStatus.NOT_STARTED);
+                finish();
+            }
+        });
+
+        quitDialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        quitDialog.show();
+    }
+
+    private void openItemDialog(final Action action, final int position){
+        AlertDialog.Builder itemDialog = new AlertDialog.Builder(MatchActivity.this);
+        itemDialog.setTitle(R.string.title_item_dialog);
+
+        itemDialog.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                removeAction(action, position);
+            }
+        });
+
+        itemDialog.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        itemDialog.show();
+    }
+
+    private void act(View view, Action.EventType eventType) {
+        if (currentMatch.getMatchStatus() == MatchList.MatchStatus.STARTED) {
+            chosenAction = eventType;
+            actionListRecyclerView.setVisibility(View.GONE);
+            team1RecyclerView.setVisibility(View.VISIBLE);
+            team2RecyclerView.setVisibility(View.VISIBLE);
+        } else {
+            Snackbar.make(view, R.string.error_not_allowed, Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        }
+    }
+
     private void addAction(View view, Action.EventType event, String idTeam, String idUser) {
         switch (event) {
-            case MATCH_END:
-            case MATCH_START:
-            case TIME_END:
-            case TIME_START:
+            case MATCH_FINISHED:
+            case MATCH_STARTED:
+            case TIME_FINISHED:
+            case TIME_STARTED:
                 break;
             default:
                 if (!(currentMatch.getMatchStatus() == MatchList.MatchStatus.STARTED)) {
-                    Snackbar.make(view, "Not allowed", Snackbar.LENGTH_LONG)
+                    Snackbar.make(view, R.string.error_not_allowed, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                     return;
                 }
@@ -223,7 +262,7 @@ public class MatchActivity extends AppCompatActivity {
         linearLayoutManager.scrollToPosition(0);
     }
 
-    public void incrementScore(String idTeam) {
+    private void incrementScore(String idTeam) {
         if (currentMatch.getTeam1().getIdTeam().equals(idTeam)) {
             currentMatch.setTeam1Score(currentMatch.getTeam1Score() + 1);
         } else {
@@ -232,59 +271,12 @@ public class MatchActivity extends AppCompatActivity {
         score.setText(currentMatch.getTeam1Score() + ":" + currentMatch.getTeam2Score());
     }
 
-    private void openQuitDialog() {
-        AlertDialog.Builder quitDialog = new AlertDialog.Builder(MatchActivity.this);
-        quitDialog.setTitle("Матч будет сброшен, Вы уверены?");
-
-        quitDialog.setPositiveButton("Да", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                currentMatch.setTeam1Score(0);
-                currentMatch.setTeam2Score(0);
-                currentMatch.getActionList().clear();
-                currentMatch.getDeletedActionList().clear();
-                currentMatch.setMatchStatus(MatchList.MatchStatus.NOT_STARTED);
-                finish();
-            }
-        });
-
-        quitDialog.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // TODO Auto-generated method stub
-            }
-        });
-
-        quitDialog.show();
-    }
-
-    private void openItemDialog(final Action action, final int position){
-        AlertDialog.Builder itemDialog = new AlertDialog.Builder(MatchActivity.this);
-        itemDialog.setTitle("Удалить событие?");
-
-        itemDialog.setPositiveButton("Да", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                removeAction(action, position);
-            }
-        });
-
-        itemDialog.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // TODO Auto-generated method stub
-            }
-        });
-
-        itemDialog.show();
-    }
-
     private void removeAction(Action action, int position) {
         switch (action.getIdEvent()) {
-            case MATCH_END:
-            case MATCH_START:
-            case TIME_END:
-            case TIME_START:
+            case MATCH_FINISHED:
+            case MATCH_STARTED:
+            case TIME_FINISHED:
+            case TIME_STARTED:
                 return;
             case GOAL:
                 decrementScore(action.getIdTeam());
@@ -313,12 +305,112 @@ public class MatchActivity extends AppCompatActivity {
         score.setText(currentMatch.getTeam1Score() + ":" + currentMatch.getTeam2Score());
     }
 
-    public class ActionListRecyclerViewAdapter
+    private int getTime() {
+        String chronometerText = mChronometer.getText().toString();
+        String array[] = chronometerText.split(":");
+        return Integer.parseInt(array[1]);
+    }
+
+    private View.OnClickListener btnStartTimeClick;
+
+    {
+        btnStartTimeClick = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (currentMatch.getMatchStatus()) {
+                    case FINISHED:
+                        Snackbar.make(view, R.string.match_finished, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                        break;
+                    case NOT_STARTED:
+                        addAction(view, Action.EventType.MATCH_STARTED, null, null);
+                    case BREAK:
+                        addAction(view, Action.EventType.TIME_STARTED, null, null);
+                        currentMatch.setMatchStatus(MatchList.MatchStatus.STARTED);
+                        additionalChronometer.setBase(SystemClock.elapsedRealtime());
+                        mChronometer.setBase(SystemClock.elapsedRealtime() - timePeriod * currentPeriod);
+                        mChronometer.start();
+                        currentPeriod++;
+                        assert period != null;
+                        period.setText(String.valueOf(currentPeriod));
+                        break;
+                    case STARTED:
+                        Snackbar.make(view, R.string.error_already_started, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+    }
+
+    private View.OnClickListener btnFinishTimeClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (currentMatch.getMatchStatus()) {
+                case FINISHED:
+                    Snackbar.make(view, R.string.match_finished, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    break;
+                case NOT_STARTED:
+                    Snackbar.make(view, R.string.error_not_started, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    break;
+                case BREAK:
+                    Snackbar.make(view, R.string.error_already_stopped, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    break;
+                case STARTED:
+                    if (!isAdditional) {
+                        Snackbar.make(view, R.string.error_too_early, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                        break;
+                    } else {
+                        addAction(view, Action.EventType.TIME_FINISHED, null, null);
+                        assert period != null;
+                        period.setText(R.string.match_break);
+                        currentMatch.setMatchStatus(MatchList.MatchStatus.BREAK);
+                        isAdditional = false;
+                        mChronometer.stop();
+                        mChronometer.setBase(SystemClock.elapsedRealtime() - timePeriod * currentPeriod);
+                        additionalChronometer.stop();
+                        if (currentPeriod == countPeriods) {
+                            addAction(view, Action.EventType.MATCH_FINISHED, null, null);
+                            currentMatch.setMatchStatus(MatchList.MatchStatus.FINISHED);
+                            period.setText(R.string.match_finished);
+                        }
+                    }
+                default:
+                    break;
+            }
+        }
+    };
+
+    private Chronometer.OnChronometerTickListener mChronometerTick = new Chronometer.OnChronometerTickListener(){
+        @Override
+        public void onChronometerTick(Chronometer chronometer) {
+            long elapsedMillis = SystemClock.elapsedRealtime() - mChronometer.getBase();
+            if (elapsedMillis > timePeriod * (currentPeriod)) {
+                isAdditional = true;
+
+                mChronometer.stop();
+                mChronometer.setBase(SystemClock.elapsedRealtime() - timePeriod * (currentPeriod));
+
+                additionalChronometer.setBase(SystemClock.elapsedRealtime());
+                additionalChronometer.start();
+
+                vibrator.vibrate(500);
+            }
+        }
+    };
+
+    private class ActionListRecyclerViewAdapter
             extends RecyclerView.Adapter<ActionListRecyclerViewAdapter.ViewHolder> {
 
         private final List<Action> aValues;
 
-        public ActionListRecyclerViewAdapter(List<Action> items) {
+        private ActionListRecyclerViewAdapter(List<Action> items) {
             aValues = items;
         }
 
@@ -336,16 +428,18 @@ public class MatchActivity extends AppCompatActivity {
             holder.aContentView.setText(aValues.get(position).toString());
 
             switch (holder.aAction.getIdEvent()) {
-                case MATCH_END:
-                case MATCH_START:
-                case TIME_END:
-                case TIME_START:
+                case MATCH_FINISHED:
+                case MATCH_STARTED:
+                case TIME_FINISHED:
+                case TIME_STARTED:
                     return;
             }
             holder.aView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openItemDialog(holder.aAction, holder.getAdapterPosition());
+                    if (!(currentMatch.getMatchStatus() == MatchList.MatchStatus.FINISHED)) {
+                        openItemDialog(holder.aAction, holder.getAdapterPosition());
+                    }
                 }
             });
         }
@@ -356,13 +450,13 @@ public class MatchActivity extends AppCompatActivity {
             return aValues.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public final View aView;
-            public final TextView aMinute;
-            public final TextView aContentView;
-            public Action aAction;
+        class ViewHolder extends RecyclerView.ViewHolder {
+            private final View aView;
+            private final TextView aMinute;
+            private final TextView aContentView;
+            private Action aAction;
 
-            public ViewHolder(View view) {
+            private ViewHolder(View view) {
                 super(view);
                 aView = view;
                 aMinute = (TextView) view.findViewById(R.id.id);
@@ -376,115 +470,17 @@ public class MatchActivity extends AppCompatActivity {
         }
     }
 
-    public int getTime() {
-        String chronometerText = mChronometer.getText().toString();
-        String array[] = chronometerText.split(":");
-        return Integer.parseInt(array[1]);
-    }
-
-    private View.OnClickListener btnStartClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (currentPeriod < countPeriods + 1 && !(currentMatch.getMatchStatus() == MatchList.MatchStatus.FINISHED)) {
-                if (currentMatch.getMatchStatus() == MatchList.MatchStatus.NOT_STARTED) {
-                    currentMatch.setMatchStatus(MatchList.MatchStatus.STARTED);
-                    addAction(view, Action.EventType.MATCH_START, null, null);
-//                    actionListRecyclerViewAdapter.notifyItemInserted(0);
-                }
-                if (isStopped) {
-                    additionalChronometer.setVisibility(View.INVISIBLE);
-                    addAction(view, Action.EventType.TIME_START, null, null);
-                    isStopped = false;
-                    if (!isAdditional) {
-                        assert period != null;
-                        period.setText("Period " + currentPeriod);
-                        mChronometer.setBase(SystemClock.elapsedRealtime() - timeWhenStopped);
-                        mChronometer.start();
-                    } else {
-                        additionalChronometer.setBase(SystemClock.elapsedRealtime() + timeWhenAdditionalStopped);
-                        additionalChronometer.start();
-                    }
-                }
-            } else {
-                Snackbar.make(view, "Full time", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        }
-    };
-
-    private View.OnClickListener btnEndTimeClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (currentPeriod < countPeriods + 1 && !(currentMatch.getMatchStatus() == MatchList.MatchStatus.FINISHED)) {
-                if (!isStopped) {
-                    if (isAdditional) {
-                        addAction(view, Action.EventType.TIME_END, null, null);
-                        assert period != null;
-                        period.setText("Break");
-                        isStopped = true;
-                        isAdditional = false;
-                        timeWhenStopped = timePeriod * (currentPeriod);
-                        timeWhenAdditionalStopped = 0;
-                        mChronometer.stop();
-                        mChronometer.setBase(SystemClock.elapsedRealtime() - timeWhenStopped);
-                        additionalChronometer.stop();
-                        currentPeriod++;
-                        if (currentPeriod > countPeriods) {
-                            addAction(view, Action.EventType.MATCH_END, null, null);
-                            currentMatch.setMatchStatus(MatchList.MatchStatus.FINISHED);
-                            period.setText("Full time");
-//                            additionalChronometer.setBase(SystemClock.elapsedRealtime());
-//                            additionalChronometer.setVisibility(View.INVISIBLE);
-                            Snackbar.make(view, "Full time", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                        }
-                    } else {
-                        Snackbar.make(view, "Too early", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-                    }
-                } else {
-                    Snackbar.make(view, "Match is stopped", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            } else {
-                Snackbar.make(view, "Full time", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        }
-    };
-
-    private Chronometer.OnChronometerTickListener mChronometerTick = new Chronometer.OnChronometerTickListener(){
-        @Override
-        public void onChronometerTick(Chronometer chronometer) {
-            long elapsedMillis = SystemClock.elapsedRealtime() - mChronometer.getBase();
-            if (elapsedMillis > timePeriod * (currentPeriod)) {
-                isAdditional = true;
-                additionalChronometer.setVisibility(View.VISIBLE);
-                timeWhenAdditionalStopped = 0;
-
-                mChronometer.stop();
-                mChronometer.setBase(SystemClock.elapsedRealtime() - timePeriod * (currentPeriod));
-
-                additionalChronometer.setBase(SystemClock.elapsedRealtime() - timeWhenAdditionalStopped);
-                additionalChronometer.start();
-
-                int vibrateTime = 500;
-                vibrator.vibrate(vibrateTime);
-            }
-        }
-    };
-
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView, TeamList.Team team) {
+    private void setupPlayerListRecyclerView(@NonNull RecyclerView recyclerView, TeamList.Team team) {
         recyclerView.setAdapter(new PlayerListRecyclerViewAdapter(team.getPlayers(), team));
     }
 
-    public class PlayerListRecyclerViewAdapter
+    private class PlayerListRecyclerViewAdapter
             extends RecyclerView.Adapter<PlayerListRecyclerViewAdapter.ViewHolder> {
 
         private final List<PlayerList.Player> mValues;
         private final TeamList.Team mTeam;
 
-        public PlayerListRecyclerViewAdapter(List<PlayerList.Player> playerList, TeamList.Team team) {
+        private PlayerListRecyclerViewAdapter(List<PlayerList.Player> playerList, TeamList.Team team) {
             mValues = playerList;
             mTeam = team;
         }
@@ -509,8 +505,8 @@ public class MatchActivity extends AppCompatActivity {
                     addAction(v, chosenAction, mTeam.getIdTeam(), holder.mPlayer.getIdUser());
                     chosenAction = null;
                     actionListRecyclerView.setVisibility(View.VISIBLE);
-                    recyclerViewTeam1.setVisibility(View.GONE);
-                    recyclerViewTeam2.setVisibility(View.GONE);
+                    team1RecyclerView.setVisibility(View.GONE);
+                    team2RecyclerView.setVisibility(View.GONE);
                 }
             });
         }
@@ -520,13 +516,13 @@ public class MatchActivity extends AppCompatActivity {
             return mValues.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public final View mView;
-            public final TextView mIdView;
-            public final TextView mContentView;
-            public PlayerList.Player mPlayer;
+        class ViewHolder extends RecyclerView.ViewHolder {
+            private final View mView;
+            private final TextView mIdView;
+            private final TextView mContentView;
+            private PlayerList.Player mPlayer;
 
-            public ViewHolder(View view) {
+            private ViewHolder(View view) {
                 super(view);
                 mView = view;
                 mIdView = (TextView) view.findViewById(R.id.id);
@@ -539,12 +535,4 @@ public class MatchActivity extends AppCompatActivity {
             }
         }
     }
-
-    public String getCurrentMatchId() { return currentMatchId; }
-
-    public void setCurrentMatchId(String currentMatchId) {  this.currentMatchId = currentMatchId; }
-
-    public MatchList.Match getCurrentMatch() { return currentMatch; }
-
-    public void setCurrentMatch(MatchList.Match currentMatch) { this.currentMatch = currentMatch; }
 }

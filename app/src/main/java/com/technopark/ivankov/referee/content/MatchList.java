@@ -11,7 +11,7 @@ public class MatchList {
     public static final Map<String, Match> MATCH_MAP = new HashMap<>();
 
     public enum MatchStatus {
-        NOT_STARTED, STARTED, FINISHED
+        NOT_STARTED, STARTED, BREAK, FINISHED
     }
 
     public static class Match {
