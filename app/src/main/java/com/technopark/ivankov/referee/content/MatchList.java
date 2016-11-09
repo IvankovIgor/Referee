@@ -10,6 +10,10 @@ public class MatchList {
     public static final List<Match> MATCHES = new ArrayList<>();
     public static final Map<String, Match> MATCH_MAP = new HashMap<>();
 
+    public enum MatchStatus {
+        NOT_STARTED, STARTED, FINISHED
+    }
+
     public static class Match {
         private final String idMatch;
         private final String federation;
@@ -20,10 +24,9 @@ public class MatchList {
         private final TeamList.Team team2;
         private int team1Score;
         private int team2Score;
-        private boolean started;
-        private boolean finished;
         private final List<Action> actionList;
         private final List<Action> deletedActionList;
+        private MatchStatus matchStatus;
 
         public Match(Match match) {
             idMatch = match.getIdMatch();
@@ -43,6 +46,7 @@ public class MatchList {
             }
             actionList = new ArrayList<>();
             deletedActionList = new ArrayList<>();
+            matchStatus = MatchStatus.NOT_STARTED;
             MATCHES.add(this);
             MATCH_MAP.put(idMatch, this);
         }
@@ -85,23 +89,17 @@ public class MatchList {
 
         public void setTeam2Score(Integer team2Score) { this.team2Score = team2Score; }
 
-        public boolean isStarted() {
-            return started;
-        }
-
-        public void setStarted(boolean started) {
-            this.started = started;
-        }
-
-        public boolean isFinished() {
-            return finished;
-        }
-
-        public void setFinished(boolean finished) { this.finished = finished; }
-
         public List<Action> getActionList() { return actionList; }
 
         public List<Action> getDeletedActionList() { return deletedActionList; }
+
+        public MatchStatus getMatchStatus() {
+            return matchStatus;
+        }
+
+        public void setMatchStatus(MatchStatus matchStatus) {
+            this.matchStatus = matchStatus;
+        }
 
         @Override
         public String toString() {

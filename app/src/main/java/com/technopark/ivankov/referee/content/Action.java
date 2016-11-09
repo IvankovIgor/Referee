@@ -24,25 +24,29 @@ public class Action {
     }
 
     public enum EventType {
-        MATCH_START(0),
-        MATCH_END(1),
-        TIME_START(2),
-        TIME_END(3),
-        GOAL(4),
-        OWN_GOAL(5),
-        YELLOW_CARD(6),
-        RED_CARD(7);
-
-        private final int index;
-
-        EventType(int index) {
-            this.index = index;
-        }
-
-        public int getIndex() {
-            return index;
-        }
+        MATCH_START, MATCH_END, TIME_START, TIME_END,
+        GOAL, OWN_GOAL, YELLOW_CARD, RED_CARD
     }
+//    public enum EventType {
+//        MATCH_START(0),
+//        MATCH_END(1),
+//        TIME_START(2),
+//        TIME_END(3),
+//        GOAL(4),
+//        OWN_GOAL(5),
+//        YELLOW_CARD(6),
+//        RED_CARD(7);
+//
+//        private final int index;
+//
+//        EventType(int index) {
+//            this.index = index;
+//        }
+//
+//        public int getIndex() {
+//            return index;
+//        }
+//    }
 
     public int getIdAction() {
         return this.idAction;

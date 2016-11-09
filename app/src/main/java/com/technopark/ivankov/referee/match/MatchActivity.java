@@ -155,7 +155,7 @@ public class MatchActivity extends AppCompatActivity {
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
         assert mChronometer != null;
         mChronometer.setOnChronometerTickListener(mChronometerTick);
-        if (currentMatch.isFinished()) {
+        if (currentMatch.getMatchStatus() == MatchList.MatchStatus.FINISHED) {
             mChronometer.setVisibility(View.INVISIBLE);
         }
 
@@ -178,7 +178,7 @@ public class MatchActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         score.setText(currentMatch.getTeam1Score() + ":" + currentMatch.getTeam2Score());
-        if (currentMatch.isFinished()) {
+        if (currentMatch.getMatchStatus() == MatchList.MatchStatus.FINISHED) {
             period.setText("Full time");
         }
     }
@@ -187,7 +187,7 @@ public class MatchActivity extends AppCompatActivity {
     public void onBackPressed() {
         // TODO Auto-generated method stub
         // super.onBackPressed();
-        if (!currentMatch.isFinished() && currentMatch.isStarted()) {
+        if (currentMatch.getMatchStatus() == MatchList.MatchStatus.STARTED) {
             openQuitDialog();
         } else {
             finish();
@@ -208,7 +208,7 @@ public class MatchActivity extends AppCompatActivity {
                 break;
         }
 
-        if (!currentMatch.isStarted() || currentMatch.isFinished()) {
+        if (!(currentMatch.getMatchStatus() == MatchList.MatchStatus.STARTED)) {
             Snackbar.make(view, "Not allowed", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
             return;
@@ -246,11 +246,11 @@ public class MatchActivity extends AppCompatActivity {
         quitDialog.setPositiveButton("Да", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                currentMatch.setFinished(false);
-                currentMatch.setStarted(false);
                 currentMatch.setTeam1Score(0);
                 currentMatch.setTeam2Score(0);
                 currentMatch.getActionList().clear();
+                currentMatch.getDeletedActionList().clear();
+                currentMatch.setMatchStatus(MatchList.MatchStatus.NOT_STARTED);
                 finish();
             }
         });
@@ -392,9 +392,9 @@ public class MatchActivity extends AppCompatActivity {
     private View.OnClickListener btnStartClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (currentPeriod < countPeriods + 1 && !currentMatch.isFinished()) {
-                if (!getCurrentMatch().isStarted()) {
-                    getCurrentMatch().setStarted(true);
+            if (currentPeriod < countPeriods + 1 && !(currentMatch.getMatchStatus() == MatchList.MatchStatus.FINISHED)) {
+                if (currentMatch.getMatchStatus() == MatchList.MatchStatus.NOT_STARTED) {
+                    currentMatch.setMatchStatus(MatchList.MatchStatus.STARTED);
                     addAction(view, Action.EventType.MATCH_START, null, null);
 //                    actionListRecyclerViewAdapter.notifyItemInserted(0);
                 }
@@ -422,7 +422,7 @@ public class MatchActivity extends AppCompatActivity {
     private View.OnClickListener btnEndTimeClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (currentPeriod < countPeriods + 1 && !currentMatch.isFinished()) {
+            if (currentPeriod < countPeriods + 1 && !(currentMatch.getMatchStatus() == MatchList.MatchStatus.FINISHED)) {
                 if (!isStopped) {
                     if (isAdditional) {
                         addAction(view, Action.EventType.TIME_END, null, null);
@@ -438,7 +438,7 @@ public class MatchActivity extends AppCompatActivity {
                         currentPeriod++;
                         if (currentPeriod > countPeriods) {
                             addAction(view, Action.EventType.MATCH_END, null, null);
-                            getCurrentMatch().setFinished(true);
+                            currentMatch.setMatchStatus(MatchList.MatchStatus.FINISHED);
                             period.setText("Full time");
 //                            additionalChronometer.setBase(SystemClock.elapsedRealtime());
 //                            additionalChronometer.setVisibility(View.INVISIBLE);
