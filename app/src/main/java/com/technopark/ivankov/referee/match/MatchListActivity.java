@@ -14,17 +14,15 @@ import android.widget.TextView;
 import android.content.pm.ActivityInfo;
 
 import com.technopark.ivankov.referee.R;
+import com.technopark.ivankov.referee.client.Client;
 import com.technopark.ivankov.referee.content.MatchList;
+import com.technopark.ivankov.referee.login.LoginActivity;
 
 import java.util.List;
 
 /**
- * An activity representing a list of Matches. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of matches, which when touched,
- * lead to a {@link MatchDetailActivity} representing
- * match details. On tablets, the activity presents the list of matches and
- * match details side-by-side using two vertical panes.
+ * An activity representing a list of Matches, which when touched,
+ * lead to a {@link MatchDetailActivity} representing match details.
  */
 public class MatchListActivity extends AppCompatActivity {
 
@@ -39,21 +37,23 @@ public class MatchListActivity extends AppCompatActivity {
         assert toolbar != null;
         toolbar.setTitle(getTitle());
 
-        View recyclerView = findViewById(R.id.match_list);
-        assert recyclerView != null;
-        setupRecyclerView((RecyclerView) recyclerView);
+        Client.getMatches(LoginActivity.idVk);
+
+        View matchListRecyclerView = findViewById(R.id.match_list);
+        assert matchListRecyclerView != null;
+        setupRecyclerView((RecyclerView) matchListRecyclerView);
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(MatchList.MATCHES));
+        recyclerView.setAdapter(new MatchListRecyclerViewAdapter(MatchList.MATCHES));
     }
 
-    public class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
+    private class MatchListRecyclerViewAdapter
+            extends RecyclerView.Adapter<MatchListRecyclerViewAdapter.ViewHolder> {
 
         private final List<MatchList.Match> mValues;
 
-        public SimpleItemRecyclerViewAdapter(List<MatchList.Match> items) {
+        private MatchListRecyclerViewAdapter(List<MatchList.Match> items) {
             mValues = items;
         }
 
@@ -86,12 +86,12 @@ public class MatchListActivity extends AppCompatActivity {
             return mValues.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public final View mView;
-            public final TextView mContentView;
-            public MatchList.Match mMatch;
+        class ViewHolder extends RecyclerView.ViewHolder {
+            private final View mView;
+            private final TextView mContentView;
+            private MatchList.Match mMatch;
 
-            public ViewHolder(View view) {
+            private ViewHolder(View view) {
                 super(view);
                 mView = view;
                 mContentView = (TextView) view.findViewById(R.id.content);

@@ -67,27 +67,6 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-//        call.enqueue(new Callback<List<MatchList.Match>>() {
-//            @Override
-//            public void onResponse(Call<List<MatchList.Match>> call, Response<List<MatchList.Match>> response) {
-//                try {
-//                    checkRequestContent(call.request());
-//                    checkResponseContent(response);
-//                    List<MatchList.Match> list = response.body();
-//                    for (int i = 0; i < list.size(); i++) {
-//                        new MatchList.Match(list.get(i));
-//                    }
-//                } catch (JsonParseException | NullPointerException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<MatchList.Match>> call, Throwable t) {
-//                t.printStackTrace();
-//            }
-//        });
     }
 
     public static void postAction(final Action action) {
@@ -115,7 +94,8 @@ public class Client {
     private static APIService createAPIService() {
 
         String prefix = LoginActivity.serverPort.equals("443") ? "https://" : "http://";
-        Retrofit.Builder builder = new Retrofit.Builder().baseUrl(prefix + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/");
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl(prefix + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/");
         OkHttpClient client;
 
         SSLSocketFactory sslSocketFactory = getSSLConfig(LoginActivity.context).getSocketFactory();
@@ -135,7 +115,7 @@ public class Client {
             Headers requestHeaders = request.headers();
             LOGGER.info("Headers: " + requestHeaders.toString());
             HttpUrl requestUrl = request.url();
-            LOGGER.info("HttpUrl: " + requestUrl.toString());
+            LOGGER.info("Url: " + requestUrl.toString());
             RequestBody requestBody = request.body();
             LOGGER.info("RequestBody: " + requestBody.toString());
         } catch (NullPointerException e) {

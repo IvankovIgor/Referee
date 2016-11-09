@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.technopark.ivankov.referee.client.Client;
 import com.technopark.ivankov.referee.match.MatchListActivity;
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.MatchList;
@@ -84,7 +83,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         String VK_KEY = getActivity().getString(R.string.vk_app_id);
 
         //Chose permissions
-        String[] vkScope = new String[] {
+        String[] vkScope = new String[]{
                 VKScope.FRIENDS,
                 VKScope.WALL,
                 VKScope.PHOTOS,
@@ -108,7 +107,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
             mSocialNetworkManager.setOnInitializationCompleteListener(this);
         } else {
             //if manager exist - get and setup login only for initialized SocialNetworks
-            if(!mSocialNetworkManager.getInitializedSocialNetworks().isEmpty()) {
+            if (!mSocialNetworkManager.getInitializedSocialNetworks().isEmpty()) {
                 List<SocialNetwork> socialNetworks = mSocialNetworkManager.getInitializedSocialNetworks();
                 for (SocialNetwork socialNetwork : socialNetworks) {
                     socialNetwork.setOnLoginCompleteListener(this);
@@ -127,11 +126,11 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
     public void onRequestSocialPersonSuccess(int i, SocialPerson socialPerson) {
         LoginActivity.idVk = Integer.parseInt(socialPerson.id);
         LoginActivity.userName = socialPerson.name;
-        ((LoginActivity)getActivity()).getSupportActionBar().setTitle(LoginActivity.userName);
+        ((LoginActivity) getActivity()).getSupportActionBar().setTitle(LoginActivity.userName);
     }
 
-    private void initSocialNetwork(SocialNetwork socialNetwork){
-        if(socialNetwork.isConnected()){
+    private void initSocialNetwork(SocialNetwork socialNetwork) {
+        if (socialNetwork.isConnected()) {
             vk.setText(R.string.btn_login_true);
             MatchList.MATCHES.clear();
             MatchList.MATCH_MAP.clear();
@@ -141,6 +140,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
             socialNetwork.requestCurrentPerson();
         }
     }
+
     @Override
     public void onSocialNetworkManagerInitialized() {
         //when init SocialNetworks - get and setup login only for initialized SocialNetworks
@@ -159,10 +159,11 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
             int networkId;
             networkId = VkSocialNetwork.ID;
             SocialNetwork socialNetwork = mSocialNetworkManager.getSocialNetwork(networkId);
-            if(!socialNetwork.isConnected()) {
+            if (!socialNetwork.isConnected()) {
                 socialNetwork.requestLogin();
             } else {
-                showMatchList();
+                Intent intent = new Intent(getActivity(), MatchListActivity.class);
+                startActivity(intent);
             }
         }
     };
@@ -171,7 +172,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         @Override
         public void onClick(View view) {
             vk.setText(R.string.btn_login_false);
-            ((LoginActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
+            ((LoginActivity) getActivity()).getSupportActionBar().setTitle(R.string.app_name);
             logout.setVisibility(View.GONE);
             LoginActivity.userName = null;
             MatchList.MATCHES.clear();
@@ -194,13 +195,10 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         }
     };
 
-    private View.OnKeyListener editIPKeyEvent = new View.OnKeyListener()
-    {
-        public boolean onKey(View v, int keyCode, KeyEvent event)
-        {
+    private View.OnKeyListener editIPKeyEvent = new View.OnKeyListener() {
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
             if (event.getAction() == KeyEvent.ACTION_DOWN &&
-                    (keyCode == KeyEvent.KEYCODE_ENTER))
-            {
+                    (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 LoginActivity.serverIP = editIP.getText().toString();
                 SharedPreferences.Editor editor = LoginActivity.sSettings.edit();
                 editor.putString(LoginActivity.APP_PREFERENCES_IP, LoginActivity.serverIP);
@@ -212,13 +210,10 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         }
     };
 
-    private View.OnKeyListener editPortKeyEvent = new View.OnKeyListener()
-    {
-        public boolean onKey(View v, int keyCode, KeyEvent event)
-        {
-            if(event.getAction() == KeyEvent.ACTION_DOWN &&
-                    (keyCode == KeyEvent.KEYCODE_ENTER))
-            {
+    private View.OnKeyListener editPortKeyEvent = new View.OnKeyListener() {
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN &&
+                    (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 LoginActivity.serverPort = editPort.getText().toString();
                 SharedPreferences.Editor editor = LoginActivity.sSettings.edit();
                 editor.putString(LoginActivity.APP_PREFERENCES_PORT, LoginActivity.serverPort);
@@ -239,19 +234,5 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
     @Override
     public void onError(int networkId, String requestID, String errorMessage, Object data) {
         Toast.makeText(getActivity(), "ERROR: " + errorMessage, Toast.LENGTH_LONG).show();
-    }
-
-    private void showMatchList() {
-        if (MatchList.MATCHES.isEmpty()) {
-            Client.getMatches(LoginActivity.idVk);
-        }
-        Intent intent = new Intent(getActivity(), MatchListActivity.class);
-        startActivity(intent);
-//        ProfileFragment profile = ProfileFragment.newInstance(networkId);
-//        getActivity().getSupportFragmentManager().beginTransaction()
-//                .addToBackStack("profile")
-//                .replace(R.id.container, profile)
-//                .commit();
-////                .commitAllowingStateLoss();
     }
 }
