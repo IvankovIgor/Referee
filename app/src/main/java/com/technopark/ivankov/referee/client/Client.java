@@ -73,6 +73,9 @@ public class Client {
     }
 
     public static void postAction(final Action action) {
+        if (BuildConfig.USE_LOG) {
+            checkAction(action);
+        }
 
         Call<ResponseBody> call = createAPIService().postAction(action);
 
@@ -113,6 +116,17 @@ public class Client {
                 .build();
 
         return retrofit.create(APIService.class);
+    }
+
+    private static void checkAction(Action action) {
+        Log.i(TAG, "idMatch: " + action.getIdMatch());
+        Log.i(TAG, "idTeam: " + action.getIdTeam());
+        Log.i(TAG, "teamName: " + action.getTeamName());
+        Log.i(TAG, "idPlayer: " + action.getIdPlayer());
+        Log.i(TAG, "playerName: " + action.getPlayerName());
+        Log.i(TAG, "idAction: " + action.getIdAction());
+        Log.i(TAG, "idEvent: " + action.getIdEvent());
+        Log.i(TAG, "minute: " + action.getMinute());
     }
 
     private static void checkRequestContent(Request request) {

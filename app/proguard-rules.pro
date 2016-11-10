@@ -12,25 +12,17 @@
 -dontwarn okio.**
 -dontwarn retrofit2.Platform$Java8
 
-#-keep public enum com.technopark.ivankov.referee.content.Action$EventType { *; }
--keep public enum com.technopark.ivankov.referee.content.Action$EventType {
-#    **[] $VALUES;
-    public *;
-}
-
-#-keep public enum com.technopark.ivankov.referee.content.MatchList$MatchStatus { *; }
--keep public enum com.technopark.ivankov.referee.content.MatchList$MatchStatus {
-#    **[] $VALUES;
-    public *;
-}
-
+#-keep class * extends com.technopark.ivankov.referee
 #-keepattributes InnerClasses
+
+-keep class com.google.gson.** { *; }
+-keep public class com.technopark.ivankov.referee.content.Action { *; }
 -keep public class com.technopark.ivankov.referee.content.MatchList$MatchConfig { *; }
 -keep public class com.technopark.ivankov.referee.content.MatchList$Match { *; }
 -keep public class com.technopark.ivankov.referee.content.TeamList$Team { *; }
 -keep public class com.technopark.ivankov.referee.content.PlayerList$Player { *; }
-
-#-keep class * extends com.technopark.ivankov.referee
+-keep public enum com.technopark.ivankov.referee.content.Action$EventType { *; }
+-keep public enum com.technopark.ivankov.referee.content.MatchList$MatchStatus { *; }
 
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
