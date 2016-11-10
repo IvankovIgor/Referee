@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     compileSdkVersion 25
     buildToolsVersion "23.0.2"
@@ -14,14 +18,11 @@ android {
     }
 
     signingConfigs {
-        debug {
-            storeFile file('/Users/nyashcore/.android/debug.keystore')
-        }
         config {
-            storeFile file('/Users/nyashcore/.android/referee.jks')
-            storePassword "referee"
-            keyAlias "RefereeKey"
-            keyPassword "refereekey"
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
         }
     }
 
@@ -29,8 +30,8 @@ android {
         release {
             debuggable false
             signingConfig signingConfigs.config
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "boolean", "USE_LOG", "false"
         }
@@ -38,7 +39,6 @@ android {
         debug {
             applicationIdSuffix ".debug"
             debuggable true
-            signingConfig signingConfigs.debug
             minifyEnabled false
             shrinkResources false
             buildConfigField "boolean", "USE_LOG", "true"
