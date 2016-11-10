@@ -7,15 +7,19 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.content.pm.ActivityInfo;
 
+import com.technopark.ivankov.referee.BuildConfig;
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.client.Client;
 import com.technopark.ivankov.referee.content.MatchList;
+import com.technopark.ivankov.referee.content.PlayerList;
+import com.technopark.ivankov.referee.content.TeamList;
 import com.technopark.ivankov.referee.login.LoginActivity;
 
 import java.util.List;
@@ -25,6 +29,8 @@ import java.util.List;
  * lead to a {@link MatchDetailActivity} representing match details.
  */
 public class MatchListActivity extends AppCompatActivity {
+
+    private static final String TAG = MatchListActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +48,21 @@ public class MatchListActivity extends AppCompatActivity {
         View matchListRecyclerView = findViewById(R.id.match_list);
         assert matchListRecyclerView != null;
         setupRecyclerView((RecyclerView) matchListRecyclerView);
+        if (BuildConfig.USE_LOG) {
+            Log.i(TAG, "Created.");
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MatchList.MATCHES.clear();
+        MatchList.MATCH_MAP.clear();
+        PlayerList.PLAYER_MAP.clear();
+        TeamList.TEAM_MAP.clear();
+        if (BuildConfig.USE_LOG) {
+            Log.i(TAG, "Destroyed.");
+        }
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {

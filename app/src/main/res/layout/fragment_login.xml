@@ -7,15 +7,24 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/vk"
+        android:id="@+id/login"
         android:layout_gravity="center_horizontal"
         android:background="@color/vk"
         android:layout_margin="8dp"
         android:textColor="#ffffffff" />
+
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/btn_logout"
+        android:id="@+id/to_match_list"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/vk"
+        android:layout_margin="8dp"
+        android:textColor="#ffffffff" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/logout"
         android:layout_gravity="center_vertical|center_horizontal"
         android:background="@color/vk"
@@ -74,10 +83,9 @@
     </LinearLayout>
 
     <Button
-        android:text="reset ip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btn_reset_IP"
+        android:id="@+id/btn_set_defaults"
         android:layout_marginRight="8dp"
         android:layout_marginLeft="8dp" />
 

@@ -3,9 +3,11 @@ package com.technopark.ivankov.referee.client;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.technopark.ivankov.referee.BuildConfig;
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.Action;
 import com.technopark.ivankov.referee.content.MatchList;
@@ -21,7 +23,6 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -43,7 +44,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Client {
 
-    private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
+    private static final String TAG = Client.class.getSimpleName();
 
     public static void getMatches(int idVk) {
         Call<List<MatchList.Match>> call;
@@ -55,8 +56,10 @@ public class Client {
         try {
             response = call.execute();
             try {
-                checkRequestContent(call.request());
-                checkResponseContent(response);
+                if (BuildConfig.USE_LOG) {
+                    checkRequestContent(call.request());
+                    checkResponseContent(response);
+                }
                 List<MatchList.Match> list = response.body();
                 for (int i = 0; i < list.size(); i++) {
                     new MatchList.Match(list.get(i));
@@ -76,11 +79,13 @@ public class Client {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call call, Response response) {
-                try {
-                    checkRequestContent(call.request());
-                    checkResponseContent(response);
-                } catch (JsonParseException e) {
-                    e.printStackTrace();
+                if (BuildConfig.USE_LOG) {
+                    try {
+                        checkRequestContent(call.request());
+                        checkResponseContent(response);
+                    } catch (JsonParseException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -113,11 +118,11 @@ public class Client {
     private static void checkRequestContent(Request request) {
         try {
             Headers requestHeaders = request.headers();
-            LOGGER.info("Headers: " + requestHeaders.toString());
+            Log.i(TAG, "Headers: " + requestHeaders.toString());
             HttpUrl requestUrl = request.url();
-            LOGGER.info("Url: " + requestUrl.toString());
+            Log.i(TAG, "Url: " + requestUrl.toString());
             RequestBody requestBody = request.body();
-            LOGGER.info("RequestBody: " + requestBody.toString());
+            Log.i(TAG, "RequestBody: " + requestBody.toString());
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -126,11 +131,11 @@ public class Client {
     private static void checkResponseContent(Response response) {
         try {
             Headers responseHeaders = response.headers();
-            LOGGER.info("Headers: " + responseHeaders.toString());
+            Log.i(TAG, "Headers: " + responseHeaders.toString());
             Integer responseCode = response.code();
-            LOGGER.info("ResponseCode: " + responseCode.toString());
+            Log.i(TAG, "ResponseCode: " + responseCode.toString());
             Object responseBody = response.body();
-            LOGGER.info("ResponseBody: " + responseBody.toString());
+            Log.i(TAG, "ResponseBody: " + responseBody.toString());
         } catch (NullPointerException e) {
             e.printStackTrace();
         }

@@ -10,11 +10,38 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+        setProperty("archivesBaseName", "Referee-" + defaultConfig.versionName);
     }
+
+    signingConfigs {
+        debug {
+            storeFile file('/Users/nyashcore/.android/debug.keystore')
+        }
+        config {
+            storeFile file('/Users/nyashcore/.android/referee.jks')
+            storePassword "referee"
+            keyAlias "RefereeKey"
+            keyPassword "refereekey"
+        }
+    }
+
     buildTypes {
         release {
+            debuggable false
+            signingConfig signingConfigs.config
             minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "USE_LOG", "false"
+        }
+
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
+            signingConfig signingConfigs.debug
+            minifyEnabled false
+            shrinkResources false
+            buildConfigField "boolean", "USE_LOG", "true"
         }
     }
 }

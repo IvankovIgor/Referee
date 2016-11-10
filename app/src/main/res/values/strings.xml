@@ -8,9 +8,10 @@
 
     <string name="vk_app_id">5672866</string>
 
+    <string name="btn_login">Login via vk</string>
+    <string name="btn_to_match_list">Show match list</string>
     <string name="btn_logout">Logout</string>
-    <string name="btn_login_false">Login via vk</string>
-    <string name="btn_login_true">Show match list</string>
+    <string name="btn_set_defaults">Set defaults</string>
     <string name="btn_to_match">to match</string>
     <string name="btn_start_time">start time</string>
     <string name="btn_finish_time">finish time</string>

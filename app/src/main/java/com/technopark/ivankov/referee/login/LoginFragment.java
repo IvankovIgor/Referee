@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.technopark.ivankov.referee.match.MatchListActivity;
+import com.technopark.ivankov.referee.BuildConfig;
 import com.technopark.ivankov.referee.R;
-import com.technopark.ivankov.referee.content.MatchList;
-import com.technopark.ivankov.referee.content.PlayerList;
-import com.technopark.ivankov.referee.content.TeamList;
 import com.github.gorbin.asne.core.SocialNetwork;
 import com.github.gorbin.asne.core.SocialNetworkManager;
 import com.github.gorbin.asne.core.listener.OnLoginCompleteListener;
@@ -31,7 +30,9 @@ import com.vk.sdk.VKSdk;
 import java.util.List;
 
 public class LoginFragment extends Fragment implements SocialNetworkManager.OnInitializationCompleteListener, OnLoginCompleteListener, OnRequestSocialPersonCompleteListener {
+
     public static SocialNetworkManager mSocialNetworkManager;
+    private static final String TAG = LoginFragment.class.getSimpleName();
     /**
      * SocialNetwork Ids in ASNE:
      * 1 - Twitter
@@ -42,12 +43,13 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
      * 6 - Odnoklassniki
      * 7 - Instagram
      */
-    private Button vk;
-    private Button logout;
-    private EditText editIP;
-    private EditText editPort;
+    private Button btnLogin;
+    private Button btnToMatchList;
+    private Button btnLogout;
     private TextView curIP;
     private TextView curPort;
+    private EditText editIP;
+    private EditText editPort;
 
     public LoginFragment() {
     }
@@ -57,15 +59,21 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
 
-        vk = (Button) rootView.findViewById(R.id.vk);
-        vk.setText(R.string.btn_login_false);
-        vk.setOnClickListener(loginClick);
+        btnLogin = (Button) rootView.findViewById(R.id.login);
+        btnLogin.setText(R.string.btn_login);
+        btnLogin.setOnClickListener(btnLoginClick);
 
-        logout = (Button) rootView.findViewById(R.id.logout);
-        logout.setOnClickListener(logoutClick);
+        btnToMatchList = (Button) rootView.findViewById(R.id.to_match_list);
+        btnToMatchList.setText(R.string.btn_to_match_list);
+        btnToMatchList.setOnClickListener(btnToMatchListClick);
 
-        Button btnResetIP = (Button) rootView.findViewById(R.id.btn_reset_IP);
-        btnResetIP.setOnClickListener(btnResetIPClick);
+        btnLogout = (Button) rootView.findViewById(R.id.logout);
+        btnLogout.setText(R.string.btn_logout);
+        btnLogout.setOnClickListener(btnLogoutClick);
+
+        Button btnSetDefaults = (Button) rootView.findViewById(R.id.btn_set_defaults);
+        btnSetDefaults.setText(R.string.btn_set_defaults);
+        btnSetDefaults.setOnClickListener(btnSetDefaultsClick);
 
         curIP = (TextView) rootView.findViewById(R.id.curIP);
         curIP.setText(LoginActivity.serverIP);
@@ -92,7 +100,8 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         };
 
         //Use manager to manage SocialNetworks
-        mSocialNetworkManager = (SocialNetworkManager) getFragmentManager().findFragmentByTag(LoginActivity.SOCIAL_NETWORK_TAG);
+        mSocialNetworkManager = (SocialNetworkManager) getFragmentManager()
+                .findFragmentByTag(LoginActivity.SOCIAL_NETWORK_TAG);
 
         //Check if manager exist
         if (mSocialNetworkManager == null) {
@@ -103,88 +112,114 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
             mSocialNetworkManager.addSocialNetwork(vkNetwork);
 
             //Initiate every network from mSocialNetworkManager
-            getFragmentManager().beginTransaction().add(mSocialNetworkManager, LoginActivity.SOCIAL_NETWORK_TAG).commit();
+            getFragmentManager().beginTransaction()
+                    .add(mSocialNetworkManager, LoginActivity.SOCIAL_NETWORK_TAG).commit();
             mSocialNetworkManager.setOnInitializationCompleteListener(this);
         } else {
-            //if manager exist - get and setup login only for initialized SocialNetworks
+            //if manager exist - get and setup btnLogin only for initialized SocialNetworks
             if (!mSocialNetworkManager.getInitializedSocialNetworks().isEmpty()) {
                 List<SocialNetwork> socialNetworks = mSocialNetworkManager.getInitializedSocialNetworks();
                 for (SocialNetwork socialNetwork : socialNetworks) {
                     socialNetwork.setOnLoginCompleteListener(this);
-                    initSocialNetwork(socialNetwork);
+//                    initSocialNetwork(socialNetwork);
                 }
             }
         }
         if (VKAccessToken.currentToken() != null) {
             LoginActivity.idVk = Integer.parseInt(VKAccessToken.currentToken().userId);
-            vk.setText(R.string.btn_login_true);
+            loggedIn();
+        } else {
+            loggedOut();
         }
         return rootView;
     }
 
     @Override
     public void onRequestSocialPersonSuccess(int i, SocialPerson socialPerson) {
+        if (BuildConfig.USE_LOG) {
+            Log.i(TAG, "onRequestSocialPersonSuccess");
+        }
         LoginActivity.idVk = Integer.parseInt(socialPerson.id);
         LoginActivity.userName = socialPerson.name;
-        ((LoginActivity) getActivity()).getSupportActionBar().setTitle(LoginActivity.userName);
+        loggedIn();
+//        ((LoginActivity) getActivity()).getSupportActionBar().setTitle(LoginActivity.userName);
     }
 
-    private void initSocialNetwork(SocialNetwork socialNetwork) {
-        if (socialNetwork.isConnected()) {
-            vk.setText(R.string.btn_login_true);
-            MatchList.MATCHES.clear();
-            MatchList.MATCH_MAP.clear();
-            PlayerList.PLAYER_MAP.clear();
-            TeamList.TEAM_MAP.clear();
-            logout.setVisibility(View.VISIBLE);
-            socialNetwork.requestCurrentPerson();
-        }
-    }
+//    private void initSocialNetwork(SocialNetwork socialNetwork) {
+//        if (socialNetwork.isConnected()) {
+//            btnLogin.setText(R.string.btn_login_true);
+//            btnLogin.setVisibility(View.GONE);
+//            btnLogin.setEnabled(false);
+//            btnLogout.setVisibility(View.VISIBLE);
+//            btnLogout.setEnabled(true);
+//            loggedOut();
+//            socialNetwork.requestCurrentPerson();
+//        }
+//    }
 
     @Override
     public void onSocialNetworkManagerInitialized() {
-        //when init SocialNetworks - get and setup login only for initialized SocialNetworks
+        if (BuildConfig.USE_LOG) {
+            Log.i(TAG, "onSocialNetworkManagerInitialized");
+        }
+        //when init SocialNetworks - get and setup btnLogin only for initialized SocialNetworks
         for (SocialNetwork socialNetwork : mSocialNetworkManager.getInitializedSocialNetworks()) {
             socialNetwork.setOnLoginCompleteListener(this);
             socialNetwork.setOnRequestCurrentPersonCompleteListener(this);
-            initSocialNetwork(socialNetwork);
+//            initSocialNetwork(socialNetwork);
         }
     }
 
-    //Login listener
+    private void loggedIn() {
+        btnLogin.setVisibility(View.GONE);
+        btnLogin.setEnabled(false);
+        btnToMatchList.setVisibility(View.VISIBLE);
+        btnToMatchList.setEnabled(true);
+        btnLogout.setVisibility(View.VISIBLE);
+        btnLogout.setEnabled(true);
+    }
 
-    private View.OnClickListener loginClick = new View.OnClickListener() {
+    private void loggedOut() {
+        btnLogin.setVisibility(View.VISIBLE);
+        btnLogin.setEnabled(true);
+        btnToMatchList.setVisibility(View.GONE);
+        btnToMatchList.setEnabled(false);
+        btnLogout.setVisibility(View.GONE);
+        btnLogout.setEnabled(false);
+    }
+
+    private View.OnClickListener btnLoginClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            int networkId;
-            networkId = VkSocialNetwork.ID;
-            SocialNetwork socialNetwork = mSocialNetworkManager.getSocialNetwork(networkId);
+            SocialNetwork socialNetwork = mSocialNetworkManager.getSocialNetwork(VkSocialNetwork.ID);
             if (!socialNetwork.isConnected()) {
                 socialNetwork.requestLogin();
-            } else {
-                Intent intent = new Intent(getActivity(), MatchListActivity.class);
-                startActivity(intent);
             }
         }
     };
 
-    private View.OnClickListener logoutClick = new View.OnClickListener() {
+    private View.OnClickListener btnToMatchListClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            vk.setText(R.string.btn_login_false);
-            ((LoginActivity) getActivity()).getSupportActionBar().setTitle(R.string.app_name);
-            logout.setVisibility(View.GONE);
+            Intent intent = new Intent(getActivity(), MatchListActivity.class);
+            startActivity(intent);
+        }
+    };
+
+    private View.OnClickListener btnLogoutClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
             LoginActivity.userName = null;
-            MatchList.MATCHES.clear();
+            loggedOut();
             VKSdk.logout();
         }
     };
 
-    private View.OnClickListener btnResetIPClick = new View.OnClickListener() {
+    private View.OnClickListener btnSetDefaultsClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             LoginActivity.serverIP = "ifootball.ml";
-            SharedPreferences.Editor editor = LoginActivity.sSettings.edit();
+            SharedPreferences.Editor editor = LoginActivity.serverSettings.edit();
             editor.putString(LoginActivity.APP_PREFERENCES_IP, LoginActivity.serverIP);
             editor.apply();
             curIP.setText(LoginActivity.serverIP);
@@ -200,7 +235,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
             if (event.getAction() == KeyEvent.ACTION_DOWN &&
                     (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 LoginActivity.serverIP = editIP.getText().toString();
-                SharedPreferences.Editor editor = LoginActivity.sSettings.edit();
+                SharedPreferences.Editor editor = LoginActivity.serverSettings.edit();
                 editor.putString(LoginActivity.APP_PREFERENCES_IP, LoginActivity.serverIP);
                 editor.apply();
                 curIP.setText(LoginActivity.serverIP);
@@ -215,7 +250,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
             if (event.getAction() == KeyEvent.ACTION_DOWN &&
                     (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 LoginActivity.serverPort = editPort.getText().toString();
-                SharedPreferences.Editor editor = LoginActivity.sSettings.edit();
+                SharedPreferences.Editor editor = LoginActivity.serverSettings.edit();
                 editor.putString(LoginActivity.APP_PREFERENCES_PORT, LoginActivity.serverPort);
                 editor.apply();
                 curPort.setText(LoginActivity.serverPort);
@@ -227,8 +262,12 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
 
     @Override
     public void onLoginSuccess(int networkId) {
+        if (BuildConfig.USE_LOG) {
+            Log.i(TAG, "onLoginSuccess");
+        }
         SocialNetwork socialNetwork = mSocialNetworkManager.getSocialNetwork(networkId);
         socialNetwork.requestCurrentPerson();
+        loggedIn();
     }
 
     @Override
