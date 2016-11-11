@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.technopark.ivankov.referee.Constants;
 import com.technopark.ivankov.referee.match.MatchListActivity;
 import com.technopark.ivankov.referee.BuildConfig;
 import com.technopark.ivankov.referee.R;
@@ -29,7 +30,7 @@ import com.vk.sdk.VKSdk;
 
 import java.util.List;
 
-public class LoginFragment extends Fragment implements SocialNetworkManager.OnInitializationCompleteListener, OnLoginCompleteListener, OnRequestSocialPersonCompleteListener {
+public class LoginFragment extends Fragment implements Constants, SocialNetworkManager.OnInitializationCompleteListener, OnLoginCompleteListener, OnRequestSocialPersonCompleteListener {
 
     public static SocialNetworkManager mSocialNetworkManager;
     private static final String TAG = LoginFragment.class.getSimpleName();
@@ -136,7 +137,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
 
     @Override
     public void onRequestSocialPersonSuccess(int i, SocialPerson socialPerson) {
-        if (BuildConfig.USE_LOG) {
+        if (BuildConfig.DEBUG) {
             Log.i(TAG, "onRequestSocialPersonSuccess");
         }
         LoginActivity.idVk = Integer.parseInt(socialPerson.id);
@@ -159,7 +160,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
 
     @Override
     public void onSocialNetworkManagerInitialized() {
-        if (BuildConfig.USE_LOG) {
+        if (BuildConfig.DEBUG) {
             Log.i(TAG, "onSocialNetworkManagerInitialized");
         }
         //when init SocialNetworks - get and setup btnLogin only for initialized SocialNetworks
@@ -219,12 +220,12 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
         @Override
         public void onClick(View v) {
             LoginActivity.serverIP = "ifootball.ml";
-            SharedPreferences.Editor editor = LoginActivity.serverSettings.edit();
-            editor.putString(LoginActivity.APP_PREFERENCES_IP, LoginActivity.serverIP);
+            SharedPreferences.Editor editor = LoginActivity.serverPreferences.edit();
+            editor.putString(Constants.SERVER_IP, LoginActivity.serverIP);
             editor.apply();
             curIP.setText(LoginActivity.serverIP);
             LoginActivity.serverPort = "443";
-            editor.putString(LoginActivity.APP_PREFERENCES_PORT, LoginActivity.serverPort);
+            editor.putString(Constants.SERVER_PORT, LoginActivity.serverPort);
             editor.apply();
             curPort.setText(LoginActivity.serverPort);
         }
@@ -235,8 +236,8 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
             if (event.getAction() == KeyEvent.ACTION_DOWN &&
                     (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 LoginActivity.serverIP = editIP.getText().toString();
-                SharedPreferences.Editor editor = LoginActivity.serverSettings.edit();
-                editor.putString(LoginActivity.APP_PREFERENCES_IP, LoginActivity.serverIP);
+                SharedPreferences.Editor editor = LoginActivity.serverPreferences.edit();
+                editor.putString(Constants.SERVER_IP, LoginActivity.serverIP);
                 editor.apply();
                 curIP.setText(LoginActivity.serverIP);
                 return true;
@@ -250,8 +251,8 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
             if (event.getAction() == KeyEvent.ACTION_DOWN &&
                     (keyCode == KeyEvent.KEYCODE_ENTER)) {
                 LoginActivity.serverPort = editPort.getText().toString();
-                SharedPreferences.Editor editor = LoginActivity.serverSettings.edit();
-                editor.putString(LoginActivity.APP_PREFERENCES_PORT, LoginActivity.serverPort);
+                SharedPreferences.Editor editor = LoginActivity.serverPreferences.edit();
+                editor.putString(Constants.SERVER_PORT, LoginActivity.serverPort);
                 editor.apply();
                 curPort.setText(LoginActivity.serverPort);
                 return true;
@@ -262,7 +263,7 @@ public class LoginFragment extends Fragment implements SocialNetworkManager.OnIn
 
     @Override
     public void onLoginSuccess(int networkId) {
-        if (BuildConfig.USE_LOG) {
+        if (BuildConfig.DEBUG) {
             Log.i(TAG, "onLoginSuccess");
         }
         SocialNetwork socialNetwork = mSocialNetworkManager.getSocialNetwork(networkId);

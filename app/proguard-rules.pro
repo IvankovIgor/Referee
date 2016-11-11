@@ -12,15 +12,22 @@
 -dontwarn okio.**
 -dontwarn retrofit2.Platform$Java8
 
+#-keep public class com.technopark.ivankov.referee.** { *; }
 #-keep class * extends com.technopark.ivankov.referee
 #-keepattributes InnerClasses
 
+# For correct fingerprint
+#-keep public class com.technopark.ivankov.referee.login.LoginActivity { *; }
+
+# For correct integration with server.
 -keep class com.google.gson.** { *; }
 -keep public class com.technopark.ivankov.referee.content.Action { *; }
 -keep public class com.technopark.ivankov.referee.content.MatchList$MatchConfig { *; }
 -keep public class com.technopark.ivankov.referee.content.MatchList$Match { *; }
 -keep public class com.technopark.ivankov.referee.content.TeamList$Team { *; }
 -keep public class com.technopark.ivankov.referee.content.PlayerList$Player { *; }
+
+# For enumerations.
 -keep public enum com.technopark.ivankov.referee.content.Action$EventType { *; }
 -keep public enum com.technopark.ivankov.referee.content.MatchList$MatchStatus { *; }
 

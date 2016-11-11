@@ -288,7 +288,7 @@ public class MatchActivity extends AppCompatActivity {
                 break;
         }
 
-        Client.postAction(new Action(currentMatch.getIdMatch(), idTeam,
+        new Client(this).postAction(new Action(currentMatch.getIdMatch(), idTeam,
                 idUser, getTime(), event));
         actionListRecyclerViewAdapter.notifyItemInserted(0);
         linearLayoutManager.scrollToPosition(0);

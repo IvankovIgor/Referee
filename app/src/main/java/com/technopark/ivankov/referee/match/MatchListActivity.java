@@ -43,12 +43,12 @@ public class MatchListActivity extends AppCompatActivity {
         assert toolbar != null;
         toolbar.setTitle(getTitle());
 
-        Client.getMatches(LoginActivity.idVk);
+        new Client(this).getMatches(LoginActivity.idVk);
 
         View matchListRecyclerView = findViewById(R.id.match_list);
         assert matchListRecyclerView != null;
         setupRecyclerView((RecyclerView) matchListRecyclerView);
-        if (BuildConfig.USE_LOG) {
+        if (BuildConfig.DEBUG) {
             Log.i(TAG, "Created.");
         }
     }
@@ -60,7 +60,7 @@ public class MatchListActivity extends AppCompatActivity {
         MatchList.MATCH_MAP.clear();
         PlayerList.PLAYER_MAP.clear();
         TeamList.TEAM_MAP.clear();
-        if (BuildConfig.USE_LOG) {
+        if (BuildConfig.DEBUG) {
             Log.i(TAG, "Destroyed.");
         }
     }

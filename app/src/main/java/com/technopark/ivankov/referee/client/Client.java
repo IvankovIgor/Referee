@@ -2,16 +2,17 @@ package com.technopark.ivankov.referee.client;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.technopark.ivankov.referee.BuildConfig;
+import com.technopark.ivankov.referee.Constants;
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.content.Action;
 import com.technopark.ivankov.referee.content.MatchList;
-import com.technopark.ivankov.referee.login.LoginActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,11 +43,15 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class Client {
+public class Client implements Constants {
 
     private static final String TAG = Client.class.getSimpleName();
 
-    public static void getMatches(int idVk) {
+    private Context context;
+
+    public Client(Context context) { this.context = context; }
+
+    public void getMatches(int idVk) {
         Call<List<MatchList.Match>> call;
         JsonObject param = new JsonObject();
         param.addProperty("idVk", idVk);
@@ -56,7 +61,7 @@ public class Client {
         try {
             response = call.execute();
             try {
-                if (BuildConfig.USE_LOG) {
+                if (BuildConfig.DEBUG) {
                     checkRequestContent(call.request());
                     checkResponseContent(response);
                 }
@@ -72,8 +77,8 @@ public class Client {
         }
     }
 
-    public static void postAction(final Action action) {
-        if (BuildConfig.USE_LOG) {
+    public void postAction(final Action action) {
+        if (BuildConfig.DEBUG) {
             checkAction(action);
         }
 
@@ -82,7 +87,7 @@ public class Client {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call call, Response response) {
-                if (BuildConfig.USE_LOG) {
+                if (BuildConfig.DEBUG) {
                     try {
                         checkRequestContent(call.request());
                         checkResponseContent(response);
@@ -99,14 +104,19 @@ public class Client {
         });
     }
 
-    private static APIService createAPIService() {
+    private APIService createAPIService() {
 
-        String prefix = LoginActivity.serverPort.equals("443") ? "https://" : "http://";
+        SharedPreferences serverPreferences = context.getSharedPreferences(
+                Constants.SERVER_PREFERENCES, Context.MODE_PRIVATE);
+        String serverIP = serverPreferences.getString(Constants.SERVER_IP, "ifootball.ml");
+        String serverPort = serverPreferences.getString(Constants.SERVER_PORT, "443");
+
+        String prefix = serverPort.equals("443") ? "https://" : "http://";
         Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(prefix + LoginActivity.serverIP + ":" + LoginActivity.serverPort + "/");
+                .baseUrl(prefix + serverIP + ":" + serverPort + "/");
         OkHttpClient client;
 
-        SSLSocketFactory sslSocketFactory = getSSLConfig(LoginActivity.context).getSocketFactory();
+        SSLSocketFactory sslSocketFactory = getSSLConfig().getSocketFactory();
         X509TrustManager trustManager = Platform.get().trustManager(sslSocketFactory);
         client = new OkHttpClient.Builder().sslSocketFactory(sslSocketFactory, trustManager)
                 .build();
@@ -118,7 +128,7 @@ public class Client {
         return retrofit.create(APIService.class);
     }
 
-    private static void checkAction(Action action) {
+    private void checkAction(Action action) {
         Log.i(TAG, "idMatch: " + action.getIdMatch());
         Log.i(TAG, "idTeam: " + action.getIdTeam());
         Log.i(TAG, "teamName: " + action.getTeamName());
@@ -129,34 +139,30 @@ public class Client {
         Log.i(TAG, "minute: " + action.getMinute());
     }
 
-    private static void checkRequestContent(Request request) {
+    private void checkRequestContent(Request request) {
         try {
-            Headers requestHeaders = request.headers();
-            Log.i(TAG, "Headers: " + requestHeaders.toString());
-            HttpUrl requestUrl = request.url();
-            Log.i(TAG, "Url: " + requestUrl.toString());
-            RequestBody requestBody = request.body();
-            Log.i(TAG, "RequestBody: " + requestBody.toString());
+            Log.i(TAG, "Headers: " + request.headers().toString());
+            Log.i(TAG, "Url: " + request.url().toString());
+            Log.i(TAG, "RequestBody: " + request.body().toString());
         } catch (NullPointerException e) {
+            Log.e(TAG, "Request content NullPointerException");
             e.printStackTrace();
         }
     }
 
-    private static void checkResponseContent(Response response) {
+    private void checkResponseContent(Response response) {
         try {
-            Headers responseHeaders = response.headers();
-            Log.i(TAG, "Headers: " + responseHeaders.toString());
-            Integer responseCode = response.code();
-            Log.i(TAG, "ResponseCode: " + responseCode.toString());
-            Object responseBody = response.body();
-            Log.i(TAG, "ResponseBody: " + responseBody.toString());
+            Log.i(TAG, "Headers: " + response.headers().toString());
+            Log.i(TAG, "ResponseCode: " + ((Integer) response.code()).toString());
+            Log.i(TAG, "ResponseBody: " + response.body().toString());
         } catch (NullPointerException e) {
+            Log.e(TAG, "Response content NullPointerException");
             e.printStackTrace();
         }
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    private static SSLContext getSSLConfig(Context context) {
+    private SSLContext getSSLConfig() {
 
         // Loading CAs from an InputStream
         CertificateFactory cf = null;

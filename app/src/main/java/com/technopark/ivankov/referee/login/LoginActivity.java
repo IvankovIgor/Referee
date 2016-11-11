@@ -8,47 +8,45 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.technopark.ivankov.referee.Constants;
 import com.technopark.ivankov.referee.R;
+import com.vk.sdk.util.VKUtil;
 
 
-public class LoginActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
+public class LoginActivity extends AppCompatActivity implements Constants, FragmentManager.OnBackStackChangedListener {
+
+    private static final String TAG = LoginActivity.class.getSimpleName();
+
     public static final String SOCIAL_NETWORK_TAG = "SocialIntegrationMain.SOCIAL_NETWORK_TAG";
-    public static final String APP_PREFERENCES = "server_settings";
-    public static final String APP_PREFERENCES_IP = "IP";
-    public static final String APP_PREFERENCES_PORT = "Port";
-    public static final String USER_PREFERENCES = "user_settings";
-    public static final String USER_PREFERENCES_ = "user_settings";
-    public static SharedPreferences serverSettings;
+    public static SharedPreferences serverPreferences;
     public static SharedPreferences userSettings;
-    public static Context context;
     public static String userName;
     public static String serverIP;
     public static String serverPort;
-    //    public static int idVk = 4189816;
-//    public static int idVk = 52057885;
     public static int idVk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        context = this;
-        serverSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        serverIP = serverSettings.getString(APP_PREFERENCES_IP, "ifootball.ml");
-        serverPort = serverSettings.getString(APP_PREFERENCES_PORT, "443");
+        serverPreferences = getSharedPreferences(Constants.SERVER_PREFERENCES, Context.MODE_PRIVATE);
+        serverIP = serverPreferences.getString(Constants.SERVER_IP, "ifootball.ml");
+        serverPort = serverPreferences.getString(Constants.SERVER_PORT, "443");
 
-        userSettings = getSharedPreferences(USER_PREFERENCES, Context.MODE_PRIVATE);
+        userSettings = getSharedPreferences(Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                 .permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-//        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
-//        for(int i = 0; i<fingerprints.length;i++)
-//            Log.i("myApp", "Fingerprint:"+fingerprints[i]);
+        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
+        for (String fingerprint : fingerprints) Log.i(TAG, "Fingerprint:" + fingerprint);
+        Log.i(TAG, this.getPackageName());
+        Log.i(TAG, this.getClass().getName());
 
         getSupportFragmentManager().addOnBackStackChangedListener(this);
         homeAsUpByBackStack();

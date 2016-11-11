@@ -13,7 +13,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.1"
         setProperty("archivesBaseName", "Referee-" + defaultConfig.versionName);
     }
 
@@ -33,15 +33,13 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "boolean", "USE_LOG", "false"
         }
 
         debug {
-            applicationIdSuffix ".debug"
+//            applicationIdSuffix ".debug"
             debuggable true
             minifyEnabled false
             shrinkResources false
-            buildConfigField "boolean", "USE_LOG", "true"
         }
     }
 }
