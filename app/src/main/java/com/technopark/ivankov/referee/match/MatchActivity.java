@@ -178,6 +178,13 @@ public class MatchActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mChronometer.setBase(SystemClock.elapsedRealtime());
+        additionalChronometer.setBase(SystemClock.elapsedRealtime());
+    }
+
     private void openQuitDialog() {
         AlertDialog.Builder quitDialog = new AlertDialog.Builder(MatchActivity.this);
         quitDialog.setTitle(R.string.title_quit_dialog);
