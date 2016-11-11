@@ -5,5 +5,5 @@ public interface Constants {
     String SERVER_IP = "com.technopark.ivankov.referee.IP";
     String SERVER_PORT = "com.technopark.ivankov.referee.Port";
 
-    String USER_PREFERENCES = "com.technopark.ivankov.referee.user_preferences";
+    String VK_ACCESS_TOKEN = "com.technopark.ivankov.referee.vk_access_token";
 }

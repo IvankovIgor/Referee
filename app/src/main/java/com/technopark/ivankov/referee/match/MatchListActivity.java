@@ -15,12 +15,13 @@ import android.widget.TextView;
 import android.content.pm.ActivityInfo;
 
 import com.technopark.ivankov.referee.BuildConfig;
+import com.technopark.ivankov.referee.Constants;
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.client.Client;
 import com.technopark.ivankov.referee.content.MatchList;
 import com.technopark.ivankov.referee.content.PlayerList;
 import com.technopark.ivankov.referee.content.TeamList;
-import com.technopark.ivankov.referee.login.LoginActivity;
+import com.vk.sdk.VKAccessToken;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ import java.util.List;
  * An activity representing a list of Matches, which when touched,
  * lead to a {@link MatchDetailActivity} representing match details.
  */
-public class MatchListActivity extends AppCompatActivity {
+public class MatchListActivity extends AppCompatActivity implements Constants {
 
     private static final String TAG = MatchListActivity.class.getSimpleName();
 
@@ -43,7 +44,9 @@ public class MatchListActivity extends AppCompatActivity {
         assert toolbar != null;
         toolbar.setTitle(getTitle());
 
-        new Client(this).getMatches(LoginActivity.idVk);
+        int idVk = Integer.parseInt(VKAccessToken.tokenFromSharedPreferences(
+                this, VK_ACCESS_TOKEN).userId);
+        new Client(this).getMatches(idVk);
 
         View matchListRecyclerView = findViewById(R.id.match_list);
         assert matchListRecyclerView != null;

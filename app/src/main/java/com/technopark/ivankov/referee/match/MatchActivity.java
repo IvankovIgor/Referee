@@ -357,8 +357,8 @@ public class MatchActivity extends AppCompatActivity {
                     case NOT_STARTED:
                         addAction(view, Action.EventType.MATCH_STARTED, null, null);
                     case BREAK:
-                        addAction(view, Action.EventType.TIME_STARTED, null, null);
                         currentMatch.setMatchStatus(MatchList.MatchStatus.STARTED);
+                        addAction(view, Action.EventType.TIME_STARTED, null, null);
                         additionalChronometer.setBase(SystemClock.elapsedRealtime());
                         mChronometer.setBase(SystemClock.elapsedRealtime() - timePeriod * currentPeriod);
                         mChronometer.start();

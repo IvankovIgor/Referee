@@ -11,6 +11,7 @@ import com.google.gson.JsonParseException;
 import com.technopark.ivankov.referee.BuildConfig;
 import com.technopark.ivankov.referee.Constants;
 import com.technopark.ivankov.referee.R;
+import com.technopark.ivankov.referee.Referee;
 import com.technopark.ivankov.referee.content.Action;
 import com.technopark.ivankov.referee.content.MatchList;
 
@@ -105,11 +106,8 @@ public class Client implements Constants {
     }
 
     private APIService createAPIService() {
-
-        SharedPreferences serverPreferences = context.getSharedPreferences(
-                Constants.SERVER_PREFERENCES, Context.MODE_PRIVATE);
-        String serverIP = serverPreferences.getString(Constants.SERVER_IP, "ifootball.ml");
-        String serverPort = serverPreferences.getString(Constants.SERVER_PORT, "443");
+        String serverIP = Referee.serverPreferences.getString(SERVER_IP, "ifootball.ml");
+        String serverPort = Referee.serverPreferences.getString(SERVER_PORT, "443");
 
         String prefix = serverPort.equals("443") ? "https://" : "http://";
         Retrofit.Builder builder = new Retrofit.Builder()

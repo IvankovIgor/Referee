@@ -2,98 +2,124 @@ package com.technopark.ivankov.referee.login;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.StrictMode;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 
+import com.technopark.ivankov.referee.BuildConfig;
 import com.technopark.ivankov.referee.Constants;
 import com.technopark.ivankov.referee.R;
+import com.vk.sdk.VKAccessToken;
+import com.vk.sdk.VKCallback;
+import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKError;
 import com.vk.sdk.util.VKUtil;
 
 
-public class LoginActivity extends AppCompatActivity implements Constants, FragmentManager.OnBackStackChangedListener {
+public class LoginActivity extends AppCompatActivity implements Constants {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
 
-    public static final String SOCIAL_NETWORK_TAG = "SocialIntegrationMain.SOCIAL_NETWORK_TAG";
-    public static SharedPreferences serverPreferences;
-    public static SharedPreferences userSettings;
-    public static String userName;
-    public static String serverIP;
-    public static String serverPort;
-    public static int idVk;
+    private Context context;
+    private boolean isResumed = false;
+    static final String[] vkScope = new String[]{};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        serverPreferences = getSharedPreferences(Constants.SERVER_PREFERENCES, Context.MODE_PRIVATE);
-        serverIP = serverPreferences.getString(Constants.SERVER_IP, "ifootball.ml");
-        serverPort = serverPreferences.getString(Constants.SERVER_PORT, "443");
-
-        userSettings = getSharedPreferences(Constants.USER_PREFERENCES, Context.MODE_PRIVATE);
+        context = this;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                 .permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
-        for (String fingerprint : fingerprints) Log.i(TAG, "Fingerprint:" + fingerprint);
-        Log.i(TAG, this.getPackageName());
-        Log.i(TAG, this.getClass().getName());
+        VKSdk.wakeUpSession(this, new VKCallback<VKSdk.LoginState>() {
+            @Override
+            public void onResult(VKSdk.LoginState res) {
+                if (isResumed) {
+                    switch (res) {
+                        case LoggedOut:
+                            showLogin();
+                            break;
+                        case LoggedIn:
+                            showLogout();
+                            break;
+                        case Pending:
+                            break;
+                        case Unknown:
+                            break;
+                    }
+                }
+            }
 
-        getSupportFragmentManager().addOnBackStackChangedListener(this);
-        homeAsUpByBackStack();
+            @Override
+            public void onError(VKError error) {
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new LoginFragment())
-                    .commit();
+            }
+        });
+
+        if (BuildConfig.DEBUG) {
+            String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
+            for (String fingerprint : fingerprints) Log.i(TAG, "Fingerprint:" + fingerprint);
+            Log.i(TAG, "Created.");
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return true;
+    void showLogout() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, new LogoutFragment())
+                .commitAllowingStateLoss();
+    }
+
+    void showLogin() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, new LoginFragment())
+                .commitAllowingStateLoss();
     }
 
     @Override
-    public void onBackStackChanged() {
-        homeAsUpByBackStack();
-    }
-
-    private void homeAsUpByBackStack() {
-        int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
-        if (backStackEntryCount > 0) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    protected void onResume() {
+        super.onResume();
+        isResumed = true;
+        if (VKSdk.isLoggedIn()) {
+            showLogout();
         } else {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            showLogin();
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                getSupportFragmentManager().popBackStack();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+    protected void onPause() {
+        isResumed = false;
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
+            @Override
+            public void onResult(VKAccessToken res) {
+                // User passed Authorization
+                res.saveTokenToSharedPreferences(context, VK_ACCESS_TOKEN);
+            }
 
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(SOCIAL_NETWORK_TAG);
-        if (fragment != null) {
-            fragment.onActivityResult(requestCode, resultCode, data);
+            @Override
+            public void onError(VKError error) {
+                // User didn't pass Authorization
+            }
+        };
+
+        if (!VKSdk.onActivityResult(requestCode, resultCode, data, callback)) {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 }
