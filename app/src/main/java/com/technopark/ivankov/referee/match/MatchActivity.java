@@ -87,14 +87,10 @@ public class MatchActivity extends AppCompatActivity {
         team1RecyclerView = findViewById(R.id.team1_player_list);
         assert team1RecyclerView != null;
         setupPlayerListRecyclerView((RecyclerView) team1RecyclerView, currentMatch.getTeam1());
-        team1RecyclerView.setVisibility(View.GONE);
-        team1RecyclerView.setEnabled(false);
 
         team2RecyclerView = findViewById(R.id.team2_player_list);
         assert team2RecyclerView != null;
         setupPlayerListRecyclerView((RecyclerView) team2RecyclerView, currentMatch.getTeam2());
-        team2RecyclerView.setVisibility(View.GONE);
-        team2RecyclerView.setEnabled(false);
 
         actionListRecyclerView = (RecyclerView) findViewById(R.id.action_list);
         assert actionListRecyclerView != null;
@@ -159,6 +155,7 @@ public class MatchActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        showActionList();
         score.setText(currentMatch.getTeam1Score() + ":" + currentMatch.getTeam2Score());
         if (currentMatch.getMatchStatus() == MatchList.MatchStatus.FINISHED) {
             period.setText(R.string.match_finished);
@@ -196,6 +193,7 @@ public class MatchActivity extends AppCompatActivity {
                 currentMatch.setTeam2Score(0);
                 currentMatch.getActionList().clear();
                 currentMatch.getDeletedActionList().clear();
+                currentMatch.getSentOffPlayerList().clear();
                 currentMatch.setMatchStatus(MatchList.MatchStatus.NOT_STARTED);
                 finish();
             }
@@ -230,15 +228,33 @@ public class MatchActivity extends AppCompatActivity {
         itemDialog.show();
     }
 
+    private void showPlayerList() {
+        actionListRecyclerView.setVisibility(View.GONE);
+        actionListRecyclerView.setEnabled(false);
+        team1RecyclerView.setVisibility(View.VISIBLE);
+        team1RecyclerView.setEnabled(true);
+        team2RecyclerView.setVisibility(View.VISIBLE);
+        team2RecyclerView.setEnabled(true);
+    }
+
+    private void showActionList() {
+        actionListRecyclerView.setVisibility(View.VISIBLE);
+        actionListRecyclerView.setEnabled(true);
+        team1RecyclerView.setVisibility(View.GONE);
+        team1RecyclerView.setEnabled(false);
+        team2RecyclerView.setVisibility(View.GONE);
+        team2RecyclerView.setEnabled(false);
+    }
+
     private void act(View view, Action.EventType eventType) {
         if (currentMatch.getMatchStatus() == MatchList.MatchStatus.STARTED) {
-            chosenAction = eventType;
-            actionListRecyclerView.setVisibility(View.GONE);
-            actionListRecyclerView.setEnabled(false);
-            team1RecyclerView.setVisibility(View.VISIBLE);
-            team1RecyclerView.setEnabled(true);
-            team2RecyclerView.setVisibility(View.VISIBLE);
-            team2RecyclerView.setEnabled(true);
+            if (chosenAction == eventType) {
+                chosenAction = null;
+                showActionList();
+            } else {
+                chosenAction = eventType;
+                showPlayerList();
+            }
         } else {
             Snackbar.make(view, R.string.error_not_allowed, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
@@ -266,6 +282,8 @@ public class MatchActivity extends AppCompatActivity {
                     } else {
                         incrementScore(currentMatch.getTeam1().getIdTeam());
                     }
+                } else if (event == Action.EventType.RED_CARD) {
+                    currentMatch.getSentOffPlayerList().add(idUser);
                 }
                 break;
         }
@@ -516,15 +534,15 @@ public class MatchActivity extends AppCompatActivity {
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (currentMatch.getSentOffPlayerList().contains(holder.mPlayer.getIdUser())) {
+                        Snackbar.make(v, R.string.error_sent_off, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                        return;
+                    }
                     assert chosenAction != null;
                     addAction(v, chosenAction, mTeam.getIdTeam(), holder.mPlayer.getIdUser());
                     chosenAction = null;
-                    actionListRecyclerView.setVisibility(View.VISIBLE);
-                    actionListRecyclerView.setEnabled(true);
-                    team1RecyclerView.setVisibility(View.GONE);
-                    team1RecyclerView.setEnabled(false);
-                    team2RecyclerView.setVisibility(View.GONE);
-                    team2RecyclerView.setEnabled(false);
+                    showActionList();
                 }
             });
         }

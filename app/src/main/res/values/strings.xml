@@ -25,6 +25,7 @@
     <string name="match_break">Break</string>
     <string name="match_finished">Full time</string>
     <string name="error_not_allowed">Not allowed</string>
+    <string name="error_sent_off">Sent off</string>
     <string name="error_already_started">Match is already started</string>
     <string name="error_not_started">Match is not started</string>
     <string name="error_already_stopped">Match is already stopped</string>

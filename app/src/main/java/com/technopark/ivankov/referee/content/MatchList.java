@@ -26,6 +26,7 @@ public class MatchList {
         private int team2Score;
         private final List<Action> actionList;
         private final List<Action> deletedActionList;
+        private final List<String> sentOffPlayerList;
         private MatchStatus matchStatus;
 
         public Match(Match match) {
@@ -46,6 +47,7 @@ public class MatchList {
             }
             actionList = new ArrayList<>();
             deletedActionList = new ArrayList<>();
+            sentOffPlayerList = new ArrayList<>();
             matchStatus = MatchStatus.NOT_STARTED;
             MATCHES.add(this);
             MATCH_MAP.put(idMatch, this);
@@ -92,6 +94,8 @@ public class MatchList {
         public List<Action> getActionList() { return actionList; }
 
         public List<Action> getDeletedActionList() { return deletedActionList; }
+
+        public List<String> getSentOffPlayerList() { return sentOffPlayerList; }
 
         public MatchStatus getMatchStatus() {
             return matchStatus;
