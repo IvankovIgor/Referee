@@ -10,13 +10,14 @@
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat"
         android:ems="1"
+        android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="16dp" />
 
     <TextView
         android:id="@+id/content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="16dp" />
 </LinearLayout>

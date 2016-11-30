@@ -347,7 +347,11 @@ public class MatchActivity extends AppCompatActivity {
     private int getTime() {
         String chronometerText = mChronometer.getText().toString();
         String array[] = chronometerText.split(":");
-        return Integer.parseInt(array[1]);
+        if (BuildConfig.DEBUG) {
+            return Integer.parseInt(array[1]);
+        } else {
+            return Integer.parseInt(array[0]);
+        }
     }
 
     private View.OnClickListener btnStartTimeClick;
