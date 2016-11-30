@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 
+import com.technopark.ivankov.referee.BuildConfig;
 import com.technopark.ivankov.referee.content.Action;
 import com.technopark.ivankov.referee.content.MatchList;
 import com.technopark.ivankov.referee.content.PlayerList;
@@ -65,7 +66,10 @@ public class MatchActivity extends AppCompatActivity {
         toolbar.setTitle(getTitle());
 
         currentMatch = MatchList.MATCH_MAP.get(getIntent().getStringExtra(MATCH_ID));
-        timePeriod = currentMatch.getMatchConfig().getTimePeriod() * 1000;
+        timePeriod = currentMatch.getMatchConfig().getTimePeriod() * 1000 * 60;
+        if (BuildConfig.DEBUG) {
+            timePeriod /= 60;
+        }
 //        timePeriod = 3000L;
         countPeriods = currentMatch.getMatchConfig().getCountPeriods();
         currentPeriod = 0;
@@ -319,6 +323,9 @@ public class MatchActivity extends AppCompatActivity {
                 } else {
                     decrementScore(currentMatch.getTeam1().getIdTeam());
                 }
+                break;
+            case RED_CARD:
+                currentMatch.getSentOffPlayerList().remove(action.getIdPlayer());
                 break;
             default:
                 break;

@@ -107,14 +107,15 @@ public class MatchList {
 
         @Override
         public String toString() {
-            String result = idMatch + "\n";
-            result += federation + "\n";
-            result += tournament + "\n";
-            result += stage + "\n";
-            result += matchConfig.countPeriods + "\n";
-            result += matchConfig.timePeriod + "\n";
-            result += team1.getName() + "\n";
-            result += team2.getName() + "\n";
+//            String result = idMatch + "\n";
+            String result = "";
+            result += "Федерация: " + federation + "\n";
+            result += "Турнир: " + tournament + "\n";
+            result += "Стадия: " + stage + "\n";
+            result += "Количество таймов: " + matchConfig.countPeriods + "\n";
+            result += "Длительность таймов: " + matchConfig.timePeriod;
+//            result += team1.getName() + "\n";
+//            result += team2.getName() + "\n";
 
             return result;
         }

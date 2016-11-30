@@ -24,8 +24,19 @@ public class Action {
     }
 
     public enum EventType {
-        MATCH_STARTED, MATCH_FINISHED, TIME_STARTED, TIME_FINISHED,
-        GOAL, OWN_GOAL, YELLOW_CARD, RED_CARD
+        MATCH_STARTED ("Начало матча"), MATCH_FINISHED ("Матч закончен"), TIME_STARTED ("Тайм начат"),
+        TIME_FINISHED ("Тайм закончен"), GOAL ("Гол"), OWN_GOAL ("Автогол"),
+        YELLOW_CARD ("Жёлтая карточка"), RED_CARD ("Красная карточка");
+
+        private final String event;
+
+        EventType(String event) {
+            this.event = event;
+        }
+
+        public String toString() {
+            return this.event;
+        }
     }
 
     public int getIdAction() {

@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.technopark.ivankov.referee.BuildConfig;
 import com.technopark.ivankov.referee.Constants;
 import com.technopark.ivankov.referee.R;
 import com.technopark.ivankov.referee.Referee;
@@ -43,20 +44,29 @@ public class LogoutFragment extends android.support.v4.app.Fragment implements C
         btnLogout.setOnClickListener(btnLogoutClick);
 
         final Button btnSetDefaults = (Button) v.findViewById(R.id.btn_set_defaults);
-        btnSetDefaults.setText(R.string.btn_set_defaults);
-        btnSetDefaults.setOnClickListener(btnSetDefaultsClick);
 
         curIP = (TextView) v.findViewById(R.id.curIP);
-        curIP.setText(Referee.serverPreferences.getString(SERVER_IP, "ifootball.ml"));
 
         curPort = (TextView) v.findViewById(R.id.curPort);
-        curPort.setText(Referee.serverPreferences.getString(SERVER_PORT, "443"));
 
         editIP = (EditText) v.findViewById(R.id.editIP);
-        editIP.setOnKeyListener(editIPKeyEvent);
 
         editPort = (EditText) v.findViewById(R.id.editPort);
-        editPort.setOnKeyListener(editPortKeyEvent);
+
+        if (BuildConfig.DEBUG) {
+            btnSetDefaults.setText(R.string.btn_set_defaults);
+            btnSetDefaults.setOnClickListener(btnSetDefaultsClick);
+            curIP.setText(Referee.serverPreferences.getString(SERVER_IP, "ifootball.ml"));
+            curPort.setText(Referee.serverPreferences.getString(SERVER_PORT, "443"));
+            editIP.setOnKeyListener(editIPKeyEvent);
+            editPort.setOnKeyListener(editPortKeyEvent);
+        } else {
+            btnSetDefaults.setVisibility(View.GONE);
+            curIP.setVisibility(View.GONE);
+            curPort.setVisibility(View.GONE);
+            editIP.setVisibility(View.GONE);
+            editPort.setVisibility(View.GONE);
+        }
 
         return v;
     }

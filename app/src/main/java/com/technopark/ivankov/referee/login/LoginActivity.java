@@ -10,6 +10,7 @@ import android.util.Log;
 import com.technopark.ivankov.referee.BuildConfig;
 import com.technopark.ivankov.referee.Constants;
 import com.technopark.ivankov.referee.R;
+import com.technopark.ivankov.referee.match.MatchListActivity;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
@@ -110,6 +111,8 @@ public class LoginActivity extends AppCompatActivity implements Constants {
             public void onResult(VKAccessToken res) {
                 // User passed Authorization
                 res.saveTokenToSharedPreferences(context, VK_ACCESS_TOKEN);
+                Intent intent = new Intent(LoginActivity.this, MatchListActivity.class);
+                startActivity(intent);
             }
 
             @Override
