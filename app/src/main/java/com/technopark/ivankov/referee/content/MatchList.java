@@ -18,7 +18,7 @@ public class MatchList {
         private final String idMatch;
         private final String federation;
         private final String tournament;
-        private final String stage;
+//        private final String stage;
         private final MatchConfig matchConfig;
         private final TeamList.Team team1;
         private final TeamList.Team team2;
@@ -33,7 +33,7 @@ public class MatchList {
             idMatch = match.getIdMatch();
             federation = match.getFederation();
             tournament = match.getTournament();
-            stage = match.getStage();
+//            stage = match.getStage();
             matchConfig = new MatchConfig(match.getMatchConfig());
             if (TeamList.TEAM_MAP.containsKey(match.getTeam1().getIdTeam())) {
                 team1 = TeamList.TEAM_MAP.get(match.getTeam1().getIdTeam());
@@ -65,7 +65,7 @@ public class MatchList {
             return this.tournament;
         }
 
-        public String getStage() { return this.stage; }
+//        public String getStage() { return this.stage; }
 
         public MatchConfig getMatchConfig() {
             return this.matchConfig;
@@ -111,7 +111,7 @@ public class MatchList {
             String result = "";
             result += "Федерация: " + federation + "\n";
             result += "Турнир: " + tournament + "\n";
-            result += "Стадия: " + stage + "\n";
+//            result += "Стадия: " + stage + "\n";
             result += "Количество таймов: " + matchConfig.countPeriods + "\n";
             result += "Длительность таймов: " + matchConfig.timePeriod;
 //            result += team1.getName() + "\n";
