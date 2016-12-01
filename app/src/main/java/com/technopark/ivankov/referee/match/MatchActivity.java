@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ import java.util.List;
  */
 public class MatchActivity extends AppCompatActivity {
 
+    private static final String TAG = MatchActivity.class.getSimpleName();
     public static final String MATCH_ID = "com.technopark.ivankov.referee.match.MATCH_ID";
 
     private MatchList.Match currentMatch;
@@ -154,6 +156,10 @@ public class MatchActivity extends AppCompatActivity {
                 act(view, Action.EventType.RED_CARD);
             }
         });
+
+        if (BuildConfig.DEBUG) {
+            Log.i(TAG, "onCreate.");
+        }
     }
 
     @Override
@@ -168,11 +174,16 @@ public class MatchActivity extends AppCompatActivity {
             additionalChronometer.setVisibility(View.GONE);
             additionalChronometer.setEnabled(false);
         }
+
+        if (BuildConfig.DEBUG) {
+            Log.i(TAG, "onStart.");
+        }
     }
 
     @Override
     public void onBackPressed() {
-        if (currentMatch.getMatchStatus() == MatchList.MatchStatus.STARTED) {
+        if (currentMatch.getMatchStatus() == MatchList.MatchStatus.STARTED ||
+                currentMatch.getMatchStatus() == MatchList.MatchStatus.BREAK) {
             openQuitDialog();
         } else {
             finish();
@@ -182,8 +193,14 @@ public class MatchActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mChronometer.stop();
+        additionalChronometer.stop();
         mChronometer.setBase(SystemClock.elapsedRealtime());
         additionalChronometer.setBase(SystemClock.elapsedRealtime());
+
+        if (BuildConfig.DEBUG) {
+            Log.i(TAG, "onDestroy.");
+        }
     }
 
     private void openQuitDialog() {
@@ -372,8 +389,8 @@ public class MatchActivity extends AppCompatActivity {
                         addAction(view, Action.EventType.TIME_STARTED, null, null);
                         additionalChronometer.setBase(SystemClock.elapsedRealtime());
                         mChronometer.setBase(SystemClock.elapsedRealtime() - timePeriod * currentPeriod);
-                        mChronometer.start();
                         currentPeriod++;
+                        mChronometer.start();
                         assert period != null;
                         period.setText(R.string.match_period);
                         period.append(" " + currentPeriod);
@@ -436,6 +453,10 @@ public class MatchActivity extends AppCompatActivity {
         public void onChronometerTick(Chronometer chronometer) {
             long elapsedMillis = SystemClock.elapsedRealtime() - mChronometer.getBase();
             if (elapsedMillis > timePeriod * (currentPeriod)) {
+                if (BuildConfig.DEBUG) {
+                    Log.i(TAG, "Tick.");
+                }
+
                 isAdditional = true;
 
                 mChronometer.stop();

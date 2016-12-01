@@ -3,7 +3,6 @@
 
     <string name="title_activity_login">Login</string>
     <string name="title_activity_match_list">Match List</string>
-    <string name="title_activity_match_detail">Match Detail</string>
     <string name="title_activity_match">Match</string>
 
     <string name="vk_app_id">5672866</string>
