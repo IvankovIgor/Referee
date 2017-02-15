@@ -6,8 +6,8 @@
     <string name="title_activity_match">Match</string>
 
     <string name="vk_app_id">5672866</string>
-    <string name="default_ip">ifootball.ml</string>
-    <string name="default_port">443</string>
+    <string name="default_ip">185.143.172.172</string>
+    <string name="default_port">8080</string>
 
     <string name="btn_login">Зайти через ВК</string>
     <string name="btn_to_match_list">К списку матчей</string>

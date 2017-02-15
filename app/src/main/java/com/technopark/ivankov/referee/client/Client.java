@@ -2,7 +2,6 @@ package com.technopark.ivankov.referee.client;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 
@@ -31,11 +30,8 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import okhttp3.Headers;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okhttp3.internal.platform.Platform;
 import retrofit2.Call;
@@ -133,9 +129,9 @@ public class Client implements Constants {
     }
 
     private APIService createAPIService() {
-        String serverIP = Referee.serverPreferences.getString(SERVER_IP, "foot-man.ru");
+        String serverIP = Referee.serverPreferences.getString(SERVER_IP, "185.143.172.172");
 //        String serverPort = Referee.serverPreferences.getString(SERVER_PORT, "443");
-        String serverPort = Referee.serverPreferences.getString(SERVER_PORT, "80");
+        String serverPort = Referee.serverPreferences.getString(SERVER_PORT, "8080");
 
         String prefix = serverPort.equals("443") ? "https://" : "http://";
         Retrofit.Builder builder = new Retrofit.Builder()

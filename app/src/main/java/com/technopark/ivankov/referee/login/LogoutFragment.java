@@ -56,8 +56,8 @@ public class LogoutFragment extends android.support.v4.app.Fragment implements C
         if (BuildConfig.DEBUG) {
             btnSetDefaults.setText(R.string.btn_set_defaults);
             btnSetDefaults.setOnClickListener(btnSetDefaultsClick);
-            curIP.setText(Referee.serverPreferences.getString(SERVER_IP, "foot-man.ru"));
-            curPort.setText(Referee.serverPreferences.getString(SERVER_PORT, "80"));
+            curIP.setText(Referee.serverPreferences.getString(SERVER_IP, "185.143.172.172"));
+            curPort.setText(Referee.serverPreferences.getString(SERVER_PORT, "8080"));
             editIP.setOnKeyListener(editIPKeyEvent);
             editPort.setOnKeyListener(editPortKeyEvent);
         } else {
@@ -93,8 +93,8 @@ public class LogoutFragment extends android.support.v4.app.Fragment implements C
         @Override
         public void onClick(View v) {
             SharedPreferences.Editor editor = Referee.serverPreferences.edit();
-            editor.putString(SERVER_IP, "ifootball.ml");
-            editor.putString(SERVER_PORT, "443");
+            editor.putString(SERVER_IP, "185.143.172.172");
+            editor.putString(SERVER_PORT, "8080");
             editor.apply();
             curIP.setText(R.string.default_ip);
             curPort.setText(R.string.default_port);
