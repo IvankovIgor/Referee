@@ -105,9 +105,37 @@ public class Client implements Constants {
         });
     }
 
+    public void delAction(final Action action) {
+        if (BuildConfig.DEBUG) {
+            checkAction(action);
+        }
+
+        Call<ResponseBody> call = createAPIService().delAction(action);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                if (BuildConfig.DEBUG) {
+                    try {
+                        checkRequestContent(call.request());
+                        checkResponseContent(response);
+                    } catch (JsonParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
     private APIService createAPIService() {
-        String serverIP = Referee.serverPreferences.getString(SERVER_IP, "ifootball.ml");
-        String serverPort = Referee.serverPreferences.getString(SERVER_PORT, "443");
+        String serverIP = Referee.serverPreferences.getString(SERVER_IP, "foot-man.ru");
+//        String serverPort = Referee.serverPreferences.getString(SERVER_PORT, "443");
+        String serverPort = Referee.serverPreferences.getString(SERVER_PORT, "80");
 
         String prefix = serverPort.equals("443") ? "https://" : "http://";
         Retrofit.Builder builder = new Retrofit.Builder()

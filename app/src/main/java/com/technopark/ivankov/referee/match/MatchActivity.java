@@ -43,6 +43,7 @@ public class MatchActivity extends AppCompatActivity {
     private long timePeriod;
     private int countPeriods;
     private int currentPeriod;
+    private int currentMinute;
     private Action.EventType chosenAction;
     private boolean isAdditional;
     private Chronometer mChronometer;
@@ -75,6 +76,7 @@ public class MatchActivity extends AppCompatActivity {
 //        timePeriod = 3000L;
         countPeriods = currentMatch.getMatchConfig().getCountPeriods();
         currentPeriod = 0;
+        currentMinute = 1;
         chosenAction = null;
         isAdditional = false;
 
@@ -127,6 +129,15 @@ public class MatchActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 act(view, Action.EventType.GOAL);
+            }
+        });
+
+        final Button btnAssist = (Button) findViewById(R.id.btn_assist);
+        assert btnAssist != null;
+        btnAssist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                act(view, Action.EventType.ASSIST);
             }
         });
 
@@ -269,6 +280,12 @@ public class MatchActivity extends AppCompatActivity {
 
     private void act(View view, Action.EventType eventType) {
         if (currentMatch.getMatchStatus() == MatchList.MatchStatus.STARTED) {
+            if (eventType.equals(Action.EventType.ASSIST) &&
+                    !currentMatch.getActionList().get(0).getIdEvent().equals(Action.EventType.GOAL)) {
+                Snackbar.make(view, R.string.error_not_allowed, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                return;
+            }
             if (chosenAction == eventType) {
                 chosenAction = null;
                 showActionList();
@@ -333,6 +350,14 @@ public class MatchActivity extends AppCompatActivity {
                 return;
             case GOAL:
                 decrementScore(action.getIdTeam());
+                int actionIndex = currentMatch.getActionList().indexOf(action);
+                if (actionIndex != 0) {
+                    Action nextAction = currentMatch.getActionList().get(actionIndex - 1);
+                    if (action.getIdAction() == nextAction.getIdParentAction()) {
+                        removeAction(nextAction, position - 1);
+                        position--;
+                    }
+                }
                 break;
             case OWN_GOAL:
                 if (currentMatch.getTeam1().getIdTeam().equals(action.getIdTeam())) {
@@ -350,6 +375,7 @@ public class MatchActivity extends AppCompatActivity {
         currentMatch.getDeletedActionList().add(action);
         currentMatch.getActionList().remove(action);
         actionListRecyclerViewAdapter.notifyItemRemoved(position);
+        new Client(this).delAction(new Action(currentMatch.getIdMatch(), action.getIdAction()));
     }
 
     private void decrementScore(String idTeam) {
@@ -452,7 +478,21 @@ public class MatchActivity extends AppCompatActivity {
         @Override
         public void onChronometerTick(Chronometer chronometer) {
             long elapsedMillis = SystemClock.elapsedRealtime() - mChronometer.getBase();
-            if (elapsedMillis > timePeriod * (currentPeriod)) {
+            int currentMillis = currentMinute * 1000 * 60;
+            if (BuildConfig.DEBUG) {
+                currentMillis /= 60;
+            }
+
+            if (elapsedMillis > currentMillis) {
+                if (BuildConfig.DEBUG) {
+                    Log.i(TAG, "MIN.");
+                }
+                currentMinute++;
+                new Client(MatchActivity.this).postAction(new Action(currentMatch.getIdMatch(),
+                        null, null, getTime(), Action.EventType.MIN));
+
+            }
+            if (elapsedMillis > timePeriod * currentPeriod) {
                 if (BuildConfig.DEBUG) {
                     Log.i(TAG, "Tick.");
                 }
@@ -460,7 +500,7 @@ public class MatchActivity extends AppCompatActivity {
                 isAdditional = true;
 
                 mChronometer.stop();
-                mChronometer.setBase(SystemClock.elapsedRealtime() - timePeriod * (currentPeriod));
+                mChronometer.setBase(SystemClock.elapsedRealtime() - timePeriod * currentPeriod);
 
                 additionalChronometer.setBase(SystemClock.elapsedRealtime());
                 additionalChronometer.start();

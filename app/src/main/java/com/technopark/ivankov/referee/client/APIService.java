@@ -20,4 +20,8 @@ interface APIService {
     @Headers("Content-Type: application/json;charset=UTF-8")
     @POST("api-referee/set-info")
     Call<ResponseBody> postAction(@Body Action action);
+
+    @Headers("Content-Type: application/json;charset=UTF-8")
+    @POST("api-referee/del-info")
+    Call<ResponseBody> delAction(@Body Action action);
 }

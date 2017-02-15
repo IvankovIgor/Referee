@@ -2,6 +2,7 @@ package com.technopark.ivankov.referee.content;
 
 public class Action {
     private final int idAction;
+    private final int idParentAction;
     private final String idMatch;
     private final String idTeam;
     private final String teamName;
@@ -13,6 +14,7 @@ public class Action {
     public Action(String idMatch, String idTeam, String idPlayer, int minute, EventType idEvent) {
         this.idAction = MatchList.MATCH_MAP.get(idMatch).getActionList().size() +
                         MatchList.MATCH_MAP.get(idMatch).getDeletedActionList().size();
+        this.idParentAction = this.idAction - 1;
         this.idMatch = idMatch;
         this.idTeam = idTeam;
         this.teamName = idTeam == null ? null : TeamList.TEAM_MAP.get(idTeam).getName();
@@ -20,13 +22,28 @@ public class Action {
         this.playerName = idPlayer == null ? null : PlayerList.PLAYER_MAP.get(idPlayer).getName();
         this.minute = minute;
         this.idEvent = idEvent;
-        MatchList.MATCH_MAP.get(idMatch).getActionList().add(0, this);
+        if (!(EventType.MIN.equals(idEvent))) {
+            MatchList.MATCH_MAP.get(idMatch).getActionList().add(0, this);
+        }
+    }
+
+    public Action(String idMatch, int idAction) {
+        this.idAction = idAction;
+        this.idParentAction = 0;
+        this.idMatch = idMatch;
+        this.idTeam = null;
+        this.teamName = null;
+        this.idPlayer = null;
+        this.playerName = null;
+        this.minute = 0;
+        this.idEvent = null;
     }
 
     public enum EventType {
         MATCH_STARTED ("Начало матча"), MATCH_FINISHED ("Матч закончен"), TIME_STARTED ("Тайм начат"),
         TIME_FINISHED ("Тайм закончен"), GOAL ("Гол"), OWN_GOAL ("Автогол"),
-        YELLOW_CARD ("Жёлтая карточка"), RED_CARD ("Красная карточка");
+        YELLOW_CARD ("Жёлтая карточка"), RED_CARD ("Красная карточка"), ASSIST ("Голевая передача"),
+        MIN ("Минута");
 
         private final String event;
 
@@ -42,6 +59,8 @@ public class Action {
     public int getIdAction() {
         return this.idAction;
     }
+
+    public int getIdParentAction() { return this.idParentAction; }
 
     public String getIdMatch() {
         return this.idMatch;

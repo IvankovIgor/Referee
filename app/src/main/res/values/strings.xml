@@ -17,6 +17,7 @@
     <string name="btn_start_time">Начало тайма</string>
     <string name="btn_finish_time">Конец тайма</string>
     <string name="btn_goal">Гол</string>
+    <string name="btn_assist">Пас</string>
     <string name="btn_own_goal">Автогол</string>
     <string name="btn_yellow_card">Жёлтая</string>
     <string name="btn_red_card">Красная</string>

@@ -56,8 +56,8 @@ public class LogoutFragment extends android.support.v4.app.Fragment implements C
         if (BuildConfig.DEBUG) {
             btnSetDefaults.setText(R.string.btn_set_defaults);
             btnSetDefaults.setOnClickListener(btnSetDefaultsClick);
-            curIP.setText(Referee.serverPreferences.getString(SERVER_IP, "ifootball.ml"));
-            curPort.setText(Referee.serverPreferences.getString(SERVER_PORT, "443"));
+            curIP.setText(Referee.serverPreferences.getString(SERVER_IP, "foot-man.ru"));
+            curPort.setText(Referee.serverPreferences.getString(SERVER_PORT, "80"));
             editIP.setOnKeyListener(editIPKeyEvent);
             editPort.setOnKeyListener(editPortKeyEvent);
         } else {
